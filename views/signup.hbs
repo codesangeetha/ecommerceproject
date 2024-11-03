@@ -1,11 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="stylesheets/homestyle.css">
+    <link rel="stylesheet" href="stylesheets/signupstyle.css">
+
+    <title>Signup</title>
 </head>
+
 <body>
-    <h1>Signup</h1>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light  nav-class">
+            <a class="navbar-brand  title-cls" href="#">SoleWave</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2  search-class" type="search" placeholder="Search"
+                        aria-label="Search">
+
+                    <a href="#"><img class="img-cls"
+                            src="https://static.vecteezy.com/system/resources/thumbnails/012/174/332/small/simple-magnifying-icon-png.png"></a>
+                    <button class="btn btn-outline-success my-2 my-sm-0  login-cls  " type="submit">Login</button>
+                    <a class="text-cls" href="#">Returns and orders</a>
+                    <span><img class="cartimg"
+                            src="https://i.pinimg.com/736x/2b/35/a4/2b35a4763a31b6f5f40d9de9d7e05f88.jpg"></span>
+                    <span class="text-cls">Cart</span>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container justify-content-center">
+        <div class="row mt-5">
+            <div class="col-md-3"></div>
+            <div class="col-md-5">
+                <div class="card p-4 shadow-sm">
+                    <h3 class="text-center mb-4">Sign Up</h3>
+                    <form>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Enter your password"
+                                required>
+                        </div>
+                        <button type="submit" class="btn btn-success mb-4 signup-btncls">Sign Up</button>
+
+                    </form>
+                    <div>Already have an account ? <a href="#">Login</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
-</html>
