@@ -11,3 +11,11 @@
     font-size: 18px;
     font-weight:600
 }
+.cart-buyButton{
+    width: 250px;
+    margin-left:350px ; 
+    margin-top: 20px;
+    border-radius: 25px;
+    background-color:rgb(235, 207, 237);
+    color: black;
+}
