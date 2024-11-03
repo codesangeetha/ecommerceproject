@@ -1,0 +1,36 @@
+.pro-description{
+    font-size: 20px;
+    margin-top: 100px;
+}
+.pro-disc{
+    margin-left:10px ;
+    color: rgb(242, 60, 60);
+    font-weight: bold;
+    font-size: 20px;
+}
+.pro-price{
+    margin-left:10px ;
+    font-weight: bold;
+    font-size: 20px;
+}
+.pro-size{
+    font-weight: bold;
+    margin-left:10px ;
+    margin-top: 5px;
+}
+.pro-dropdown{
+    margin-left:10px ;  
+    background-color:rgb(148, 146, 146);
+   }
+   .pro-2div{
+    border: 1px;
+   }
+   .pro-cartButton{
+    width: 250px;
+    margin-left:10px ; 
+    margin-top: 15px;
+    border-radius: 25px;
+    background-color:rgb(235, 207, 237);
+    color: black;
+  
+   }
