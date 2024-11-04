@@ -1,33 +1,4 @@
-/* body {
-    background-color: #f8f9fa;
-}
 
-.navbar-brand {
-    font-size: 1.8rem;
-    font-weight: bold;
-}
-
-.card {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
-}
-
-.card:hover {
-    transform: scale(1.05);
-}
-
-.card-title {
-    font-size: 1.2rem;
-    color: #333;
-}
-
-.card-text {
-    color: #777;
-}
-
-.container {
-    margin-top: 40px;
-} */
 
 .nav-class{
     background-color: rgb(194, 247, 247);
@@ -45,16 +16,26 @@
 }
 .login-cls{
     background-color: rgb(153, 235, 153);
-    margin-left: 15px;
+    margin-left:30px;
     color: black;
     font-weight: bold;
 }
-.text-cls{
+.text-cls, .text-cart{
     margin-left: 25px;
     color: black;
     font-size: 20px;
     font-weight: bold;
+    cursor: pointer;
 }
+
+.text-cart {
+    margin-left: 8px;
+}
+
+.hand-cls {
+    cursor: pointer;
+}
+
 .cartimg{
     width: 40px;
     height: 30px; 
@@ -62,4 +43,8 @@
 }
 .card-cls{
     background-color: rgb(251, 251, 233);
+}
+.cart-icon {
+    font-size: 22px;
+    margin-left: 30px;
 }

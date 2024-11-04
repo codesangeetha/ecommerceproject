@@ -9,4 +9,8 @@ router.get('/category',(req,res)=>{
     res.render('admincategory')
     });
 
+    router.get('/login',(req,res)=>{
+        res.render('adminlogin')
+        });
+
 module.exports = router;
