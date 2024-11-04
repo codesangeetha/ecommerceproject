@@ -1,5 +1,6 @@
-login-signup{
+.login-signup{
 color: rgb(45, 175, 250);
+cursor: pointer;
 }
 .color-cls{
     background-color: rgb(194, 247, 247);

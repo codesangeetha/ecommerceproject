@@ -1,9 +1,13 @@
-
-.signup-btncls{
+.signup-btncls {
     background-color: rgb(194, 247, 247);
     color: black;
     font-weight: bold;
-    width:150px;
+    width: 150px;
     border-radius: px;
     margin-left: 125px;
+}
+
+.signup-login {
+    color: rgb(45, 175, 250);
+    cursor: pointer;
 }
