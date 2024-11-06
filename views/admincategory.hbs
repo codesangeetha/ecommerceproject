@@ -28,7 +28,7 @@
                                 <a class="nav-link active" href="#">Categories</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Products</a>
+                                <a class="nav-link" href="/admin/product">Products</a>
                             </li>
                         </ul>
                     </div>
@@ -50,7 +50,10 @@
                         </div>
                         <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
                             <button class="btn btn-primary w-55">Add New Category</button>
+                            <a href="/admin/logout"><button class="btn btn-primary w-55">Logout</button></a>
+
                         </div>
+
                     </div>
 
 
@@ -63,10 +66,10 @@
                             </tr>
                         </thead>
                         <tbody>
-
+                            {{#each arr}}
                             <tr>
                                 <th scope="row">1</th>
-                                <td>Men</td>
+                                <td>{{name}}</td>
                                 <td>
                                     <button class="btn btn-sm btn-warning me-2">
                                         <i class="fas fa-edit"></i>
@@ -76,31 +79,8 @@
                                     </button>
                                 </td>
                             </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Women</td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning me-2">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td>Kids</td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning me-2">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
+                            
+                            {{/each}}
                         </tbody>
                     </table>
                 </main>
