@@ -25,10 +25,13 @@
                         <h5 class="text-center">Admin Panel</h5>
                         <ul class="nav flex-column ul-procatcls ">
                             <li class="nav-item">
-                                <a class="nav-link active" href="#">Categories</a>
+                                <a class="nav-link active" href="/admin/category">Categories</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/admin/product">Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/user">Users</a>
                             </li>
                         </ul>
                     </div>
@@ -62,6 +65,7 @@
                             <tr>
                                 <th scope="col">No.</th>
                                 <th scope="col">Name</th>
+                                <th scope="col">Description</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -69,6 +73,7 @@
                             {{#each arr}}
                             <tr>
                                 <th scope="row">1</th>
+                                <td>{{name}}</td>
                                 <td>{{name}}</td>
                                 <td>
                                     <button class="btn btn-sm btn-warning me-2">

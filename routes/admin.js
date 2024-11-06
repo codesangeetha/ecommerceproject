@@ -1,5 +1,5 @@
 var express = require('express');
-const { getcategorydata ,getproductsdata} = require('../helpers/functions');
+const { getcategorydata ,getproductsdata,getusersdata} = require('../helpers/functions');
 var router = express.Router();
 
 const checkadminLogin = (req, res, next) => {
@@ -45,6 +45,16 @@ router.post('/adminloginsubmit', (req, res) => {
     }
 });
 
+router.get('/user', checkadminLogin,async (req, res) => {
+        const usersdata = await getusersdata();
+    console.log(usersdata);
+   
+    res.render('adminusers',{arr:usersdata})
+});
+
+// router.get('/addcategory',(req,res)=>{
+// return res.render()
+// });
 
 router.get('/logout', (req, res) => {
     req.session.destroy((err) => {

@@ -18,7 +18,7 @@
         <div class="container-fluid">
             <div class="row">
 
-                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
                     <div class="position-sticky pt-3">
                         <h5 class="text-center">Admin Panel</h5>
                         <ul class="nav flex-column ul-procatcls ">
@@ -37,7 +37,7 @@
 
 
                 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                    <h2 class="text-center my-4">Product Management</h2>
+                    <h2 class="text-center my-4">User Management</h2>
 
 
                     <div class="row mb-3">
@@ -49,7 +49,7 @@
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
-                            <button class="btn btn-primary w-55">Add New Product</button>
+                            <button class="btn btn-primary w-55">Add New User</button>
                             <a href="/admin/logout"><button class="btn btn-primary w-55">Logout</button></a>
 
                         </div>
@@ -61,7 +61,7 @@
                             <tr>
                                 <th scope="col">No.</th>
                                 <th scope="col">Name</th>
-                                <th scope="col">Price</th>
+                                <th scope="col">Email</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -70,7 +70,7 @@
                             <tr>
                                 <th scope="row">1</th>
                                 <td>{{name}}</td>
-                                <td>{{price}}</td>
+                                <td>{{email}}</td>
                                 <td>
                                     <button class="btn btn-sm btn-warning me-2">
                                         <i class="fas fa-edit"></i>
