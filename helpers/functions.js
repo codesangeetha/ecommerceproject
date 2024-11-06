@@ -18,3 +18,9 @@ exports.getusersdata = async () => {
     const data = await Users.find({});
     return data;
 }
+
+exports.insertcategory= async (obj) => {
+    console.log('hi');
+    const data = await Category.insertMany([obj]);
+    return data;
+}

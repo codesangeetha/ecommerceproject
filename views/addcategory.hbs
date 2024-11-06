@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/adminstyle.css">
+    <link rel="stylesheet" href="/stylesheets/cartstyle.css">
+    <title>Add new category</title>
+</head>
+
+<body>
+
+
+    <section>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                    <div class="position-sticky pt-3">
+                        <h5 class="text-center">Admin Panel</h5>
+                        <ul class="nav flex-column ul-procatcls ">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/admin/category">Categories</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/product">Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/user">Users</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+
+
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                    <h2 class="text-center my-4">Add category</h2>
+
+
+                    <div class="row mb-3">
+                        <div class="col-md-8 col-sm-12 mb-2">
+
+                        </div>
+                        <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
+                            <a href="/admin/logout"><button class="btn btn-primary w-55">Logout</button></a>
+
+                        </div>
+
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Card for Adding Category -->
+                        <div class="card">
+
+                            <div class="card-body">
+                                <!-- Add Category Form -->
+                                <form action="/admin/add-categorysubmit" method="POST">
+                                    <!-- Category Name Input -->
+                                    <div class="mb-3">
+                                        <label for="categoryName" class="form-label">Category Name</label>
+                                        <input type="text" class="form-control" id="categoryName" name="categoryName"
+                                            placeholder="Enter category name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="categoryName" class="form-label">Description</label>
+                                        <input type="text" class="form-control" id="description" name="description"
+                                            placeholder="Enter description" required>
+                                    </div>
+
+                                    <!-- Submit Button -->
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Add Category</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </section>
+    <script src="/javascripts/jquery-3.2.1.slim.min.js"></script>
+    <script src="/javascripts/popper.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+</body>
+
+</html>

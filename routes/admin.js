@@ -1,28 +1,30 @@
 var express = require('express');
-const { getcategorydata ,getproductsdata,getusersdata} = require('../helpers/functions');
+const { getcategorydata, getproductsdata, getusersdata, insertcategory } = require('../helpers/functions');
 var router = express.Router();
 
 const checkadminLogin = (req, res, next) => {
     if (req.session.isLoggin && req.session.isLoggin == true) {
+        console.log('hello')
         next();
     } else {
+        console.log("god")
         res.redirect('/admin/login')
     }
 }
 
 
-router.get('/product', checkadminLogin,async(req, res) => {
+router.get('/product', checkadminLogin, async (req, res) => {
     const productdata = await getproductsdata();
     console.log(productdata);
-    res.render('adminproduct',{ arr:productdata})
+    res.render('adminproduct', { arr: productdata })
 });
 
 
-router.get('/category', checkadminLogin,async (req, res) => {
+router.get('/category', checkadminLogin, async (req, res) => {
     console.log('hello');
     const categorydata = await getcategorydata();
     console.log(categorydata);
-    res.render('admincategory',{arr:categorydata})
+    res.render('admincategory', { arr: categorydata })
 });
 
 router.get('/login', (req, res) => {
@@ -45,16 +47,27 @@ router.post('/adminloginsubmit', (req, res) => {
     }
 });
 
-router.get('/user', checkadminLogin,async (req, res) => {
-        const usersdata = await getusersdata();
+router.get('/user', checkadminLogin, async (req, res) => {
+    const usersdata = await getusersdata();
     console.log(usersdata);
-   
-    res.render('adminusers',{arr:usersdata})
+
+    res.render('adminusers', { arr: usersdata })
 });
 
-// router.get('/addcategory',(req,res)=>{
-// return res.render()
-// });
+router.get('/add-category',checkadminLogin, (req, res) => {
+    return res.render('addcategory')
+});
+
+router.post('/add-categorysubmit',async (req, res) => {
+    const obj = {
+        name: req.body.categoryName,
+        description: req.body.description
+    }
+console.log(obj);
+const data =await insertcategory(obj)
+console.log(data);
+return res.redirect('/admin/category');
+})
 
 router.get('/logout', (req, res) => {
     req.session.destroy((err) => {
