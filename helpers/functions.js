@@ -19,14 +19,30 @@ exports.getusersdata = async () => {
     return data;
 }
 
-exports.insertcategory= async (obj) => {
-    console.log('hi');
+exports.insertcategory = async (obj) => {
+
     const data = await Category.insertMany([obj]);
     return data;
 }
 
-exports.insertproduct= async (obj) => {
-    console.log('hi');
+exports.insertproduct = async (obj) => {
+
     const data = await Products.insertMany([obj]);
+    return data;
+}
+
+exports.insertuser = async (obj) => {
+
+    const data = await Users.insertMany([obj]);
+    return data;
+}
+
+exports.deletecategory = async (val) => {
+    const data = await Category.deleteOne({ _id: val });
+    return data;
+}
+
+exports.deleteproduct = async (val) => {
+    const data = await Products.deleteOne({ _id: val });
     return data;
 }

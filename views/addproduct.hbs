@@ -52,25 +52,32 @@
 
                     </div>
                     <div class="col-md-6">
-                        
+
                         <div class="card">
 
                             <div class="card-body">
-                               
+
                                 <form action="/admin/add-productsubmit" method="POST">
-                                   
+
                                     <div class="mb-3">
                                         <label for="categoryName" class="form-label">Product Name</label>
                                         <input type="text" class="form-control" id="productName" name="productName"
-                                            placeholder="Enter product name" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="categoryName" class="form-label">Description</label>
-                                        <input type="text" class="form-control" id="description" name="description"
-                                            placeholder="Enter description" required>
+                                            placeholder="Enter product name">
                                     </div>
 
-                                    
+                                    <div class="mb-3">
+                                        <label for="price" class="form-label">Price</label>
+                                        <input type="text" class="form-control" id="price" name="price"
+                                            placeholder="Enter product price">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <input type="text" class="form-control" id="description" name="description"
+                                            placeholder="Enter description">
+                                    </div>
+
+
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-primary">Add Product</button>
                                     </div>

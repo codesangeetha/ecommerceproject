@@ -1,5 +1,5 @@
 var express = require('express');
-const { getcategorydata, getproductsdata, getusersdata, insertcategory,insertproduct } = require('../helpers/functions');
+const { getcategorydata, getproductsdata, getusersdata, insertcategory,insertproduct, deletecategory,deleteproduct } = require('../helpers/functions');
 var router = express.Router();
 
 const checkadminLogin = (req, res, next) => {
@@ -76,15 +76,46 @@ router.get('/add-product',checkadminLogin, (req, res) => {
 router.post('/add-productsubmit',async (req, res) => {
     const obj = {
         name: req.body.productName,
+        price:req.body.price,
         description: req.body.description
     }
 console.log(obj);
 const data =await insertproduct(obj)
 console.log(data);
 return res.redirect('/admin/product');
-})
+});
 
 
+router.get('/add-user',checkadminLogin, (req, res) => {
+    return res.render('adduser')
+});
+
+router.post('/add-usersubmit',async (req, res) => {
+    const obj = {
+        name: req.body.name,
+       email:req.body.mail
+    }
+console.log(obj);
+const data =await insertuser(obj)
+console.log(data);
+return res.redirect('/admin/user');
+});
+
+
+router.get('/deletecategory/:id',async(req,res)=>{
+const val = req.params.id;
+console.log(val);
+const data = await deletecategory(val);
+res.redirect('/admin/category')
+});
+
+
+router.get('/deleteproduct/:id',async(req,res)=>{
+    const val = req.params.id;
+    console.log(val);
+    const data = await deleteproduct(val);
+    res.redirect('/admin/product')
+    });
 
 router.get('/logout', (req, res) => {
     req.session.destroy((err) => {
