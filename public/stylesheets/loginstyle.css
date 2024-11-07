@@ -8,5 +8,10 @@ cursor: pointer;
     font-weight: bold;
     border-radius: px;
     margin-left: 130px;
-  
-}
+  }
+
+  .error-message {
+    color: red;
+    font-size: 15px;
+    margin-top: 5px;
+  }

@@ -48,19 +48,21 @@
 
           <div class="card p-4 shadow-sm">
             <h3 class="text-center mb-4">Login</h3>
-            <form>
+            <form onsubmit="return validateForm()">
               <div class="mb-4">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" placeholder="Enter username" required>
+                <input type="text" class="form-control" id="username" placeholder="Enter username" >
+                <div id="error-name" class="error-message"></div>
               </div>
               <div class="mb-5">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+                <input type="password" class="form-control" id="password" placeholder="Enter password" >
+                <div id="error-pwd" class="error-message"></div>
               </div>
               <button type="submit" class="btn btn-primary  mb-4 color-cls w-90">Login</button>
               <div><a href="#">Forgot password?</a></div>
               <div>
-                Not a member ? <span class="login-signup">Signup</span> now
+                Not a member ? <a class="login-signup" href="/signup">Signup</a> now
               </div>
             </form>
           </div>
@@ -73,6 +75,8 @@
   <script src="javascripts/jquery-3.2.1.slim.min.js"></script>
   <script src="javascripts/popper.min.js"></script>
   <script src="javascripts/bootstrap.min.js"></script>
+
+  <script src="javascripts/adminlogin.js"></script>
 
 </body>
 

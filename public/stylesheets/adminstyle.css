@@ -2,3 +2,9 @@
     margin-top: 25px;
     font-weight: bold;
 }
+.error-msg {
+    color: red;
+    font-size: 15px;
+    margin-top: 5px;
+  }
+  

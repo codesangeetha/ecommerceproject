@@ -11,3 +11,8 @@
     color: rgb(45, 175, 250);
     cursor: pointer;
 }
+.error-style {
+    color: red;
+    font-size: 15px;
+    margin-top: 5px;
+  }

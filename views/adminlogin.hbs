@@ -7,7 +7,7 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-  <link rel="stylesheet" href="/stylesheets/homestyle.css">
+  <link rel="stylesheet" href="/stylesheets/adminstyle.css">
   <link rel="stylesheet" href="/stylesheets/loginstyle.css">
 
     <title>Admin login</title>
@@ -22,14 +22,16 @@
 
           <div class="card p-4 shadow-sm">
             <h3 class="text-center mb-4">Admin Login</h3>
-            <form action="/admin/adminloginsubmit" method="post">
+            <form action="/admin/adminloginsubmit" method="post"  onsubmit="return validateForm()">
               <div class="mb-4">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" >
+                <div id="error-name" class="error-msg"></div>
               </div>
               <div class="mb-5">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" >
+                <div id="error-pwd" class="error-msg"></div>
               </div>
               <button type="submit" class="btn btn-primary  mb-4 color-cls w-90">Login</button>
               <div>{{msg}}</div>
@@ -45,6 +47,10 @@
   <script src="/javascripts/jquery-3.2.1.slim.min.js"></script>
   <script src="/javascripts/popper.min.js"></script>
   <script src="/javascripts/bootstrap.min.js"></script>
+
+  <script src="/javascripts/adminlogin.js"></script>
+ 
+  
 
 </body>
 </html>
