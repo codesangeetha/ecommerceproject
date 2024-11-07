@@ -24,3 +24,9 @@ exports.insertcategory= async (obj) => {
     const data = await Category.insertMany([obj]);
     return data;
 }
+
+exports.insertproduct= async (obj) => {
+    console.log('hi');
+    const data = await Products.insertMany([obj]);
+    return data;
+}

@@ -1,5 +1,5 @@
 var express = require('express');
-const { getcategorydata, getproductsdata, getusersdata, insertcategory } = require('../helpers/functions');
+const { getcategorydata, getproductsdata, getusersdata, insertcategory,insertproduct } = require('../helpers/functions');
 var router = express.Router();
 
 const checkadminLogin = (req, res, next) => {
@@ -68,6 +68,23 @@ const data =await insertcategory(obj)
 console.log(data);
 return res.redirect('/admin/category');
 })
+
+router.get('/add-product',checkadminLogin, (req, res) => {
+    return res.render('addproduct')
+});
+
+router.post('/add-productsubmit',async (req, res) => {
+    const obj = {
+        name: req.body.productName,
+        description: req.body.description
+    }
+console.log(obj);
+const data =await insertproduct(obj)
+console.log(data);
+return res.redirect('/admin/product');
+})
+
+
 
 router.get('/logout', (req, res) => {
     req.session.destroy((err) => {
