@@ -5,12 +5,15 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+
+
 const mongoose = require('mongoose');
 const uri = 'mongodb://localhost:27017/solewave_db';
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((error) => console.error('Connection error', error));
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((error) => console.error('Connection error', error));
+
 
 
 var indexRouter = require('./routes/index');
@@ -36,17 +39,19 @@ app.use(session({
   cookie: { secure: false }
 }));
 
+app.use('/uploads', express.static('uploads'));
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -55,5 +60,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 module.exports = app;

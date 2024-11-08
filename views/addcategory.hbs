@@ -52,25 +52,28 @@
 
                     </div>
                     <div class="col-md-6">
-                        
+
                         <div class="card">
 
                             <div class="card-body">
-                               
-                                <form action="/admin/add-categorysubmit" method="POST">
-                                   
+
+                                <form action="/admin/add-categorysubmit" method="POST"
+                                    onsubmit="return validateAddCategory()">
+
                                     <div class="mb-3">
                                         <label for="categoryName" class="form-label">Category Name</label>
                                         <input type="text" class="form-control" id="categoryName" name="categoryName"
                                             placeholder="Enter category name">
+                                        <div id="error-name" class="error-msg"></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>
                                         <input type="text" class="form-control" id="description" name="description"
-                                            placeholder="Enter description" >
+                                            placeholder="Enter description">
+                                        <div id="error-description" class="error-msg"></div>
                                     </div>
 
-                                    
+
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-primary">Add Category</button>
                                     </div>
@@ -84,6 +87,7 @@
     <script src="/javascripts/jquery-3.2.1.slim.min.js"></script>
     <script src="/javascripts/popper.min.js"></script>
     <script src="/javascripts/bootstrap.min.js"></script>
+    <script src="/javascripts/addcategory.js"></script>
 </body>
 
 </html>

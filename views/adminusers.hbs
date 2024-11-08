@@ -18,7 +18,7 @@
         <div class="container-fluid">
             <div class="row">
 
-                 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
                     <div class="position-sticky pt-3">
                         <h5 class="text-center">Admin Panel</h5>
                         <ul class="nav flex-column ul-procatcls ">
@@ -62,25 +62,57 @@
                                 <th scope="col">No.</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Email</th>
+                                <th scope="col">Status</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {{#each arr}}
+                            {{!-- {{#each arr}}
                             <tr>
                                 <th scope="row">1</th>
                                 <td>{{name}}</td>
                                 <td>{{email}}</td>
+                                <td>{{status}}</td>
+
                                 <td>
-                                    <button class="btn btn-sm btn-warning me-2">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
+
                                     <button class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash-alt"></i>
+                                        <i class="fa-solid fa-ban"></i>
                                     </button>
                                 </td>
                             </tr>
+                            {{/each}} --}}
+
+                            {{#each arr}}
+                            <tr>
+                                <th scope="row"></th>
+                                <td>{{name}}</td>
+                                <td>{{email}}</td>
+
+                                <!-- Status display -->
+                                <td>
+                                    {{#if status}}
+                                    <span class="text-success">Active</span>
+                                    {{else}}
+                                    <span class="text-danger">Banned</span>
+                                    {{/if}}
+                                </td>
+
+                                <!-- Actions based on status -->
+                                <td>
+                                    {{#if status}}
+                                    <a href="bantoggle/{{_id}}"><button class="btn btn-sm btn-danger" title="Ban User">
+                                        <i class="fa-solid fa-ban"></i> Ban
+                                    </button></a>
+                                    {{else}}
+                                    <a href="bantoggle/{{_id}}"><button class="btn btn-sm btn-success" title="Unban User">
+                                        <i class="fa-solid fa-check-circle"></i> Unban
+                                    </button></a>
+                                    {{/if}}
+                                </td>
+                            </tr>
                             {{/each}}
+
 
                         </tbody>
                     </table>
