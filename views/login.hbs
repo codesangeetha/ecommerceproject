@@ -48,18 +48,20 @@
 
           <div class="card p-4 shadow-sm">
             <h3 class="text-center mb-4">Login</h3>
-            <form onsubmit="return validateForm()">
+            <form  action="/loginsubmit" method="post"  onsubmit="return validateForm()" >
               <div class="mb-4">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" placeholder="Enter username" >
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" >
                 <div id="error-name" class="error-message"></div>
               </div>
               <div class="mb-5">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Enter password" >
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" >
                 <div id="error-pwd" class="error-message"></div>
               </div>
+              <div>{{msg}}</div>
               <button type="submit" class="btn btn-primary  mb-4 color-cls w-90">Login</button>
+            
               <div><a href="#">Forgot password?</a></div>
               <div>
                 Not a member ? <a class="login-signup" href="/signup">Signup</a> now

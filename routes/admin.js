@@ -50,7 +50,7 @@ router.get('/login', (req, res) => {
     if (req.session.message) {
         const msg = req.session.message;
     }
-    req.session.msg = "";
+    req.session.message = "";
     res.render('adminlogin', { msg });
 });
 

@@ -69,3 +69,8 @@ exports.banusers = async (id) => {
     const data = await user.save();
     return data;
 }
+
+exports.finduser = async (username,pwd) => {
+    const data = await Users.findOne({$and:[{username:username},{password:pwd}]});
+    return data;
+}
