@@ -42,95 +42,23 @@
     <scetion>
         <div class="container mt-5">
             <div class="row">
+                {{#each arr}}
                 <div class="col-md-3 mb-4">
-                    <div class="card" style="width: 18rem mr-10;">
-                        <img class="card-img-top" src="images/shoe1.webp" alt="Card image cap">
-                        <div class="card-body card-cls">
-                            <h5 class="card-title">Red Tape</h5>
-                            <p class="card-text">₹ 275</p>
-
+                    <a href="/product/{{_id}}" style="text-decoration: none; color: inherit;">
+                        <div class="card" style="width: 18rem mr-10;">
+                        <img class="card-img-top img-cls" src="/uploads/{{image}}" alt="Card image cap">
+                        <div class="card-body card-cls " >
+                            <h5 class="card-title">{{name}}</h5>
+                            <p class="text-cls">₹ {{price}}</p>
+                            
                         </div>
-                    </div>
+                    </div></a>
                 </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card" style="width: 18rem mr-10;">
-                        <img class="card-img-top" src="images/shoe1.webp" alt="Card image cap">
-                        <div class="card-body card-cls">
-                            <h5 class="card-title">Bacca Bucci</h5>
-                            <p class="card-text">₹ 275</p>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card" style="width: 18rem mr-10;">
-                        <img class="card-img-top" src="images/shoe1.webp" alt="Card image cap">
-                        <div class="card-body card-cls">
-                            <h5 class="card-title">AADI</h5>
-                            <p class="card-text">₹ 275</p>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card" style="width: 18rem mr-10;">
-                        <img class="card-img-top" src="images/shoe1.webp" alt="Card image cap">
-                        <div class="card-body card-cls">
-                            <h5 class="card-title">Bacca Bucci</h5>
-                            <p class="card-text">₹ 275</p>
-
-                        </div>
-                    </div>
-                </div>
+                {{/each}}
             </div>
         </div>
     </scetion>
-    <scetion>
-        <div class="container mt-5">
-            <div class="row">
-                <div class="col-md-3 mb-4">
-                    <div class="card" style="width: 18rem mr-10;">
-                        <img class="card-img-top" src="images/shoe1.webp" alt="Card image cap">
-                        <div class="card-body card-cls">
-                            <h5 class="card-title">Red Tape</h5>
-                            <p class="card-text">₹ 275</p>
 
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card" style="width: 18rem mr-10;">
-                        <img class="card-img-top" src="images/shoe1.webp" alt="Card image cap">
-                        <div class="card-body card-cls">
-                            <h5 class="card-title">Bacca Bucci</h5>
-                            <p class="card-text">₹ 275</p>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card" style="width: 18rem mr-10;">
-                        <img class="card-img-top" src="images/shoe1.webp" alt="Card image cap">
-                        <div class="card-body card-cls">
-                            <h5 class="card-title">Red tape </h5>
-                            <p class="card-text">₹ 275</p>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card" style="width: 18rem mr-10;">
-                        <img class="card-img-top" src="images/shoe1.webp" alt="Card image cap">
-                        <div class="card-body card-cls">
-                            <h5 class="card-title">AADI</h5>
-                            <p class="card-text">₹ 275</p>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </scetion>
 
 
     <script src="javascripts/jquery-3.2.1.slim.min.js"></script>

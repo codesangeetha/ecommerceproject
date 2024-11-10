@@ -11,8 +11,8 @@
     font-weight: bold;
 }
 .img-cls{
-    width: 30px;
-    height: 30px;
+    width: 250px;
+    height: 250px;
 }
 .login-cls{
     background-color: rgb(153, 235, 153);
@@ -44,7 +44,14 @@
 .card-cls{
     background-color: rgb(251, 251, 233);
 }
+.text-cls{
+    font-size:20px;
+}
 .cart-icon {
     font-size: 22px;
     margin-left: 30px;
+}
+.no-style{
+    text-decoration: none;
+    color: black;
 }

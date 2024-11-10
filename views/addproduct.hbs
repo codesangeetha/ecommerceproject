@@ -57,32 +57,43 @@
 
                             <div class="card-body">
 
-                                <form action="/admin/add-productsubmit" method="POST"onsubmit="return validateAddProduct()" enctype="multipart/form-data">
+                                <form action="/admin/add-productsubmit" method="POST"
+                                    onsubmit="return validateAddProduct()" enctype="multipart/form-data">
 
                                     <div class="mb-3">
                                         <label for="categoryName" class="form-label">Product Name</label>
                                         <input type="text" class="form-control" id="productName" name="productName"
                                             placeholder="Enter product name">
-                                             <div id="error-name" class="error-msg"></div>
+                                        <div id="error-name" class="error-msg"></div>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="price" class="form-label">Price</label>
                                         <input type="text" class="form-control" id="price" name="price"
                                             placeholder="Enter product price">
-                                             <div id="error-price" class="error-msg"></div>
+                                        <div id="error-price" class="error-msg"></div>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>
                                         <input type="text" class="form-control" id="description" name="description"
                                             placeholder="Enter description">
-                                             <div id="error-description" class="error-msg"></div>
+                                        <div id="error-description" class="error-msg"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="category" class="form-label">Category</label>
+                                        <select class="form-control" id="category" name="category">
+                                            <option value="">Select a category</option>
+                                            {{#each arr}}
+                                            <option value="{{_id}}">{{name}}</option>
+                                            {{/each}}
+                                        </select>
+                                        <div id="error-category" class="error-msg"></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="image" class="form-label">Product Image</label>
                                         <input type="file" class="form-control" id="image" name="image">
-                                         <div id="error-image" class="error-msg"></div>
+                                        <div id="error-image" class="error-msg"></div>
                                     </div>
 
                                     <div class="d-grid">

@@ -3,12 +3,12 @@ const Products = require("../models/products.model");
 const Users = require("../models/users.model");
 
 exports.getcategorydata = async () => {
-    const data = await Category.find({});
+    const data = await Category.find({isdeleted:false});
     return data;
 }
 
 exports.getproductsdata = async () => {
-    const data = await Products.find({});
+    const data = await Products.find({isdeleted:false});
     return data;
 }
 
@@ -34,12 +34,12 @@ exports.insertuser = async (obj) => {
 }
 
 exports.deletecategory = async (val) => {
-    const data = await Category.deleteOne({ _id: val });
+    const data = await Category.updateOne({ _id: val },{$set:{isdeleted:true}});
     return data;
 }
 
 exports.deleteproduct = async (val) => {
-    const data = await Products.deleteOne({ _id: val });
+    const data = await Products.updateOne({ _id: val },{$set:{isdeleted:true}});
     return data;
 }
 

@@ -78,6 +78,17 @@
                                             value="{{products.description}}">
                                     </div>
                                     <div class="mb-3">
+                                        <label for="category" class="form-label">Category</label>
+                                        <select class="form-control" id="category" name="category">
+                                            <option value="">Select a category</option>
+                                            {{#each arr}}
+                                            <option value="{{_id}}" >{{name}}</option>
+                                            {{/each}}
+                                        </select>
+                                        <div id="error-category" class="error-msg"></div>
+                                    </div>
+
+                                    <div class="mb-3">
                                         <label for="image" class="form-label">Product Image</label>
                                         <input type="file" class="form-control" id="image" name="image">
                                     </div>

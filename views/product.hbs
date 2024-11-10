@@ -5,10 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="stylesheets/homestyle.css">
-    <link rel="stylesheet" href="stylesheets/productstyle.css">
+    <link rel="stylesheet" href="/stylesheets/homestyle.css">
+    <link rel="stylesheet" href="/stylesheets/productstyle.css">
 
     <title>product</title>
 </head>
@@ -43,18 +43,16 @@
             <div class="row">
                 <div class="col-md-6 mb-6">
                     <div class="card" style="width: 18rem mr-10;">
-                        <img class="card-img-top" src="images/shoe1.webp" alt="Card image cap">
+                        <img class="card-img-top" src="/uploads/{{product.image}}" alt="Card image cap">
 
                     </div>
                 </div>
                 <div class="col-md-6 mb-6">
                     <div class="card pro-2div" style="width: 18rem mr-10;">
-                        <p class="pro-description ">Bacca Bucci Men's Dragon Splash Proof Full Leather Classic Fashion
-                            Boots for Bikers Riders Trekking Trails Backpacking and Hiking | 6 Inches | Ankle Height |
-                            All Day wear</p>
+                        <p class="pro-description ">{{product.name}}</p>
                         <div>
                             <span class="pro-disc">-52%</span>
-                            <span class="pro-price">₹ 1700</span>
+                            <span class="pro-price">₹ {{product.price}}</span>
                         </div>
                         <p class="pro-size">Size</p>
                         <div class="dropdown">
