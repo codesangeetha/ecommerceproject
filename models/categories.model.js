@@ -5,7 +5,8 @@ const categorySchema = new mongoose.Schema({
     description : String,
     created_at : Date,
     updated_at : Date,
-    isdeleted :Boolean
+    isdeleted :Boolean,
+    editUser: String
 });
 const Category = mongoose.model('categories',categorySchema);
 module.exports = Category;

@@ -1,3 +1,4 @@
+const Adminusers = require("../models/adminusers");
 const Category = require("../models/categories.model");
 const Products = require("../models/products.model");
 const Users = require("../models/users.model");
@@ -7,8 +8,17 @@ exports.getcategorydata = async () => {
     return data;
 }
 
+exports.getcategorysearch = async (str) => {
+    const data = await Category.find({isdeleted:false, name: { $regex: str, $options: 'i' }});
+    return data;
+}
+
 exports.getproductsdata = async () => {
     const data = await Products.find({isdeleted:false});
+    return data;
+}
+exports.getproductsearch = async (str) => {
+    const data = await Products.find({isdeleted:false,name: { $regex: str, $options: 'i'}});
     return data;
 }
 
@@ -72,5 +82,10 @@ exports.banusers = async (id) => {
 
 exports.finduser = async (username,pwd) => {
     const data = await Users.findOne({$and:[{username:username},{password:pwd}]});
+    return data;
+}
+
+exports.finduseradmin = async (username,pwd) => {
+    const data = await Adminusers.findOne({$and:[{username:username},{password:pwd}]});
     return data;
 }

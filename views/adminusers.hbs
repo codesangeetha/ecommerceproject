@@ -42,11 +42,13 @@
 
                     <div class="row mb-3">
                         <div class="col-md-8 col-sm-12 mb-2">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search products..."
+                            <form action="/admin/product-search">
+                                <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search users..."
                                     aria-label="Search products">
                                 <button class="btn btn-outline-secondary" type="button">Search</button>
                             </div>
+                            </form>
                         </div>
                         <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
                             <button class="btn btn-primary w-55">Add New User</button>
@@ -67,29 +69,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{!-- {{#each arr}}
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>{{name}}</td>
-                                <td>{{email}}</td>
-                                <td>{{status}}</td>
-
-                                <td>
-
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fa-solid fa-ban"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            {{/each}} --}}
-
+                            
                             {{#each arr}}
                             <tr>
-                                <th scope="row"></th>
+                                <th>{{slno}}</th>
                                 <td>{{name}}</td>
                                 <td>{{email}}</td>
 
-                                <!-- Status display -->
                                 <td>
                                     {{#if status}}
                                     <span class="text-success">Active</span>
@@ -98,8 +84,7 @@
                                     {{/if}}
                                 </td>
 
-                                <!-- Actions based on status -->
-                                <td>
+                                                              <td>
                                     {{#if status}}
                                     <a href="bantoggle/{{_id}}"><button class="btn btn-sm btn-danger" title="Ban User">
                                         <i class="fa-solid fa-ban"></i> Ban

@@ -45,11 +45,13 @@
 
                     <div class="row mb-3">
                         <div class="col-md-8 col-sm-12 mb-2">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search categories..."
-                                    aria-label="Search categories">
-                                <button class="btn btn-outline-secondary" type="button">Search</button>
-                            </div>
+                            <form action="/admin/category-search" method="post">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search categories..."
+                                        aria-label="Search categories" name="search">
+                                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                                </div>
+                            </form>
                         </div>
                         <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
                             <a href="/admin/add-category"><button class="btn btn-primary w-55">Add New
@@ -73,13 +75,13 @@
                         <tbody>
                             {{#each arr}}
                             <tr>
-                                <th scope="row">1</th>
+                                <th >{{slno}}</th>
                                 <td>{{name}}</td>
                                 <td>{{description}}</td>
                                 <td>
                                     <a href="edit-category/{{_id}}"><button class="btn btn-sm btn-warning me-2">
-                                        <i class="fas fa-edit"></i>
-                                    </button></a>
+                                            <i class="fas fa-edit"></i>
+                                        </button></a>
                                     <a href="deletecategory/{{_id}}" onclick="return confirmDelete()"><button
                                             class="btn btn-sm btn-danger">
                                             <i class="fas fa-trash-alt"></i>

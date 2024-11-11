@@ -65,7 +65,12 @@
                                         <input type="text" class="form-control" id="productName" name="productName"
                                             value="{{products.name}}">
                                     </div>
-
+                                    <div class="mb-3">
+                                        <label for="brand" class="form-label">Brand</label>
+                                        <input type="text" class="form-control" id="brand" name="brand"
+                                            value="{{products.brand}}">
+                                        <div id="error-brand" class="error-msg"></div>
+                                    </div>
                                     <div class="mb-3">
                                         <label for="price" class="form-label">Price</label>
                                         <input type="text" class="form-control" id="price" name="price"
@@ -82,7 +87,7 @@
                                         <select class="form-control" id="category" name="category">
                                             <option value="">Select a category</option>
                                             {{#each arr}}
-                                            <option value="{{_id}}" >{{name}}</option>
+                                            <option value="{{_id}}" {{selected}}>{{name}}</option>
                                             {{/each}}
                                         </select>
                                         <div id="error-category" class="error-msg"></div>

@@ -42,11 +42,13 @@
 
                     <div class="row mb-3">
                         <div class="col-md-8 col-sm-12 mb-2">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search products..."
-                                    aria-label="Search products">
-                                <button class="btn btn-outline-secondary" type="button">Search</button>
-                            </div>
+                            <form action="/admin/product-search" method="post">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search products..."
+                                        aria-label="Search products" name="search">
+                                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                                </div>
+                            </form>
                         </div>
                         <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
                             <a href="/admin/add-product"> <button class="btn btn-primary w-55">Add New
@@ -71,7 +73,7 @@
                         <tbody>
                             {{#each arr}}
                             <tr>
-                                <th scope="row">1</th>
+                                <th>{{slno}}</th>
                                 <td>{{name}}</td>
                                 <td>₹ {{price}}</td>
                                 <td>{{description}}</td>

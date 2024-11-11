@@ -1,6 +1,15 @@
 var express = require('express');
 const multer = require('multer');
-const { getcategorydata, getproductsdata, getusersdata, insertcategory, insertproduct, deletecategory, deleteproduct, getCategoryDatabyId, editcategory, getProductDatabyId, editproduct, banusers } = require('../helpers/functions');
+const { getcategorydata,
+    getproductsdata,
+    getusersdata,
+    insertcategory,
+    insertproduct, deletecategory, deleteproduct, getCategoryDatabyId,
+    editcategory, getProductDatabyId,
+    editproduct, banusers,
+    getcategorysearch,
+    finduseradmin,
+    getproductsearch } = require('../helpers/functions');
 
 var router = express.Router();
 
@@ -33,6 +42,7 @@ const checkadminLogin = (req, res, next) => {
 
 router.get('/product', checkadminLogin, async (req, res) => {
     const productdata = await getproductsdata();
+    clearCache(res);
     console.log(productdata);
 
     const arr = [];
@@ -40,6 +50,7 @@ router.get('/product', checkadminLogin, async (req, res) => {
         const o = productdata[i];
         const newDesc = o.description.substring(0, 20);
         const newO = {
+            slno: i + 1,
             _id: o._id,
             name: o.name,
             description: newDesc,
@@ -49,16 +60,72 @@ router.get('/product', checkadminLogin, async (req, res) => {
         arr.push(newO);
     }
 
-    // console.log('new arr', arr);
-    res.render('adminproduct', { arr: arr })
+    console.log('new arr', arr);
+    res.render('adminproduct', { arr: arr, isAdmin: true })
 });
+
+router.post('/product-search',checkadminLogin, async (req, res) => {
+    const productdata = await getproductsearch(req.body.search);
+    clearCache(res);
+    console.log("productdata",productdata);
+    const arr = [];
+    for (let i = 0; i < productdata.length; i++) {
+        const o = productdata[i];
+        const newDesc = o.description.substring(0, 20);
+        const newO = {
+            slno: i + 1,
+            _id: o._id,
+            name: o.name,
+            description: newDesc,
+            price: o.price,
+            image: o.image
+        };
+        arr.push(newO);
+    }
+    res.render('adminproduct', { arr: arr, isAdmin: true })
+})
 
 
 router.get('/category', checkadminLogin, async (req, res) => {
-    console.log('hello');
     const categorydata = await getcategorydata();
     console.log(categorydata);
-    res.render('admincategory', { arr: categorydata })
+    clearCache(res);
+
+    const arr = [];
+    for (let i = 0; i < categorydata.length; i++) {
+        const o = categorydata[i];
+        const newDesc = o.description.substring(0, 20);
+        const newO = {
+            slno: i + 1,
+            _id: o._id,
+            name: o.name,
+            description: newDesc
+        };
+        arr.push(newO);
+    }
+
+    res.render('admincategory', { arr: arr, isAdmin: true })
+});
+
+router.post('/category-search', checkadminLogin, async (req, res) => {
+    console.log("search form : ", req.body);
+    // console.log('hello');
+    const categorydata = await getcategorysearch(req.body.search);
+    console.log("categorydata",categorydata);
+    clearCache(res);
+    const arr = [];
+    for (let i = 0; i < categorydata.length; i++) {
+        const o = categorydata[i];
+        const newDesc = o.description.substring(0, 20);
+        const newO = {
+            slno: i + 1,
+            _id: o._id,
+            name: o.name,
+            description: newDesc
+        };
+        arr.push(newO);
+    }
+    res.render('admincategory', { arr: arr, isAdmin: true })
 });
 
 router.get('/login', (req, res) => {
@@ -67,29 +134,77 @@ router.get('/login', (req, res) => {
         const msg = req.session.message;
     }
     req.session.message = "";
-    res.render('adminlogin', { msg });
+    clearCache(res);
+
+    res.render('adminlogin', { msg, isAdmin: true });
 });
 
-router.post('/adminloginsubmit', (req, res) => {
-    if (req.body.username == "Manu" && req.body.password == "manupwd") {
-        req.session.isAdminLoggin = true;
-        req.session.username = req.body.username;
-        return res.redirect('/admin/category');
-    } else {
-        req.session.message = "Invalid username /password";
+router.post('/adminloginsubmit', async (req, res) => {
+    const loginvalue = await finduseradmin(req.body.username, req.body.password);
+    console.log(loginvalue);
+    if (loginvalue == null) {
+        req.session.message = "Invalid username/password";
         return res.redirect('/admin/login');
+    } else {
+        req.session.isAdminLoggin = true;
+        req.session.adminName = req.body.username;
+        req.session.id = loginvalue._id;
+        return res.redirect('/admin/category');
     }
 });
 
 router.get('/user', checkadminLogin, async (req, res) => {
     const usersdata = await getusersdata();
     console.log(usersdata);
+    clearCache(res);
+    const arr = [];
+    for (let i = 0; i < usersdata.length; i++) {
+        const o = usersdata[i];
 
-    res.render('adminusers', { arr: usersdata })
+        const newO = {
+            slno: i + 1,
+            _id: o._id,
+            name: o.name,
+            email: o.email,
+            status:o.status
+        };
+        arr.push(newO);
+
+    }
+    console.log("newarr",arr);
+    res.render('adminusers', { arr: arr, isAdmin: true })
 });
 
+
+router.get('/user', checkadminLogin, async (req, res) => {
+    const usersdata = await getusersdata();
+    console.log(usersdata);
+    clearCache(res);
+    const arr = [];
+    for (let i = 0; i < usersdata.length; i++) {
+        const o = usersdata[i];
+
+        const newO = {
+            slno: i + 1,
+            _id: o._id,
+            name: o.name,
+            email: o.email,
+            status:o.status
+        };
+        arr.push(newO);
+
+    }
+    console.log("newarr",arr);
+    res.render('adminusers', { arr: arr, isAdmin: true })
+});
+
+
+
+
+
+
 router.get('/add-category', checkadminLogin, (req, res) => {
-    return res.render('addcategory')
+    return res.render('addcategory', {isAdmin: true})
 });
 
 router.post('/add-categorysubmit', async (req, res) => {
@@ -106,17 +221,18 @@ router.post('/add-categorysubmit', async (req, res) => {
 
 router.get('/add-product', checkadminLogin, async (req, res) => {
     const data = await getcategorydata();
-      console.log(data);
-    return res.render('addproduct', { arr: data })
+    console.log(data);
+    return res.render('addproduct', { arr: data, isAdmin: true })
 });
 
 router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
     console.log(req.body);
     const obj = {
         name: req.body.productName,
+        brand: req.body.brand,
         price: req.body.price,
         description: req.body.description,
-        category : req.body.category,
+        category: req.body.category,
         isdeleted: false,
         image: req.file ? req.file.filename : null
     }
@@ -156,15 +272,16 @@ router.get('/edit-category/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
     const data = await getCategoryDatabyId(val)
     //  console.log(data);
-    return res.render('editcategory', { category: data })
+    return res.render('editcategory', { category: data, isAdmin: true })
 });
 
 router.post('/edit-categorysubmit/:id', checkadminLogin, async (req, res) => {
     const val2 = req.params.id;
     let obj = {
         name: req.body.categoryName,
-        description: req.body.description
-    }
+        description: req.body.description,
+        editUser: req.session.adminName
+    };
     console.log(obj);
     const data = await editcategory(val2, obj);
     // console.log(data);
@@ -173,11 +290,28 @@ router.post('/edit-categorysubmit/:id', checkadminLogin, async (req, res) => {
 
 router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
-    const data = await getProductDatabyId(val)
-    //  console.log(data);
-    const info = await getcategorydata();
-    console.log(info);
-    return res.render('editproduct', { products: data,arr:info})
+    const product = await getProductDatabyId(val)
+    console.log(product);
+
+    const categories = await getcategorydata();
+    const newCategories = [];
+
+    for (let i = 0; i < categories.length; i++) {
+        let selectVal = "";
+        if (product.category == categories[i]._id) {
+            selectVal = "selected";
+        }
+        const obj = {
+            _id: categories[i]._id,
+            name: categories[i].name,
+            selected: selectVal
+        };
+        newCategories.push(obj);
+    }
+
+
+    console.log(newCategories);
+    return res.render('editproduct', { products: product, arr: newCategories, isAdmin: true });
 });
 
 router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {
@@ -186,7 +320,7 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), 
         name: req.body.productName,
         price: req.body.price,
         description: req.body.description,
-        category:req.body.category,
+        category: req.body.category,
         image: req.file ? req.file.filename : null
     }
     // console.log(obj);
@@ -197,8 +331,13 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), 
 
 router.get('/bantoggle/:id', async (req, res) => {
     const val = req.params.id;
+  
     const info = await banusers(val);
     res.redirect('/admin/user')
 });
+
+function clearCache(res) {
+    res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private')
+}
 
 module.exports = router;
