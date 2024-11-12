@@ -15,7 +15,7 @@ var router = express.Router();
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/'); // Set your desired upload directory
+        cb(null, 'uploads/');
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + "-" + random() + "-" + file.originalname);
@@ -227,7 +227,7 @@ router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
         description: req.body.description,
         category: req.body.category,
         isdeleted: false,
-        editUser:req.session.adminName,
+        editUser: req.session.adminName,
         image: req.file ? req.file.filename : null
     }
     console.log(obj);
@@ -322,12 +322,14 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), 
     res.redirect('/admin/product');
 });
 
+
 router.get('/bantoggle/:id', async (req, res) => {
     const val = req.params.id;
 
     const info = await banusers(val);
     res.redirect('/admin/user')
 });
+
 
 function clearCache(res) {
     res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private')
