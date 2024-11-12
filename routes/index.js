@@ -36,7 +36,7 @@ router.get('/',  async (req, res) => {
     return res.render('index', { arr: arr });
 });
 
-router.get('/product/:id', async (req, res) => {
+router.get('/product/:id',checkLogin, async (req, res) => {
     const val = req.params.id;
     const info = await getProductDatabyId(val);
     // console.log(info)
@@ -86,7 +86,7 @@ router.post("/signupsubmit", async (req, res) => {
     return res.redirect('/login');
 });
 
-router.get('/checkout', (req, res) => {
+router.get('/checkout',checkLogin, (req, res) => {
     return res.render('checkout');
 });
 router.get('/payment', (req, res) => {

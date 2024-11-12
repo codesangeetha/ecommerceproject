@@ -43,7 +43,7 @@ const checkadminLogin = (req, res, next) => {
 router.get('/product', checkadminLogin, async (req, res) => {
     const productdata = await getproductsdata();
     clearCache(res);
-    console.log(productdata);
+    // console.log(productdata);
 
     const arr = [];
     for (let i = 0; i < productdata.length; i++) {
@@ -60,14 +60,14 @@ router.get('/product', checkadminLogin, async (req, res) => {
         arr.push(newO);
     }
 
-    console.log('new arr', arr);
+    // console.log('new arr', arr);
     res.render('adminproduct', { arr: arr, isAdmin: true })
 });
 
-router.post('/product-search',checkadminLogin, async (req, res) => {
+router.post('/product-search', checkadminLogin, async (req, res) => {
     const productdata = await getproductsearch(req.body.search);
     clearCache(res);
-    console.log("productdata",productdata);
+    console.log("productdata", productdata);
     const arr = [];
     for (let i = 0; i < productdata.length; i++) {
         const o = productdata[i];
@@ -111,7 +111,7 @@ router.post('/category-search', checkadminLogin, async (req, res) => {
     console.log("search form : ", req.body);
     // console.log('hello');
     const categorydata = await getcategorysearch(req.body.search);
-    console.log("categorydata",categorydata);
+    console.log("categorydata", categorydata);
     clearCache(res);
     const arr = [];
     for (let i = 0; i < categorydata.length; i++) {
@@ -129,10 +129,7 @@ router.post('/category-search', checkadminLogin, async (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-    const msg = "";
-    if (req.session.message) {
-        const msg = req.session.message;
-    }
+    const msg = req.session.message;
     req.session.message = "";
     clearCache(res);
 
@@ -166,12 +163,12 @@ router.get('/user', checkadminLogin, async (req, res) => {
             _id: o._id,
             name: o.name,
             email: o.email,
-            status:o.status
+            status: o.status
         };
         arr.push(newO);
 
     }
-    console.log("newarr",arr);
+    console.log("newarr", arr);
     res.render('adminusers', { arr: arr, isAdmin: true })
 });
 
@@ -189,22 +186,18 @@ router.get('/user', checkadminLogin, async (req, res) => {
             _id: o._id,
             name: o.name,
             email: o.email,
-            status:o.status
+            status: o.status
         };
         arr.push(newO);
 
     }
-    console.log("newarr",arr);
+    console.log("newarr", arr);
     res.render('adminusers', { arr: arr, isAdmin: true })
 });
 
 
-
-
-
-
 router.get('/add-category', checkadminLogin, (req, res) => {
-    return res.render('addcategory', {isAdmin: true})
+    return res.render('addcategory', { isAdmin: true })
 });
 
 router.post('/add-categorysubmit', async (req, res) => {
@@ -234,6 +227,7 @@ router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
         description: req.body.description,
         category: req.body.category,
         isdeleted: false,
+        editUser:req.session.adminName,
         image: req.file ? req.file.filename : null
     }
     console.log(obj);
@@ -263,7 +257,6 @@ router.get('/logout', (req, res) => {
             console.error('Error destroying session:', err);
             return res.status(500).send("Couldn't log out");
         }
-        // Redirect to login page after session is destroyed
         res.redirect('/admin/login');
     });
 });
@@ -282,7 +275,7 @@ router.post('/edit-categorysubmit/:id', checkadminLogin, async (req, res) => {
         description: req.body.description,
         editUser: req.session.adminName
     };
-    console.log(obj);
+    // console.log(obj);
     const data = await editcategory(val2, obj);
     // console.log(data);
     res.redirect('/admin/category');
@@ -291,7 +284,7 @@ router.post('/edit-categorysubmit/:id', checkadminLogin, async (req, res) => {
 router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
     const product = await getProductDatabyId(val)
-    console.log(product);
+    // console.log(product);
 
     const categories = await getcategorydata();
     const newCategories = [];
@@ -309,8 +302,7 @@ router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
         newCategories.push(obj);
     }
 
-
-    console.log(newCategories);
+    //  console.log(newCategories);
     return res.render('editproduct', { products: product, arr: newCategories, isAdmin: true });
 });
 
@@ -321,9 +313,10 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), 
         price: req.body.price,
         description: req.body.description,
         category: req.body.category,
+        editUser: req.session.adminName,
         image: req.file ? req.file.filename : null
     }
-    // console.log(obj);
+    console.log(obj);
     const data = await editproduct(val2, obj);
     //  console.log(data);
     res.redirect('/admin/product');
@@ -331,7 +324,7 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), 
 
 router.get('/bantoggle/:id', async (req, res) => {
     const val = req.params.id;
-  
+
     const info = await banusers(val);
     res.redirect('/admin/user')
 });

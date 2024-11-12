@@ -11,7 +11,8 @@ const productsSchema = new mongoose.Schema({
     sizes_available:Number,
     colors_available:String,
     created_at : Date,
-    updated_at : Date
+    updated_at : Date,
+    editUser: String
 });
 const Products = mongoose.model('products',productsSchema);
 module.exports = Products;
