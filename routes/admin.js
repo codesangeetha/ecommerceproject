@@ -9,7 +9,9 @@ const { getcategorydata,
     editproduct, banusers,
     getcategorysearch,
     finduseradmin,
-    getproductsearch } = require('../helpers/functions');
+    getproductsearch,
+    getbranddata, insertbrand, getBrandDatabyId,editbrand, 
+    deletebrand} = require('../helpers/functions');
 
 var router = express.Router();
 
@@ -128,6 +130,25 @@ router.post('/category-search', checkadminLogin, async (req, res) => {
     res.render('admincategory', { arr: arr, isAdmin: true })
 });
 
+router.get('/brand', async (req, res) => {
+    const branddata = await getbranddata();
+    console.log(branddata);
+    clearCache(res);
+    const arr = [];
+    for (let i = 0; i < branddata.length; i++) {
+        const o = branddata[i];
+        const newDesc = o.description.substring(0, 20);
+        const newO = {
+            slno: i + 1,
+            _id: o._id,
+            name: o.name,
+            description: newDesc
+        };
+        arr.push(newO);
+    }
+    return res.render('adminbrand', { arr: arr, isAdmin: true })
+});
+
 router.get('/login', (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
@@ -173,7 +194,7 @@ router.get('/user', checkadminLogin, async (req, res) => {
 });
 
 
-router.get('/user', checkadminLogin, async (req, res) => {
+/* router.get('/user', checkadminLogin, async (req, res) => {
     const usersdata = await getusersdata();
     console.log(usersdata);
     clearCache(res);
@@ -193,7 +214,7 @@ router.get('/user', checkadminLogin, async (req, res) => {
     }
     console.log("newarr", arr);
     res.render('adminusers', { arr: arr, isAdmin: true })
-});
+}); */
 
 
 router.get('/add-category', checkadminLogin, (req, res) => {
@@ -212,10 +233,32 @@ router.post('/add-categorysubmit', async (req, res) => {
     return res.redirect('/admin/category');
 });
 
+
+
+router.get('/add-brand', (req, res) => {
+    return res.render('addbrand', { isAdmin: true })
+});
+
+router.post('/add-brandsubmit', async (req, res) => {
+    const obj = {
+        name: req.body.brandName,
+        description: req.body.description,
+        isdeleted: false
+    }
+    console.log(obj);
+    const data = await insertbrand(obj)
+    return res.redirect('/admin/brand');
+});
+
+
+
 router.get('/add-product', checkadminLogin, async (req, res) => {
     const data = await getcategorydata();
     console.log(data);
-    return res.render('addproduct', { arr: data, isAdmin: true })
+    const info = await getbranddata();
+    console.log("brand data",info);
+
+    return res.render('addproduct', { arr: data,arr2:info, isAdmin: true })
 });
 
 router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
@@ -243,6 +286,12 @@ router.get('/deletecategory/:id', async (req, res) => {
     res.redirect('/admin/category')
 });
 
+router.get('/deletebrand/:id',async(req,res)=>{
+    const val = req.params.id;
+    // console.log(val);
+    const data = await  deletebrand(val);
+res.redirect('/admin/brand')
+});
 
 router.get('/deleteproduct/:id', async (req, res) => {
     const val = req.params.id;
@@ -250,6 +299,7 @@ router.get('/deleteproduct/:id', async (req, res) => {
     const data = await deleteproduct(val);
     res.redirect('/admin/product')
 });
+
 
 router.get('/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -281,6 +331,24 @@ router.post('/edit-categorysubmit/:id', checkadminLogin, async (req, res) => {
     res.redirect('/admin/category');
 });
 
+router.get('/edit-brand/:id',checkadminLogin, async (req, res) => {
+    const val = req.params.id;
+    const data = await getBrandDatabyId(val)
+    // console.log("editbrand-data", data)
+    return res.render('editbrand', { brand: data, isAdmin: true })
+});
+router.post('/edit-brandsubmit/:id',checkadminLogin,async(req, res) => {
+    const val = req.params.id;
+    let obj = {
+        name: req.body.brandName,
+        description: req.body.description,
+        editUser: req.session.adminName
+    };
+    // console.log("ready to edit",obj);
+    const data = await editbrand(val, obj);
+return res.redirect('/admin/brand')
+});
+
 router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
     const product = await getProductDatabyId(val)
@@ -302,8 +370,24 @@ router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
         newCategories.push(obj);
     }
 
+    const brands = await getbranddata();
+    const newbrands = [];
+
+    for (let i = 0; i < brands.length; i++) {
+        let selectVal = "";
+        if (product.brand == brands[i]._id) {
+            selectVal = "selected";
+        }
+        const obj = {
+            _id: brands[i]._id,
+            name: brands[i].name,
+            selected: selectVal
+        };
+        newbrands.push(obj);
+    }
+
     //  console.log(newCategories);
-    return res.render('editproduct', { products: product, arr: newCategories, isAdmin: true });
+    return res.render('editproduct', { products: product, arr: newCategories,arr2:newbrands, isAdmin: true });
 });
 
 router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {

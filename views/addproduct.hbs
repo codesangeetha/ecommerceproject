@@ -1,102 +1,103 @@
+<section>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <h5 class="text-center">Admin Panel</h5>
+                    <ul class="nav flex-column ul-procatcls ">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/category">Categories</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/product">Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/user">Users</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
 
 
-    <section>
-        <div class="container mt-5">
-            <div class="row justify-content-center">
-                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                    <div class="position-sticky pt-3">
-                        <h5 class="text-center">Admin Panel</h5>
-                        <ul class="nav flex-column ul-procatcls ">
-                            <li class="nav-item">
-                                <a class="nav-link active" href="/admin/category">Categories</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/product">Products</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/user">Users</a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <h2 class="text-center my-4">Add product</h2>
 
 
-
-                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                    <h2 class="text-center my-4">Add product</h2>
-
-
-                    <div class="row mb-3">
-                        <div class="col-md-8 col-sm-12 mb-2">
-
-                        </div>
-                        <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
-                            <a href="/admin/logout"><button class="btn btn-primary w-55">Logout</button></a>
-
-                        </div>
+                <div class="row mb-3">
+                    <div class="col-md-8 col-sm-12 mb-2">
 
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
+                        <a href="/admin/logout"><button class="btn btn-primary w-55">Logout</button></a>
 
-                        <div class="card">
+                    </div>
 
-                            <div class="card-body">
+                </div>
+                <div class="col-md-6">
 
-                                <form action="/admin/add-productsubmit" method="POST"
-                                    onsubmit="return validateAddProduct()" enctype="multipart/form-data">
+                    <div class="card">
 
-                                    <div class="mb-3">
-                                        <label for="productName" class="form-label">Product Name</label>
-                                        <input type="text" class="form-control" id="productName" name="productName"
-                                            placeholder="Enter product name">
-                                        <div id="error-name" class="error-msg"></div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="brand" class="form-label">Brand</label>
-                                        <input type="text" class="form-control" id="brand" name="brand"
-                                            placeholder="Enter brand name">
-                                        <div id="error-brand" class="error-msg"></div>
-                                    </div>
+                        <div class="card-body">
 
-                                    <div class="mb-3">
-                                        <label for="price" class="form-label">Price</label>
-                                        <input type="text" class="form-control" id="price" name="price"
-                                            placeholder="Enter product price">
-                                        <div id="error-price" class="error-msg"></div>
-                                    </div>
+                            <form action="/admin/add-productsubmit" method="POST" onsubmit="return validateAddProduct()"
+                                enctype="multipart/form-data">
 
-                                    <div class="mb-3">
-                                        <label for="description" class="form-label">Description</label>
-                                        <input type="text" class="form-control" id="description" name="description"
-                                            placeholder="Enter description">
-                                        <div id="error-description" class="error-msg"></div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="category" class="form-label">Category</label>
-                                        <select class="form-control" id="category" name="category">
-                                            <option value="">Select a category</option>
-                                            {{#each arr}}
-                                            <option value="{{_id}}">{{name}}</option>
-                                            {{/each}}
-                                        </select>
-                                        <div id="error-category" class="error-msg"></div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="image" class="form-label">Product Image</label>
-                                        <input type="file" class="form-control" id="image" name="image">
-                                        <div id="error-image" class="error-msg"></div>
-                                    </div>
+                                <div class="mb-3">
+                                    <label for="productName" class="form-label">Product Name</label>
+                                    <input type="text" class="form-control" id="productName" name="productName"
+                                        placeholder="Enter product name">
+                                    <div id="error-name" class="error-msg"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="brand" class="form-label">Brand</label>
+                                    <select class="form-control" id="brand" name="brand">
+                                        <option value="">Select a brand</option>
+                                        {{#each arr2}}
+                                        <option value="{{_id}}">{{name}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <div id="error-brand" class="error-msg"></div>
+                                </div>
 
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary">Add Product</button>
-                                    </div>
-                                </form>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">Price</label>
+                                    <input type="text" class="form-control" id="price" name="price"
+                                        placeholder="Enter product price">
+                                    <div id="error-price" class="error-msg"></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" name="description" id="description"
+                                        placeholder="Enter description"></textarea>
+
+                                    <div id="error-description" class="error-msg"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="category" class="form-label">Category</label>
+                                    <select class="form-control" id="category" name="category">
+                                        <option value="">Select a category</option>
+                                        {{#each arr}}
+                                        <option value="{{_id}}">{{name}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <div id="error-category" class="error-msg"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Product Image</label>
+                                    <input type="file" class="form-control" id="image" name="image">
+                                    <div id="error-image" class="error-msg"></div>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Add Product</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-            </div>
+                </div>
         </div>
-    </section>
-    <script src="/javascripts/addproduct.js"></script>
-    
+    </div>
+</section>
+<script src="/javascripts/addproduct.js"></script>

@@ -1,24 +1,49 @@
 const Adminusers = require("../models/adminusers");
+const Brand = require("../models/brands.model");
 const Category = require("../models/categories.model");
 const Products = require("../models/products.model");
 const Users = require("../models/users.model");
 
+
 exports.getcategorydata = async () => {
-    const data = await Category.find({isdeleted:false});
+    const data = await Category.find({ isdeleted: false });
     return data;
 }
 
 exports.getcategorysearch = async (str) => {
-    const data = await Category.find({isdeleted:false, name: { $regex: str, $options: 'i' }});
+    const data = await Category.find({ isdeleted: false, name: { $regex: str, $options: 'i' } });
     return data;
 }
 
+exports.getbranddata = async () => {
+    const data = await Brand.find({ isdeleted: false });
+    return data;
+}
+exports.insertbrand = async (obj) => {
+    const data = await Brand.insertMany([obj]);
+    return data;
+}
+exports.getBrandDatabyId = async (val) => {
+    const data = await Brand.findOne({ _id: val });
+    return data;
+}
+exports.editbrand = async (id, info) => {
+    const data = await Brand.updateOne({ _id: id }, info);
+    return data;
+}
+
+exports.deletebrand = async (val) => {
+    const data = await Brand.updateOne({ _id: val }, { $set: { isdeleted: true } });
+    return data;
+}
+
+
 exports.getproductsdata = async () => {
-    const data = await Products.find({isdeleted:false});
+    const data = await Products.find({ isdeleted: false });
     return data;
 }
 exports.getproductsearch = async (str) => {
-    const data = await Products.find({isdeleted:false,name: { $regex: str, $options: 'i'}});
+    const data = await Products.find({ isdeleted: false, name: { $regex: str, $options: 'i' } });
     return data;
 }
 
@@ -44,12 +69,12 @@ exports.insertuser = async (obj) => {
 }
 
 exports.deletecategory = async (val) => {
-    const data = await Category.updateOne({ _id: val },{$set:{isdeleted:true}});
+    const data = await Category.updateOne({ _id: val }, { $set: { isdeleted: true } });
     return data;
 }
 
 exports.deleteproduct = async (val) => {
-    const data = await Products.updateOne({ _id: val },{$set:{isdeleted:true}});
+    const data = await Products.updateOne({ _id: val }, { $set: { isdeleted: true } });
     return data;
 }
 
@@ -58,8 +83,8 @@ exports.getCategoryDatabyId = async (val) => {
     return data;
 }
 
-exports.editcategory = async (id,info) => {
-    const data = await Category.updateOne({ _id: id },info);
+exports.editcategory = async (id, info) => {
+    const data = await Category.updateOne({ _id: id }, info);
     return data;
 }
 
@@ -68,8 +93,8 @@ exports.getProductDatabyId = async (val) => {
     return data;
 }
 
-exports.editproduct = async (id,info) => {
-    const data = await Products.updateOne({ _id: id },info);
+exports.editproduct = async (id, info) => {
+    const data = await Products.updateOne({ _id: id }, info);
     return data;
 }
 
@@ -80,12 +105,12 @@ exports.banusers = async (id) => {
     return data;
 }
 
-exports.finduser = async (username,pwd) => {
-    const data = await Users.findOne({$and:[{username:username},{password:pwd}]});
+exports.finduser = async (username, pwd) => {
+    const data = await Users.findOne({ $and: [{ username: username }, { password: pwd }] });
     return data;
 }
 
-exports.finduseradmin = async (username,pwd) => {
-    const data = await Adminusers.findOne({$and:[{username:username},{password:pwd}]});
+exports.finduseradmin = async (username, pwd) => {
+    const data = await Adminusers.findOne({ $and: [{ username: username }, { password: pwd }] });
     return data;
 }

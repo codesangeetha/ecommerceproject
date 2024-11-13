@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const categorySchema = new mongoose.Schema({
+const brandSchema = new mongoose.Schema({
     name: String,
     description: String,
     isdeleted: Boolean,
@@ -9,5 +9,5 @@ const categorySchema = new mongoose.Schema({
     {
         timestamps: true
     });
-const Category = mongoose.model('categories', categorySchema);
-module.exports = Category;
+const Brand = mongoose.model('brands', brandSchema);
+module.exports = Brand;

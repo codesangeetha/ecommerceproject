@@ -33,14 +33,14 @@ router.get('/',  async (req, res) => {
         arr.push(newOb);
     }
     // console.log('new', arr)
-    return res.render('index', { arr: arr });
+    return res.render('index', { arr: arr, isLogin: req.session.isLoggin });
 });
 
 router.get('/product/:id',checkLogin, async (req, res) => {
     const val = req.params.id;
     const info = await getProductDatabyId(val);
     // console.log(info)
-    return res.render('product', { product: info });
+    return res.render('product', { product: info, isLogin: req.session.isLoggin });
 });
 router.get('/cart', (req, res) => {
     return res.render('cart');
@@ -53,6 +53,7 @@ router.get('/login', (req, res) => {
 });
 
 router.post("/loginsubmit", async (req, res) => {
+    
     // console.log(req.body);
     const loginvalue = await finduser(req.body.username, req.body.password);
     console.log(loginvalue);

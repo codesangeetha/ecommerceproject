@@ -65,12 +65,19 @@
                                         <input type="text" class="form-control" id="productName" name="productName"
                                             value="{{products.name}}">
                                     </div>
+
                                     <div class="mb-3">
                                         <label for="brand" class="form-label">Brand</label>
-                                        <input type="text" class="form-control" id="brand" name="brand"
-                                            value="{{products.brand}}">
+                                        <select class="form-control" id="brand" name="brand">
+                                            <option value="">Select a brand</option>
+                                            {{#each arr2}}
+                                            <option value="{{_id}}" {{selected}}>{{name}}</option>
+                                            {{/each}}
+                                        </select>
                                         <div id="error-brand" class="error-msg"></div>
                                     </div>
+
+
                                     <div class="mb-3">
                                         <label for="price" class="form-label">Price</label>
                                         <input type="text" class="form-control" id="price" name="price"
@@ -95,7 +102,8 @@
 
                                     <div class="mb-3">
                                         <label for="image" class="form-label">Product Image</label>
-                                        <input type="file" class="form-control" id="image" name="image" value="{{products.image}}">
+                                        <input type="file" class="form-control" id="image" name="image"
+                                            value="{{products.image}}">
                                     </div>
 
                                     <div class="d-grid">
