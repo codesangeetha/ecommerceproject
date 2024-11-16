@@ -103,8 +103,23 @@
                                     <div class="mb-3">
                                         <label for="image" class="form-label">Product Image</label>
                                         <input type="file" class="form-control" id="image" name="image"
-                                            value="{{products.image}}">
+                                            accept="image/*">
+
+                                        <!-- Display current product image if it exists -->
+                                        <div id="existing-image-preview" class="mt-3">
+                                            {{#if products.image}}
+                                            <img src="/uploads/{{products.image}}" alt="Current Product Image"
+                                                class="img-thumbnail"
+                                                style="width: 150px; height: 150px; object-fit: cover;">
+                                            <button type="button" class="btn btn-danger btn-sm mt-2"
+                                                id="remove-existing-image">Remove</button>
+                                            {{/if}}
+                                        </div>
+
+                                        <!-- Display preview for newly selected image -->
+                                        <div id="image-preview" class="mt-3"></div>
                                     </div>
+
 
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -116,6 +131,53 @@
             </div>
         </div>
     </section>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const imageInput = document.getElementById("image");
+            const previewContainer = document.getElementById("image-preview");
+            const existingImagePreview = document.getElementById("existing-image-preview");
+            const removeExistingImageBtn = document.getElementById("remove-existing-image");
+
+            // Handle new image preview
+            imageInput.addEventListener("change", () => {
+                previewContainer.innerHTML = ""; // Clear existing preview
+
+                const file = imageInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.alt = "Selected Product Image";
+                        img.style.width = "150px";
+                        img.style.height = "150px";
+                        img.style.objectFit = "cover";
+                        img.className = "img-thumbnail";
+
+                        const removeBtn = document.createElement("button");
+                        removeBtn.textContent = "Remove";
+                        removeBtn.className = "btn btn-danger btn-sm mt-2";
+                        removeBtn.onclick = () => {
+                            imageInput.value = ""; // Reset file input
+                            previewContainer.innerHTML = ""; // Clear preview
+                        };
+
+                        previewContainer.appendChild(img);
+                        previewContainer.appendChild(removeBtn);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Handle removing existing image
+            if (removeExistingImageBtn) {
+                removeExistingImageBtn.addEventListener("click", () => {
+                    existingImagePreview.innerHTML = ""; // Clear existing image preview
+                });
+            }
+        });
+
+    </script>
     <script src="/javascripts/jquery-3.2.1.slim.min.js"></script>
     <script src="/javascripts/popper.min.js"></script>
     <script src="/javascripts/bootstrap.min.js"></script>

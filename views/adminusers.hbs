@@ -31,6 +31,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="/admin/user">Users</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/brand">Brands</a>
+                            </li>
                         </ul>
                     </div>
                 </nav>
@@ -44,14 +47,13 @@
                         <div class="col-md-8 col-sm-12 mb-2">
                             <form action="/admin/product-search">
                                 <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search users..."
-                                    aria-label="Search products">
-                                <button class="btn btn-outline-secondary" type="button">Search</button>
-                            </div>
+                                    <input type="text" class="form-control" placeholder="Search users..."
+                                        aria-label="Search products">
+                                    <button class="btn btn-outline-secondary" type="button">Search</button>
+                                </div>
                             </form>
                         </div>
                         <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
-                            <button class="btn btn-primary w-55">Add New User</button>
                             <a href="/admin/logout"><button class="btn btn-primary w-55">Logout</button></a>
 
                         </div>
@@ -69,7 +71,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
+
                             {{#each arr}}
                             <tr>
                                 <th>{{slno}}</th>
@@ -84,15 +86,16 @@
                                     {{/if}}
                                 </td>
 
-                                                              <td>
+                                <td>
                                     {{#if status}}
                                     <a href="bantoggle/{{_id}}"><button class="btn btn-sm btn-danger" title="Ban User">
-                                        <i class="fa-solid fa-ban"></i> Ban
-                                    </button></a>
+                                            <i class="fa-solid fa-ban"></i> Ban
+                                        </button></a>
                                     {{else}}
-                                    <a href="bantoggle/{{_id}}"><button class="btn btn-sm btn-success" title="Unban User">
-                                        <i class="fa-solid fa-check-circle"></i> Unban
-                                    </button></a>
+                                    <a href="bantoggle/{{_id}}"><button class="btn btn-sm btn-success"
+                                            title="Unban User">
+                                            <i class="fa-solid fa-check-circle"></i> Unban
+                                        </button></a>
                                     {{/if}}
                                 </td>
                             </tr>
@@ -104,6 +107,34 @@
                 </main>
             </div>
         </div>
+
+        <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        {{#if (gt currentPage 1)}}
+                            <li class="page-item">
+                                <a class="page-link" href="/admin/user?page={{subtract currentPage 1}}">Previous</a>
+                            </li>
+                        {{/if}}
+
+                        {{#each (range 1 totalPages)}}
+                            <li class="page-item {{#if (eq ../currentPage this)}}active{{/if}}">
+                                <a class="page-link" href="/admin/user?page={{this}}">{{this}}</a>
+                            </li>
+                        {{/each}}
+
+                        {{#if (lt currentPage totalPages)}}
+                            <li class="page-item">
+                                <a class="page-link" href="/admin/user?page={{add currentPage 1}}">Next</a>
+                            </li>
+                        {{/if}}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
     </section>
     <script src="/javascripts/jquery-3.2.1.slim.min.js"></script>
     <script src="/javascripts/popper.min.js"></script>

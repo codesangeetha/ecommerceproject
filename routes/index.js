@@ -1,4 +1,5 @@
 var express = require('express');
+const bcrypt = require("bcrypt");
 const { finduser, getproductsdata, getProductDatabyId } = require('../helpers/functions');
 const { insertuser } = require('../helpers/functions');
 
@@ -74,11 +75,13 @@ router.get('/signup', (req, res) => {
 });
 
 router.post("/signupsubmit", async (req, res) => {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
     const obj2 = {
         name: req.body.name,
         username: req.body.username,
         email: req.body.email,
-        password: req.body.password,
+        password: hashedPassword,
         status: true
     }
     console.log(obj2);

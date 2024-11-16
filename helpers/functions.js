@@ -3,10 +3,10 @@ const Brand = require("../models/brands.model");
 const Category = require("../models/categories.model");
 const Products = require("../models/products.model");
 const Users = require("../models/users.model");
-
+const bcrypt = require("bcrypt");
 
 exports.getcategorydata = async () => {
-    const data = await Category.find({ isdeleted: false });
+    const data = await Category.find({ isdeleted: false }).sort({ createdAt: -1 });
     return data;
 }
 
@@ -16,7 +16,7 @@ exports.getcategorysearch = async (str) => {
 }
 
 exports.getbranddata = async () => {
-    const data = await Brand.find({ isdeleted: false });
+    const data = await Brand.find({ isdeleted: false }).sort({ createdAt: -1 });
     return data;
 }
 exports.insertbrand = async (obj) => {
@@ -39,16 +39,44 @@ exports.deletebrand = async (val) => {
 
 
 exports.getproductsdata = async () => {
-    const data = await Products.find({ isdeleted: false });
+    const data = await Products.find({ isdeleted: false }).sort({ createdAt: -1 });
     return data;
 }
 exports.getproductsearch = async (str) => {
-    const data = await Products.find({ isdeleted: false, name: { $regex: str, $options: 'i' } });
+    // Trim whitespace and check if the search string is empty
+    if (!str.trim()) {
+        // If the search string is empty, return all non-deleted products
+        return await Products.find({ isdeleted: false }).sort({ createdAt: -1 });
+    }
+
+    const isNumber = !isNaN(str);
+
+    const searchConditions = [
+        { name: { $regex: str, $options: 'i' } },
+        { description: { $regex: str, $options: 'i' } },
+        { brand: { $regex: str, $options: 'i' } },
+        { category: { $regex: str, $options: 'i' } },
+        { editUser: { $regex: str, $options: 'i' } }
+    ];
+
+    if (isNumber) {
+        searchConditions.push({ price: parseFloat(str) });
+    }
+
+    const searchQuery = { 
+        isdeleted: false,
+        $or: searchConditions
+    };
+
+    const data = await Products.find(searchQuery);
     return data;
-}
+};
+
+
+
 
 exports.getusersdata = async () => {
-    const data = await Users.find({});
+    const data = await Users.find({}).sort({ createdAt: -1 });
     return data;
 }
 
@@ -106,9 +134,16 @@ exports.banusers = async (id) => {
 }
 
 exports.finduser = async (username, pwd) => {
-    const data = await Users.findOne({ $and: [{ username: username }, { password: pwd }] });
-    return data;
-}
+    // Find the user by username
+    const user = await Users.findOne({ username: username });
+    if (!user) {
+        return null; // User not found
+    }
+
+    // Compare the provided password with the stored hashed password
+    const isMatch = await bcrypt.compare(pwd, user.password);
+    return isMatch ? user : null; // Return user if password matches, otherwise null
+};
 
 exports.finduseradmin = async (username, pwd) => {
     const data = await Adminusers.findOne({ $and: [{ username: username }, { password: pwd }] });

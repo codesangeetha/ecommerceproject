@@ -47,3 +47,39 @@ function validateAddProduct() {
     return isValid;
 
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const imageInput = document.getElementById("image");
+    const previewContainer = document.getElementById("image-preview");
+
+    // Function to display the image preview
+    imageInput.addEventListener("change", () => {
+        previewContainer.innerHTML = ""; // Clear existing preview
+
+        const file = imageInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.alt = "Selected Product Image";
+                img.style.width = "150px";
+                img.style.height = "150px";
+                img.style.objectFit = "cover";
+                img.className = "img-thumbnail";
+
+                const removeBtn = document.createElement("button");
+                removeBtn.textContent = "Remove";
+                removeBtn.className = "btn btn-danger btn-sm mt-2";
+                removeBtn.onclick = () => {
+                    imageInput.value = ""; // Reset file input
+                    previewContainer.innerHTML = ""; // Clear preview
+                };
+
+                previewContainer.appendChild(img);
+                previewContainer.appendChild(removeBtn);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+});

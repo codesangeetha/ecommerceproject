@@ -98,6 +98,34 @@
                 </main>
             </div>
         </div>
+
+          <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        {{#if (gt currentPage 1)}}
+                            <li class="page-item">
+                                <a class="page-link" href="/admin/category?page={{subtract currentPage 1}}">Previous</a>
+                            </li>
+                        {{/if}}
+
+                        {{#each (range 1 totalPages)}}
+                            <li class="page-item {{#if (eq ../currentPage this)}}active{{/if}}">
+                                <a class="page-link" href="/admin/category?page={{this}}">{{this}}</a>
+                            </li>
+                        {{/each}}
+
+                        {{#if (lt currentPage totalPages)}}
+                            <li class="page-item">
+                                <a class="page-link" href="/admin/category?page={{add currentPage 1}}">Next</a>
+                            </li>
+                        {{/if}}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
     </section>
 
 
