@@ -6,7 +6,13 @@ const usersSchema = new mongoose.Schema({
     email: String,
     password: String,
     status: Boolean,
-    address: Object
+    address: {
+        fullname: String,
+        address: String,
+        city: String,
+        state: String,
+        pincode: String
+    }
 },
     {
         timestamps: true

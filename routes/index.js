@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const { finduser, getproductsdata, getProductDatabyId } = require('../helpers/functions');
 const { insertuser } = require('../helpers/functions');
 
+const Cart = require("../models/cart.model");
+const User = require("../models/users.model");
 
 var router = express.Router();
 
@@ -43,9 +45,49 @@ router.get('/product/:id',checkLogin, async (req, res) => {
     // console.log(info)
     return res.render('product', { product: info, isLogin: req.session.isLoggin });
 });
-router.get('/cart', (req, res) => {
-    return res.render('cart');
+router.get('/cart',checkLogin, async (req, res) => {
+    const userId = req.session.userId; // Assuming user is logged in and session is set
+    // if (!userId) return res.redirect('/login');
+
+    try {
+        const cart = await Cart.findOne({ user: userId }).populate('products.product');
+        console.log('cart', cart);
+        res.render('cart', { cart });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error');
+    }
 });
+
+
+router.post('/cart/add', async (req, res) => {
+    console.log('body', req.body);
+    const { productId, quantity } = req.body;
+    const userId = req.session.userId;
+
+    try {
+        let cart = await Cart.findOne({ user: userId });
+        if (!cart) {
+            cart = new Cart({ user: userId, products: [] });
+        }
+
+        const productIndex = cart.products.findIndex(p => p.product.toString() === productId);
+        if (productIndex >= 0) {
+            cart.products[productIndex].quantity += parseInt(quantity, 10);
+        } else {
+            cart.products.push({ product: productId, quantity });
+        }
+
+        await cart.save();
+        res.redirect('/cart'); 
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error');
+    }
+});
+
+
+
 
 router.get('/login', (req, res) => {
     const msg = req.session.message;
@@ -64,6 +106,9 @@ router.post("/loginsubmit", async (req, res) => {
     } else {
         req.session.isLoggin = true;
         req.session.name = req.body.username;
+        req.session.userId = loginvalue._id;
+        // console.log("loginvalue",req.session.userId)
+
         return res.redirect('/');
     }
 });
@@ -90,11 +135,45 @@ router.post("/signupsubmit", async (req, res) => {
     return res.redirect('/login');
 });
 
-router.get('/checkout',checkLogin, (req, res) => {
-    return res.render('checkout');
+router.get('/checkout', checkLogin, async (req, res) => {
+    const userId = req.session.userId;
+
+    try {
+        const cart = await Cart.findOne({ user: userId }).populate('products.product');
+        const user = await User.findById(userId);
+
+        res.render('checkout', { cart, user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error');
+    }
 });
+
+router.post('/checkout', checkLogin, async (req, res) => {
+    const { fullname, address, city, state, pincode, email } = req.body;
+    const userId = req.session.userId;
+
+    try {
+        // Update user address
+        await User.findByIdAndUpdate(userId, {
+            address: { fullname, address, city, state, pincode }
+        });
+
+        // Clear the cart
+        await Cart.findOneAndDelete({ user: userId });
+
+        res.send('Order placed successfully!');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error');
+    }
+});
+
+
+
 router.get('/payment', (req, res) => {
     return res.render('payment');
 });
+
 
 module.exports = router;

@@ -79,11 +79,33 @@
                                     <select class="form-control" id="category" name="category">
                                         <option value="">Select a category</option>
                                         {{#each arr}}
-                                        <option value="{{_id}}">{{name}}</option>
+                                        <option value="{{this._id}}">{{this.name}}</option>
                                         {{/each}}
                                     </select>
                                     <div id="error-category" class="error-msg"></div>
                                 </div>
+                                <div class="mb-3">
+                                    <label for="size" class="form-label">Choose Size available</label>
+                                    <select class="form-control" id="size" name="size" multiple>
+                                        <option value="">Select a size</option>
+                                        {{#each sizeArr}}
+                                        <option value="{{this}}">{{this}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <div id="error-size" class="error-msg"></div>
+                                </div>
+
+                                 <div class="mb-3">
+                                    <label for="color" class="form-label">Choose colors available</label>
+                                    <select class="form-control" id="color" name="color" multiple>
+                                        <option value="">Select a color</option>
+                                        {{#each colorArr}}
+                                        <option value="{{this}}">{{this}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <div id="error-color" class="error-msg"></div>
+                                </div>
+
                                 <div class="mb-3">
                                     <label for="image" class="form-label">Product Image</label>
                                     <input type="file" class="form-control" id="image" name="image" accept="image/*">

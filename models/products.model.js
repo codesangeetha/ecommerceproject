@@ -8,9 +8,10 @@ const productsSchema = new mongoose.Schema({
     image: String,
     category: String,
     isdeleted: Boolean,
-    sizes_available: Number,
+    sizes_available: [String],
     colors_available: String,
-    editUser: String
+    editUser: String,
+    stock: { type: Number, required: true }
 },
     {
         timestamps: true

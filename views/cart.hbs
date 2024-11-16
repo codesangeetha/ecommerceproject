@@ -5,7 +5,34 @@
 
     <scetion>
         <div class="container mt-5">
+            {{#each cart.products}}
             <div class="row mt-2">
+                <div class="col-md-2">
+                    <div class="card">
+                        <img class="card-img-top" src="/uploads/{{this.product.image}}" alt="Card image cap">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p class="cart-pcls">{{this.product.name}}</p>
+                    <div class="cart-size">Color : {{this.product.color}}</div>
+                    <div class="cart-size">Size : {{this.product.size}}</div>
+                    <div class="cart-size">Qty : {{this.quantity}}</div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="dropdown mt-2">
+                                <button class="btn btn-secondary  btn-cls" type="button">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 cart-size">₹ {{this.product.price}}</div>
+            </div>
+            <hr style="border-width:2px;">
+            {{/each}}
+
+            {{!-- <div class="row mt-2">
                 <div class="col-md-2">
                     <div class="card">
                         <img class="card-img-top" src="images/shoe1.webp" alt="Card image cap">
@@ -46,54 +73,11 @@
                     ₹ 1783
                 </div>
 
-            </div>
-            <hr / style="border-width:2px;">
-
-            <div class="row mt-2">
-                <div class="col-md-2">
-                    <div class="card">
-                        <img class="card-img-top" src="images/shoe1.webp" alt="Card image cap">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div>
-                        <p class="cart-pcls">AADI Men’s Black Mesh Outdoor Casual Shoes MRJ1346 _9</p>
-                        <div class="cart-size">Color : Black</div>
-                        <div class="cart-size">Size : 9UK</div>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <div class="dropdown mt-2">
-                                    <button class="btn btn-secondary dropdown-toggle pro-dropdown btn-cls" type="button"
-                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                        Qty : 1
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item" href="#">2</a>
-                                        <a class="dropdown-item" href="#">3</a>
-                                        <a class="dropdown-item" href="#">4</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="dropdown mt-2">
-                                    <button class="btn btn-secondary  btn-cls" type="button">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="col-md-2 cart-size">
-                    ₹ 1783
-                </div>
-
-            </div>
-            <hr / style="border-width:2px;">
+            </div> --}}
             <div>
-                <button type="button" class="btn btn-secondary cart-buyButton w-90">Proceed to buy</button>
+                <a href="/checkout">
+                    <button type="button" class="btn btn-secondary cart-buyButton w-90">Proceed to buy</button>
+                </a>
             </div>
 
         </div>

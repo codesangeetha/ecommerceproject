@@ -347,8 +347,10 @@ router.get('/add-product', checkadminLogin, async (req, res) => {
     console.log(data);
     const info = await getbranddata();
     console.log("brand data", info);
+    const sizeArr = [5, 6, 7, 8, 9, 10, 11, 12, 13];
+    const colorArr = ["Red", "Blue", "White", "Black"];
 
-    return res.render('addproduct', { arr: data, arr2: info, isAdmin: true })
+    return res.render('addproduct', { arr: data, arr2: info, sizeArr: sizeArr, colorArr: colorArr, isAdmin: true })
 });
 
 router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
@@ -361,7 +363,10 @@ router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
         category: req.body.category,
         isdeleted: false,
         editUser: req.session.adminName,
-        image: req.file ? req.file.filename : null
+        image: req.file ? req.file.filename : null,
+        sizes_available: req.body.size,
+        colors_available: req.body.color,
+        stock: 5
     }
     console.log(obj);
     const data = await insertproduct(obj)
@@ -476,9 +481,41 @@ router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
         newbrands.push(obj);
     }
 
-    //  console.log(newCategories);
-    return res.render('editproduct', { products: product, arr: newCategories, arr2: newbrands, isAdmin: true });
+    const sizeArr = [5, 6, 7, 8, 9, 10, 11, 12, 13];
+    const newSizeArr = [];
+    for (let i = 0; i < sizeArr.length; i++) {
+        let selectVal = "";
+
+        if (product.sizes_available.includes(sizeArr[i])) {
+            selectVal = "selected";
+        }
+
+        const obj = {
+            size: sizeArr[i],
+            selected: selectVal
+        }
+        newSizeArr.push(obj);
+    }
+
+    const colorArr = ["Red", "Blue", "White", "Black"];
+    const newColorArr = [];
+    for (let i = 0; i < colorArr.length; i++) {
+        let selectVal = "";
+
+        if (product.colors_available.includes(colorArr[i])) {
+            selectVal = "selected";
+        }
+
+        const obj = {
+            color: colorArr[i],
+            selected: selectVal
+        }
+        newColorArr.push(obj);
+    }
+    console.log(newColorArr);
+    return res.render('editproduct', { products: product, arr: newCategories, arr2: newbrands, newSizeArr: newSizeArr,newColorArr:newColorArr, isAdmin: true });
 });
+
 
 /* router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {
     const val2 = req.params.id;
