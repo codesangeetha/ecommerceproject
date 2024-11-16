@@ -1,4 +1,5 @@
 function validateEditProduct() {
+    console.log('hi');
     var name = document.getElementById("productName").value;
     var brand = document.getElementById("brand").value;
     var price = document.getElementById("price").value;
