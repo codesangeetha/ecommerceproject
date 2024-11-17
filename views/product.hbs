@@ -16,35 +16,29 @@
                             <span class="pro-disc">-52%</span>
                             <span class="pro-price">₹ {{product.price}}</span>
                         </div>
-                        <p class="pro-size">Size</p>
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle pro-dropdown" type="button"
-                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
-                                8UK
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">9</a>
-                                <a class="dropdown-item" href="#">10</a>
-                                <a class="dropdown-item" href="#">11</a>
-                            </div>
+                    
+                        <div style="margin-left: 10px;margin-top: 20px;margin-bottom: 20px;">
+                            <label for="color" class="form-label"style="font-weight: bold;">Size</label>
+                            <select class="form-control" id="size" name="size" style="width: 60px;font-weight :bold">
+                                {{!-- <option value="1" selected>1</option> --}}
+                                {{#each product.sizes_available}}
+                                <option value="{{this}}">{{this}}</option>
+                                {{/each}}
+                            </select>
                         </div>
-                        <p class="pro-size">Color</p>
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle pro-dropdown" type="button"
-                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
-                                Black
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Red</a>
-                                <a class="dropdown-item" href="#">White</a>
-                                <a class="dropdown-item" href="#">Blue</a>
-                            </div>
+                        
+                        <div style="margin-left: 10px;margin-top: 20px;margin-bottom: 20px;">
+                            <label for="color" class="form-label" style="font-weight: bold;">Color</label>
+                            <select class="form-control" id="color" name="color" style="width: 90px;font-weight :bold">
+                                {{!-- <option value="1" selected>1</option> --}}
+                                {{#each product.colors_available}}
+                                <option value="{{this}}">{{this}}</option>
+                                {{/each}}
+                            </select>
                         </div>
                         <div style="margin-left: 10px;margin-top: 20px;margin-bottom: 20px;">
-                            <label for="quantity" class="form-label">Quantity</label>
-                            <select class="form-control" id="quantity" name="quantity" style="width: 60px;">
+                            <label for="quantity" class="form-label"style="font-weight: bold;">Quantity</label>
+                            <select class="form-control" id="quantity" name="quantity" style="width: 60px; font-weight :bold">
                                 <option value="1" selected>1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>

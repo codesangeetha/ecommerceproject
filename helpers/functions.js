@@ -149,3 +149,4 @@ exports.finduseradmin = async (username, pwd) => {
     const data = await Adminusers.findOne({ $and: [{ username: username }, { password: pwd }] });
     return data;
 }
+

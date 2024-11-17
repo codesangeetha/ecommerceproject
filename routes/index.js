@@ -18,7 +18,7 @@ const checkLogin = (req, res, next) => {
 }
 
 
-router.get('/',  async (req, res) => {
+router.get('/', async (req, res) => {
     const info = await getproductsdata();
     // console.log(info);
 
@@ -39,19 +39,21 @@ router.get('/',  async (req, res) => {
     return res.render('index', { arr: arr, isLogin: req.session.isLoggin });
 });
 
-router.get('/product/:id',checkLogin, async (req, res) => {
+router.get('/product/:id', checkLogin, async (req, res) => {
     const val = req.params.id;
     const info = await getProductDatabyId(val);
     // console.log(info)
     return res.render('product', { product: info, isLogin: req.session.isLoggin });
 });
-router.get('/cart',checkLogin, async (req, res) => {
+
+
+router.get('/cart', checkLogin, async (req, res) => {
     const userId = req.session.userId; // Assuming user is logged in and session is set
     // if (!userId) return res.redirect('/login');
 
     try {
         const cart = await Cart.findOne({ user: userId }).populate('products.product');
-        console.log('cart', cart);
+        // console.log('cart', cart);
         res.render('cart', { cart });
     } catch (error) {
         console.error(error);
@@ -61,8 +63,8 @@ router.get('/cart',checkLogin, async (req, res) => {
 
 
 router.post('/cart/add', async (req, res) => {
-    console.log('body', req.body);
-    const { productId, quantity } = req.body;
+    // console.log('body', req.body);
+    const { productId, quantity, size, color } = req.body;
     const userId = req.session.userId;
 
     try {
@@ -71,22 +73,44 @@ router.post('/cart/add', async (req, res) => {
             cart = new Cart({ user: userId, products: [] });
         }
 
-        const productIndex = cart.products.findIndex(p => p.product.toString() === productId);
+        const productIndex = cart.products.findIndex(p => {
+            return p.product.toString() === productId && p.size === size && p.color === color;
+        });
         if (productIndex >= 0) {
             cart.products[productIndex].quantity += parseInt(quantity, 10);
         } else {
-            cart.products.push({ product: productId, quantity });
+            cart.products.push({ product: productId, quantity, color, size });
         }
 
         await cart.save();
-        res.redirect('/cart'); 
+        res.redirect('/cart');
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
     }
 });
 
+router.get('/delete-cart/:id', checkLogin, async (req, res) => {
+    const val = req.params.id;
+    const userId = req.session.userId;
+    //  console.log(val);
+    let cart = await Cart.findOne({ user: userId })
+    console.log(cart);
+    let cartproducts = cart.products;
+    console.log(cartproducts);
 
+    const arr = [];
+    for (let i = 0; i < cart.products.length; i++) {
+        if (val !== cart.products[i]._id.toString()) {
+            arr.push(cart.products[i]);
+        }
+    }
+    cart.products = arr;
+    await cart.save();
+    return res.redirect('/cart');
+
+
+});
 
 
 router.get('/login', (req, res) => {
@@ -96,7 +120,7 @@ router.get('/login', (req, res) => {
 });
 
 router.post("/loginsubmit", async (req, res) => {
-    
+
     // console.log(req.body);
     const loginvalue = await finduser(req.body.username, req.body.password);
     console.log(loginvalue);

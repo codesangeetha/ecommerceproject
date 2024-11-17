@@ -27,6 +27,7 @@ const storage = multer.diskStorage({
     }
 });
 const hbs = require('hbs');
+const Brand = require('../models/brands.model');
 
 hbs.registerHelper('range', (start, end) => {
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
@@ -211,7 +212,39 @@ router.post('/category-search', checkadminLogin, async (req, res) => {
     res.render('admincategory', { arr: arr, isAdmin: true })
 });
 
+
 router.get('/brand', async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 4;
+
+    const totalbrands = await Brand.countDocuments({ isdeleted: false });
+
+
+    const branddata = await Brand.find({ isdeleted: false })
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * perPage)
+        .limit(perPage);
+
+    const brands = branddata.map((o, index) => ({
+        slno: (page - 1) * perPage + index + 1,
+        _id: o._id,
+        name: o.name,
+        description: o.description.substring(0, 20),
+
+    }));
+
+    const totalPages = Math.ceil(totalbrands / perPage);
+
+    res.render('adminbrand', {
+        arr: brands,
+        currentPage: page,
+        totalPages,
+        isAdmin: true
+    });
+    clearCache(res);
+});
+
+/* router.get('/brand', async (req, res) => {
     const branddata = await getbranddata();
     // console.log(branddata);
     clearCache(res);
@@ -228,7 +261,7 @@ router.get('/brand', async (req, res) => {
         arr.push(newO);
     }
     return res.render('adminbrand', { arr: arr, isAdmin: true })
-});
+}); */
 
 router.get('/login', (req, res) => {
     const msg = req.session.message;
@@ -335,7 +368,7 @@ router.post('/add-brandsubmit', async (req, res) => {
         description: req.body.description,
         isdeleted: false
     }
-    console.log(obj);
+    // console.log(obj);
     const data = await insertbrand(obj)
     return res.redirect('/admin/brand');
 });
@@ -349,12 +382,22 @@ router.get('/add-product', checkadminLogin, async (req, res) => {
     console.log("brand data", info);
     const sizeArr = [5, 6, 7, 8, 9, 10, 11, 12, 13];
     const colorArr = ["Red", "Blue", "White", "Black"];
+    // console.log("colorarr", colorArr);
 
     return res.render('addproduct', { arr: data, arr2: info, sizeArr: sizeArr, colorArr: colorArr, isAdmin: true })
 });
 
 router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
+    let sizearr = req.body.size;
+    if (!Array.isArray(req.body.size)) {
+        sizearr = [req.body.size];
+    }
+    let colorarr = req.body.color;
+    if (!Array.isArray(req.body.color)) {
+        colorarr = [req.body.color];
+    }
+
     const obj = {
         name: req.body.productName,
         brand: req.body.brand,
@@ -364,9 +407,9 @@ router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
         isdeleted: false,
         editUser: req.session.adminName,
         image: req.file ? req.file.filename : null,
-        sizes_available: req.body.size,
-        colors_available: req.body.color,
-        stock: 5
+        sizes_available: sizearr,
+        colors_available: colorarr,
+        stock: req.body.stock
     }
     console.log(obj);
     const data = await insertproduct(obj)
@@ -447,7 +490,7 @@ router.post('/edit-brandsubmit/:id', checkadminLogin, async (req, res) => {
 router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
     const product = await getProductDatabyId(val)
-    // console.log(product);
+    console.log(product);
 
     const categories = await getcategorydata();
     const newCategories = [];
@@ -512,8 +555,8 @@ router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
         }
         newColorArr.push(obj);
     }
-    console.log(newColorArr);
-    return res.render('editproduct', { products: product, arr: newCategories, arr2: newbrands, newSizeArr: newSizeArr,newColorArr:newColorArr, isAdmin: true });
+    // console.log(newColorArr);
+    return res.render('editproduct', { products: product, arr: newCategories, arr2: newbrands, newSizeArr: newSizeArr, newColorArr: newColorArr, isAdmin: true });
 });
 
 
@@ -535,12 +578,25 @@ router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
 
 router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {
     const val2 = req.params.id;
+    let sizearr = req.body.size;
+    if (!Array.isArray(req.body.size)) {
+        sizearr = [req.body.size];
+    }
+    let colorarr = req.body.color;
+    if (!Array.isArray(req.body.color)) {
+        colorarr = [req.body.color];
+    }
     let obj = {
         name: req.body.productName,
         price: req.body.price,
+        brand: req.body.brand,
         description: req.body.description,
         category: req.body.category,
+        sizes_available: sizearr,
+        colors_available: colorarr,
         editUser: req.session.adminName,
+        image: req.file ? req.file.filename : null,
+        stock :req.body.stock
     };
 
     // Handle new image upload

@@ -9,7 +9,7 @@ const productsSchema = new mongoose.Schema({
     category: String,
     isdeleted: Boolean,
     sizes_available: [String],
-    colors_available: String,
+    colors_available: [String],
     editUser: String,
     stock: { type: Number, required: true }
 },
