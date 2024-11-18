@@ -11,14 +11,54 @@ exports.getcategorydata = async () => {
 }
 
 exports.getcategorysearch = async (str) => {
-    const data = await Category.find({ isdeleted: false, name: { $regex: str, $options: 'i' } });
+
+    if (!str.trim()) {
+        return await Category.find({ isdeleted: false }).sort({ createdAt: -1 });
+    }
+
+    const searchConditions = [
+        { name: { $regex: str, $options: 'i' } },
+        { description: { $regex: str, $options: 'i' } },
+        { editUser: { $regex: str, $options: 'i' } }
+    ];
+
+    const searchQuery = {
+        isdeleted: false,
+        $or: searchConditions
+    };
+
+    const data = await Category.find(searchQuery);
     return data;
+
 }
 
 exports.getbranddata = async () => {
     const data = await Brand.find({ isdeleted: false }).sort({ createdAt: -1 });
     return data;
 }
+
+exports.getbrandsearch = async (str) => {
+
+    if (!str.trim()) {
+        return await Brand.find({ isdeleted: false }).sort({ createdAt: -1 });
+    }
+
+    const searchConditions = [
+        { name: { $regex: str, $options: 'i' } },
+        { description: { $regex: str, $options: 'i' } },
+        { editUser: { $regex: str, $options: 'i' } }
+    ];
+
+    const searchQuery = {
+        isdeleted: false,
+        $or: searchConditions
+    };
+
+    const data = await Brand.find(searchQuery);
+    return data;
+
+}
+
 exports.insertbrand = async (obj) => {
     const data = await Brand.insertMany([obj]);
     return data;
@@ -63,7 +103,7 @@ exports.getproductsearch = async (str) => {
         searchConditions.push({ price: parseFloat(str) });
     }
 
-    const searchQuery = { 
+    const searchQuery = {
         isdeleted: false,
         $or: searchConditions
     };
@@ -72,14 +112,33 @@ exports.getproductsearch = async (str) => {
     return data;
 };
 
-
-
-
 exports.getusersdata = async () => {
     const data = await Users.find({}).sort({ createdAt: -1 });
     return data;
 }
 
+/* exports.getusersearch = async (str) => {
+    if (!str.trim()) {
+        return await Users.find({ isdeleted: false }).sort({ createdAt: -1 }); 
+    }
+    
+
+    const searchConditions = [
+        { name: { $regex: str, $options: 'i' } },
+        { username: { $regex: str, $options: 'i' } },
+        { email: { $regex: str, $options: 'i' } },
+        { status: { $regex: str, $options: 'i' } }
+    ];
+
+    const searchQuery = {
+        isdeleted: false,
+        $or: searchConditions,
+    };
+
+    const data = await Users.find(searchQuery).sort({createdAt:-1});
+    return data;
+};
+ */
 exports.insertcategory = async (obj) => {
 
     const data = await Category.insertMany([obj]);

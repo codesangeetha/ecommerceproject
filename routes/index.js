@@ -140,20 +140,47 @@ router.post("/loginsubmit", async (req, res) => {
 
 
 router.get('/signup', (req, res) => {
-    return res.render('signup');
+    const msg = req.session.message;
+    req.session.message = "";
+    return res.render('signup', { msg });
 });
 
 router.post("/signupsubmit", async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+    if (req.body.name === "") {
+        req.session.message = "Enter name";
+        return res.redirect('/signup');
+    }
+
+    if (req.body.username === "") {
+        req.session.message = "Enter username";
+        return res.redirect('/signup');
+    }
+    if (req.body.email === "") {
+        req.session.message = "Enter email";
+        return res.redirect('/signup');
+    }
+    if (req.body.password === "") {
+        req.session.message = "Enter password";
+        return res.redirect('/signup');
+    }
+    console.log("req.body", req.body);
     const obj2 = {
         name: req.body.name,
         username: req.body.username,
         email: req.body.email,
         password: hashedPassword,
-        status: true
+        status: true,
+        address: {
+            houseNo: req.body.houseNo,
+            city: req.body.city,
+            state: req.body.state,
+            pincode: req.body.pincode,
+        }
     }
-    console.log(obj2);
+
+    // console.log(obj2);
     const data = await insertuser(obj2);
     req.session.message = "Successfully signed up";
     return res.redirect('/login');

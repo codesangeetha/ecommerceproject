@@ -11,7 +11,8 @@ const { getcategorydata,
     finduseradmin,
     getproductsearch,
     getbranddata, insertbrand, getBrandDatabyId, editbrand,
-    deletebrand } = require('../helpers/functions');
+    deletebrand ,getbrandsearch,
+       getusersearch} = require('../helpers/functions');
 const Products = require("../models/products.model");
 const Category = require("../models/categories.model");
 const Users = require("../models/users.model");
@@ -59,31 +60,6 @@ const checkadminLogin = (req, res, next) => {
     }
 }
 
-
-/* router.get('/product', checkadminLogin, async (req, res) => {
-    const productdata = await getproductsdata();
-    clearCache(res);
-    // console.log(productdata);
-
-    const arr = [];
-    for (let i = 0; i < productdata.length; i++) {
-        const o = productdata[i];
-        const newDesc = o.description.substring(0, 20);
-        const newO = {
-            slno: i + 1,
-            _id: o._id,
-            name: o.name,
-            description: newDesc,
-            price: o.price,
-            image: o.image
-        };
-        arr.push(newO);
-    }
-
-    // console.log('new arr', arr);
-    res.render('adminproduct', { arr: arr, isAdmin: true })
-}); */
-
 router.get('/product', checkadminLogin, async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
@@ -119,7 +95,7 @@ router.get('/product', checkadminLogin, async (req, res) => {
 router.post('/product-search', checkadminLogin, async (req, res) => {
     const productdata = await getproductsearch(req.body.search);
     clearCache(res);
-    console.log("productdata", productdata);
+    // console.log("productdata", productdata);
     const arr = [];
     for (let i = 0; i < productdata.length; i++) {
         const o = productdata[i];
@@ -135,7 +111,7 @@ router.post('/product-search', checkadminLogin, async (req, res) => {
         arr.push(newO);
     }
     res.render('adminproduct', { arr: arr, isAdmin: true })
-})
+});
 
 
 router.get('/category', checkadminLogin, async (req, res) => {
@@ -169,27 +145,6 @@ router.get('/category', checkadminLogin, async (req, res) => {
     clearCache(res);
 });
 
-/*  const categorydata = await getcategorydata();
- console.log(categorydata);
- clearCache(res);
-
- const arr = [];
- for (let i = 0; i < categorydata.length; i++) {
-     const o = categorydata[i];
-     const newDesc = o.description.substring(0, 20);
-     const newO = {
-         slno: i + 1,
-         _id: o._id,
-         name: o.name,
-         description: newDesc
-     };
-     arr.push(newO);
-
-      res.render('admincategory', { arr: arr, isAdmin: true })
- } */
-
-
-
 
 router.post('/category-search', checkadminLogin, async (req, res) => {
     // console.log("search form : ", req.body);
@@ -213,7 +168,7 @@ router.post('/category-search', checkadminLogin, async (req, res) => {
 });
 
 
-router.get('/brand', async (req, res) => {
+router.get('/brand', checkadminLogin, async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
 
@@ -244,24 +199,28 @@ router.get('/brand', async (req, res) => {
     clearCache(res);
 });
 
-/* router.get('/brand', async (req, res) => {
-    const branddata = await getbranddata();
-    // console.log(branddata);
-    clearCache(res);
-    const arr = [];
-    for (let i = 0; i < branddata.length; i++) {
-        const o = branddata[i];
-        const newDesc = o.description.substring(0, 20);
-        const newO = {
-            slno: i + 1,
-            _id: o._id,
-            name: o.name,
-            description: newDesc
-        };
-        arr.push(newO);
-    }
-    return res.render('adminbrand', { arr: arr, isAdmin: true })
-}); */
+router.post('/brand-search', checkadminLogin,async(req,res)=>{
+    const branddata = await getbrandsearch(req.body.search);
+     console.log("branddata", branddata);
+     clearCache(res);
+     const arr = [];
+     for (let i = 0; i < branddata.length; i++) {
+         const o = branddata[i];
+         const newDesc = o.description.substring(0, 20);
+         const newO = {
+             slno: i + 1,
+             _id: o._id,
+             name: o.name,
+             description: newDesc
+         };
+         arr.push(newO);
+     }
+     res.render('adminbrand', { arr: arr, isAdmin: true })
+ });
+ 
+router.get('/dashboard',checkadminLogin,(req,res)=>{
+return res.render('admindashboard',{isAdmin:true});
+});
 
 router.get('/login', (req, res) => {
     const msg = req.session.message;
@@ -281,7 +240,7 @@ router.post('/adminloginsubmit', async (req, res) => {
         req.session.isAdminLoggin = true;
         req.session.adminName = req.body.username;
         req.session.id = loginvalue._id;
-        return res.redirect('/admin/category');
+        return res.redirect('/admin/dashboard');
     }
 });
 
@@ -318,51 +277,78 @@ router.get('/user', checkadminLogin, async (req, res) => {
     });
     clearCache(res);
 });
-/*    const usersdata = await getusersdata();
-   console.log(usersdata);
-   clearCache(res);
-   const arr = [];
-   for (let i = 0; i < usersdata.length; i++) {
-       const o = usersdata[i];
 
-       const newO = {
-           slno: i + 1,
-           _id: o._id,
-           name: o.name,
-           email: o.email,
-           status: o.status
-       };
-       arr.push(newO);
-
-   }
-   console.log("newarr", arr);
-   res.render('adminusers', { arr: arr, isAdmin: true }) */
-
-
-
+/* router.post('/user-search', checkadminLogin, async (req, res) => {
+    const userdata = await getusersearch(req.body.search);
+    clearCache(res);
+     console.log("userdata", userdata);
+    const arr = [];
+    for (let i = 0; i < userdata.length; i++) {
+        const o = userdata[i];
+                const newO = {
+            slno: i + 1,
+            _id: o._id,
+            name: o.name,
+            email: o.email,
+            status:o.status,
+            username:o.username
+        };
+        arr.push(newO);
+    }
+    res.render('adminusers', { arr: arr, isAdmin: true })
+})
+ */
 router.get('/add-category', checkadminLogin, (req, res) => {
-    return res.render('addcategory', { isAdmin: true })
+    const msg = req.session.message;
+    req.session.message = "";
+    // console.log("msg", msg);
+    return res.render('addcategory', { isAdmin: true, msg: msg })
 });
 
 router.post('/add-categorysubmit', async (req, res) => {
+
+    if (req.body.categoryName === "") {
+        req.session.message = "Category Name is empty";
+        return res.redirect("/admin/add-category");
+    }
+
+    if (req.body.description === "") {
+        req.session.message = "Category description is empty";
+        return res.redirect("/admin/add-category");
+    }
+
     const obj = {
         name: req.body.categoryName,
         description: req.body.description,
         isdeleted: false
     }
     // console.log(obj);
-    const data = await insertcategory(obj)
+    const data = await insertcategory(obj);
     // console.log(data);
     return res.redirect('/admin/category');
 });
 
 
 
-router.get('/add-brand', (req, res) => {
-    return res.render('addbrand', { isAdmin: true })
+router.get('/add-brand', checkadminLogin, (req, res) => {
+    const msg = req.session.message;
+    req.session.message = "";
+    // console.log("msg = ",msg);
+    return res.render('addbrand', { isAdmin: true, msg: msg })
 });
 
 router.post('/add-brandsubmit', async (req, res) => {
+
+    if (req.body.brandName === "") {
+        req.session.message = "Brand name is empty";
+        return res.redirect('/admin/add-brand')
+    }
+
+    if (req.body.description === "") {
+        req.session.message = "Brand descripton is empty";
+        return res.redirect('/admin/add-brand')
+    }
+
     const obj = {
         name: req.body.brandName,
         description: req.body.description,
@@ -384,7 +370,10 @@ router.get('/add-product', checkadminLogin, async (req, res) => {
     const colorArr = ["Red", "Blue", "White", "Black"];
     // console.log("colorarr", colorArr);
 
-    return res.render('addproduct', { arr: data, arr2: info, sizeArr: sizeArr, colorArr: colorArr, isAdmin: true })
+    const msg = req.session.message;
+    req.session.message = "";
+
+    return res.render('addproduct', { arr: data, arr2: info, sizeArr: sizeArr, msg: msg, colorArr: colorArr, isAdmin: true })
 });
 
 router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
@@ -398,6 +387,42 @@ router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
         colorarr = [req.body.color];
     }
 
+    if (req.body.productName === "") {
+        req.session.message = "Product name is empty";
+        return res.redirect("/admin/add-product")
+    }
+    if (req.body.brand === "") {
+        req.session.message = "Product brand is empty";
+        return res.redirect("/admin/add-product")
+    }
+    if (req.body.price === "") {
+        req.session.message = "Product price is empty";
+        return res.redirect("/admin/add-product")
+    }
+    if (req.body.description === "") {
+        req.session.message = "Product description is empty";
+        return res.redirect("/admin/add-product")
+    }
+    if (req.body.category === "") {
+        req.session.message = "Product category is empty";
+        return res.redirect("/admin/add-product")
+    }
+    if (req.body.size === "") {
+        req.session.message = "Product size is empty";
+        return res.redirect("/admin/add-product")
+    }
+    if (req.body.color === "") {
+        req.session.message = "Product color is empty";
+        return res.redirect("/admin/add-product")
+    }
+    if (req.body.stock === "") {
+        req.session.message = "Product stock is empty";
+        return res.redirect("/admin/add-product")
+    }
+    if (req.body.image === "") {
+        req.session.message = "Product image is empty";
+        return res.redirect("/admin/add-product")
+    }
     const obj = {
         name: req.body.productName,
         brand: req.body.brand,
@@ -453,11 +478,14 @@ router.get('/edit-category/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
     const data = await getCategoryDatabyId(val)
     //  console.log(data);
-    return res.render('editcategory', { category: data, isAdmin: true })
+  
+    return res.render('editcategory', { category: data, msg:msg, isAdmin: true })
 });
 
 router.post('/edit-categorysubmit/:id', checkadminLogin, async (req, res) => {
     const val2 = req.params.id;
+
+
     let obj = {
         name: req.body.categoryName,
         description: req.body.description,
@@ -560,22 +588,6 @@ router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
 });
 
 
-/* router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {
-    const val2 = req.params.id;
-    let obj = {
-        name: req.body.productName,
-        price: req.body.price,
-        description: req.body.description,
-        category: req.body.category,
-        editUser: req.session.adminName,
-        image: req.file ? req.file.filename : null
-    }
-    console.log(obj);
-    const data = await editproduct(val2, obj);
-    //  console.log(data);
-    res.redirect('/admin/product');
-}); */
-
 router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {
     const val2 = req.params.id;
     let sizearr = req.body.size;
@@ -596,7 +608,7 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), 
         colors_available: colorarr,
         editUser: req.session.adminName,
         image: req.file ? req.file.filename : null,
-        stock :req.body.stock
+        stock: req.body.stock
     };
 
     // Handle new image upload

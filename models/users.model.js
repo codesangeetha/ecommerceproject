@@ -7,8 +7,7 @@ const usersSchema = new mongoose.Schema({
     password: String,
     status: Boolean,
     address: {
-        fullname: String,
-        address: String,
+        houseNo: String,
         city: String,
         state: String,
         pincode: String

@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+<link rel="stylesheet" href="stylesheets/signupstyle.css">
+<link rel="stylesheet" href="/stylesheets/loginstyle.css">
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="stylesheets/homestyle.css">
-    <link rel="stylesheet" href="stylesheets/signupstyle.css">
-
-    <title>Signup</title>
+<title>Signup</title>
 </head>
 
 <body>
-   
+
 
     <section>
         <div class="container justify-content-center">
@@ -23,20 +14,23 @@
                 <div class="col-md-5">
                     <div class="card p-4 shadow-sm">
                         <h3 class="text-center mb-4">Sign Up</h3>
-                        <form  action="/signupsubmit" method="post" onsubmit="return validateSignupForm()">
+                        <form action="/signupsubmit" method="post" onsubmit="return validateSignupForm()">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name">
+                                <input type="text" class="form-control" id="name" name="name"
+                                    placeholder="Enter your name">
                                 <div id="error-name" class="error-style"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="name" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username">
+                                <input type="text" class="form-control" id="username" name="username"
+                                    placeholder="Enter your username">
                                 <div id="error-username" class="error-style"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="Enter your email">
                                 <div id="error-email" class="error-style"></div>
                             </div>
                             <div class="mb-3">
@@ -45,8 +39,38 @@
                                     placeholder="Enter your password">
                                 <div id="error-password" class="error-style"></div>
                             </div>
-                            <button type="submit" class="btn btn-success mb-4 signup-btncls w-65">Sign Up</button>
 
+                            <div class="mb-3">
+                                <label for="houseNo" class="form-label">House.No</label>
+                                <input type="textarea" class="form-control" id="houseNo" name="houseNo"
+                                    placeholder="Enter your address">
+                                <div id="error-houseNo" class="error-style"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" class="form-control" id="city" name="city"
+                                    placeholder="Enter your username">
+                                <div id="error-city" class="error-style"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" class="form-control" id="state" name="state"
+                                    placeholder="Enter your state">
+                                <div id="error-state" class="error-style"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="pincode" class="form-label">Pincode</label>
+                                <input type="text" class="form-control" id="pincode" name="pincode"
+                                    placeholder="Enter your pincode">
+                                <div id="error-pincode" class="error-style"></div>
+                            </div>
+
+
+                            <button type="submit" class="btn btn-success mb-4 signup-btncls w-65">Sign Up</button>
+                            <div class="error-message">{{msg}}</div>
                         </form>
                         <div>Already have an account ? <a href="/login" class="signup-login">Login</a></div>
                     </div>
@@ -54,10 +78,8 @@
             </div>
         </div>
     </section>
-    <script src="javascripts/jquery-3.2.1.slim.min.js"></script>
-    <script src="javascripts/popper.min.js"></script>
-    <script src="javascripts/bootstrap.min.js"></script>
-    <script src="javascripts/signupformvalidation.js"></script>
+    {{!--
+    <script src="javascripts/signupformvalidation.js"></script> --}}
 </body>
 
 </html>
