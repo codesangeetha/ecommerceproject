@@ -244,7 +244,7 @@ router.post('/adminloginsubmit', async (req, res) => {
     }
 });
 
-router.get('/user', checkadminLogin, async (req, res) => {
+router.get('/user', async (req, res) => {
 
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
@@ -278,7 +278,8 @@ router.get('/user', checkadminLogin, async (req, res) => {
     clearCache(res);
 });
 
-/* router.post('/user-search', checkadminLogin, async (req, res) => {
+router.post('/user-search', async (req, res) => {
+
     const userdata = await getusersearch(req.body.search);
     clearCache(res);
      console.log("userdata", userdata);
@@ -297,7 +298,7 @@ router.get('/user', checkadminLogin, async (req, res) => {
     }
     res.render('adminusers', { arr: arr, isAdmin: true })
 })
- */
+
 router.get('/add-category', checkadminLogin, (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
@@ -320,7 +321,9 @@ router.post('/add-categorysubmit', async (req, res) => {
     const obj = {
         name: req.body.categoryName,
         description: req.body.description,
-        isdeleted: false
+        isdeleted: false,
+        status:true,
+        editUser: req.session.adminName
     }
     // console.log(obj);
     const data = await insertcategory(obj);
@@ -352,7 +355,9 @@ router.post('/add-brandsubmit', async (req, res) => {
     const obj = {
         name: req.body.brandName,
         description: req.body.description,
-        isdeleted: false
+        isdeleted: false,
+        status:true,
+        editUser: req.session.adminName
     }
     // console.log(obj);
     const data = await insertbrand(obj)
@@ -434,9 +439,10 @@ router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
         image: req.file ? req.file.filename : null,
         sizes_available: sizearr,
         colors_available: colorarr,
-        stock: req.body.stock
+        stock: req.body.stock,
+        status:true
     }
-    console.log(obj);
+    // console.log(obj);
     const data = await insertproduct(obj)
     // console.log(data);
     return res.redirect('/admin/product');

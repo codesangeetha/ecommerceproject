@@ -4,7 +4,8 @@ const brandSchema = new mongoose.Schema({
     name: String,
     description: String,
     isdeleted: Boolean,
-    editUser: String
+    editUser: String,
+    status:Boolean
 },
     {
         timestamps: true

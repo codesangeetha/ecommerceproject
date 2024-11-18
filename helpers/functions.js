@@ -117,28 +117,24 @@ exports.getusersdata = async () => {
     return data;
 }
 
-/* exports.getusersearch = async (str) => {
+exports.getusersearch = async (str) => {
     if (!str.trim()) {
-        return await Users.find({ isdeleted: false }).sort({ createdAt: -1 }); 
+        return await Users.find({}).sort({ createdAt: -1 }); 
     }
-    
-
     const searchConditions = [
         { name: { $regex: str, $options: 'i' } },
         { username: { $regex: str, $options: 'i' } },
-        { email: { $regex: str, $options: 'i' } },
-        { status: { $regex: str, $options: 'i' } }
+        { email: { $regex: str, $options: 'i' } }
     ];
 
     const searchQuery = {
-        isdeleted: false,
         $or: searchConditions,
     };
 
     const data = await Users.find(searchQuery).sort({createdAt:-1});
     return data;
 };
- */
+
 exports.insertcategory = async (obj) => {
 
     const data = await Category.insertMany([obj]);

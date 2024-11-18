@@ -11,7 +11,8 @@ const productsSchema = new mongoose.Schema({
     sizes_available: [String],
     colors_available: [String],
     editUser: String,
-    stock: { type: Number, required: true }
+    stock: { type: Number, required: true },
+    status:Boolean
 },
     {
         timestamps: true
