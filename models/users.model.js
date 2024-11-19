@@ -11,7 +11,9 @@ const usersSchema = new mongoose.Schema({
         city: String,
         state: String,
         pincode: String
-    }
+    },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 },
     {
         timestamps: true

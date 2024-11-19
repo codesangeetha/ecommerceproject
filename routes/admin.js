@@ -11,8 +11,8 @@ const { getcategorydata,
     finduseradmin,
     getproductsearch,
     getbranddata, insertbrand, getBrandDatabyId, editbrand,
-    deletebrand ,getbrandsearch,
-       getusersearch} = require('../helpers/functions');
+    deletebrand, getbrandsearch,
+    getusersearch } = require('../helpers/functions');
 const Products = require("../models/products.model");
 const Category = require("../models/categories.model");
 const Users = require("../models/users.model");
@@ -199,27 +199,27 @@ router.get('/brand', checkadminLogin, async (req, res) => {
     clearCache(res);
 });
 
-router.post('/brand-search', checkadminLogin,async(req,res)=>{
+router.post('/brand-search', checkadminLogin, async (req, res) => {
     const branddata = await getbrandsearch(req.body.search);
-     console.log("branddata", branddata);
-     clearCache(res);
-     const arr = [];
-     for (let i = 0; i < branddata.length; i++) {
-         const o = branddata[i];
-         const newDesc = o.description.substring(0, 20);
-         const newO = {
-             slno: i + 1,
-             _id: o._id,
-             name: o.name,
-             description: newDesc
-         };
-         arr.push(newO);
-     }
-     res.render('adminbrand', { arr: arr, isAdmin: true })
- });
- 
-router.get('/dashboard',checkadminLogin,(req,res)=>{
-return res.render('admindashboard',{isAdmin:true});
+    console.log("branddata", branddata);
+    clearCache(res);
+    const arr = [];
+    for (let i = 0; i < branddata.length; i++) {
+        const o = branddata[i];
+        const newDesc = o.description.substring(0, 20);
+        const newO = {
+            slno: i + 1,
+            _id: o._id,
+            name: o.name,
+            description: newDesc
+        };
+        arr.push(newO);
+    }
+    res.render('adminbrand', { arr: arr, isAdmin: true })
+});
+
+router.get('/dashboard', checkadminLogin, (req, res) => {
+    return res.render('admindashboard', { isAdmin: true });
 });
 
 router.get('/login', (req, res) => {
@@ -282,17 +282,17 @@ router.post('/user-search', async (req, res) => {
 
     const userdata = await getusersearch(req.body.search);
     clearCache(res);
-     console.log("userdata", userdata);
+    console.log("userdata", userdata);
     const arr = [];
     for (let i = 0; i < userdata.length; i++) {
         const o = userdata[i];
-                const newO = {
+        const newO = {
             slno: i + 1,
             _id: o._id,
             name: o.name,
             email: o.email,
-            status:o.status,
-            username:o.username
+            status: o.status,
+            username: o.username
         };
         arr.push(newO);
     }
@@ -322,7 +322,7 @@ router.post('/add-categorysubmit', async (req, res) => {
         name: req.body.categoryName,
         description: req.body.description,
         isdeleted: false,
-        status:true,
+        status: true,
         editUser: req.session.adminName
     }
     // console.log(obj);
@@ -356,7 +356,7 @@ router.post('/add-brandsubmit', async (req, res) => {
         name: req.body.brandName,
         description: req.body.description,
         isdeleted: false,
-        status:true,
+        status: true,
         editUser: req.session.adminName
     }
     // console.log(obj);
@@ -440,7 +440,7 @@ router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
         sizes_available: sizearr,
         colors_available: colorarr,
         stock: req.body.stock,
-        status:true
+        status: true
     }
     // console.log(obj);
     const data = await insertproduct(obj)
@@ -484,8 +484,8 @@ router.get('/edit-category/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
     const data = await getCategoryDatabyId(val)
     //  console.log(data);
-  
-    return res.render('editcategory', { category: data, msg:msg, isAdmin: true })
+
+    return res.render('editcategory', { category: data, msg: msg, isAdmin: true })
 });
 
 router.post('/edit-categorysubmit/:id', checkadminLogin, async (req, res) => {

@@ -4,6 +4,11 @@ const Category = require("../models/categories.model");
 const Products = require("../models/products.model");
 const Users = require("../models/users.model");
 const bcrypt = require("bcrypt");
+const { MailtrapClient } = require("mailtrap");
+const TOKEN = "a72cedfa02a11c174c1e8596b1bc1f14";
+const ENDPOINT = "https://send.api.mailtrap.io/";
+const client = new MailtrapClient({ endpoint: ENDPOINT, token:TOKEN});
+
 
 exports.getcategorydata = async () => {
     const data = await Category.find({ isdeleted: false }).sort({ createdAt: -1 });
@@ -189,19 +194,48 @@ exports.banusers = async (id) => {
 }
 
 exports.finduser = async (username, pwd) => {
-    // Find the user by username
     const user = await Users.findOne({ username: username });
     if (!user) {
-        return null; // User not found
+        return null; 
     }
 
-    // Compare the provided password with the stored hashed password
     const isMatch = await bcrypt.compare(pwd, user.password);
-    return isMatch ? user : null; // Return user if password matches, otherwise null
+    return isMatch ? user : null; 
 };
 
 exports.finduseradmin = async (username, pwd) => {
-    const data = await Adminusers.findOne({ $and: [{ username: username }, { password: pwd }] });
-    return data;
+    const user = await Adminusers.findOne({ username: username });
+    if (!user) {
+        return null; 
+    }
+
+    const isMatch = await bcrypt.compare(pwd, user.password);
+    return isMatch ? user : null; 
+}
+
+exports.sendEmail = async (toEmail, subject, message) => {
+    const sender = {
+        email: "mailtrap@demomailtrap.com",
+        name: "Mailtrap Test",
+
+    };
+    const recipients = [
+        {
+            email: toEmail,
+        },
+    ];
+
+    try {
+        const response = await client.send({
+            from: sender,
+            to: recipients,
+            subject: subject,
+            text: message,
+            category: "Integration Test",
+        });
+        console.log('Email sent successfully:', response);
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
 }
 

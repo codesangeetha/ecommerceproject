@@ -16,6 +16,6 @@ async function verifyPassword(plainPassword, hashedPassword) {
 
 // Example Usage
 (async () => {
-    const hashedPassword = await hashPassword("manupwd");
+    const hashedPassword = await hashPassword("sandeeppwd");
     // await verifyPassword(plainTextPassword, hashedPassword);
 })();

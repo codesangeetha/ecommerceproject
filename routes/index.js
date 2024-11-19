@@ -1,6 +1,7 @@
 var express = require('express');
 const bcrypt = require("bcrypt");
-const { finduser, getproductsdata, getProductDatabyId } = require('../helpers/functions');
+const crypto = require('crypto');
+const { finduser, getproductsdata, getProductDatabyId, sendEmail } = require('../helpers/functions');
 const { insertuser } = require('../helpers/functions');
 
 const Cart = require("../models/cart.model");
@@ -225,6 +226,92 @@ router.post('/checkout', checkLogin, async (req, res) => {
 router.get('/payment', (req, res) => {
     return res.render('payment');
 });
+
+router.get('/forgot-password', (req, res) => {
+    res.render('forgot-password'); 
+  });
+
+  
+
+router.post('/forgot-password-submit', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    const token = crypto.randomBytes(32).toString('hex');
+
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    await user.save();
+
+    const resetURL = `http://${req.headers.host}/reset-password/${token}`;
+    const mailBody = `You are receiving this because you requested to reset your password.\n\n
+    Please click on the following link, or paste it into your browser to complete the process:\n\n
+    ${resetURL}\n\n
+    If you did not request this, please ignore this email.\n`;
+
+    await sendEmail(user.email, 'Password Reset', mailBody);
+
+    res.send('Password reset email sent!');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error occurred');
+  }
+});
+
+router.get('/reset-password/:token', async (req, res) => {
+    const { token } = req.params;
+  
+    try {
+      const user = await User.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpires: { $gt: Date.now() }, 
+      });
+  
+      if (!user) {
+        return res.status(400).send('Password reset token is invalid or has expired.');
+      }
+  
+      res.render('reset-password', { token }); 
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error occurred');
+    }
+  });
+
+  router.post('/reset-password-submit/:token', async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+  
+    try {
+      const user = await User.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpires: { $gt: Date.now() },
+      });
+  
+      if (!user) {
+        return res.status(400).send('Password reset token is invalid or has expired.');
+      }
+  
+      user.password = hashedPassword;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+  
+      await user.save();
+      res.send('Password has been reset successfully!');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error occurred');
+    }
+  });
+  
+  
+
+  
 
 
 module.exports = router;
