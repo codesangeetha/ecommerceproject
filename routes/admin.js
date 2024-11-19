@@ -86,7 +86,7 @@ router.get('/product', checkadminLogin, async (req, res) => {
         arr: products,
         currentPage: page,
         totalPages,
-        isAdmin: true
+        isAdmin: true, isadminlogin: req.session.isAdminLoggin
     });
     clearCache(res);
 });
@@ -110,7 +110,7 @@ router.post('/product-search', checkadminLogin, async (req, res) => {
         };
         arr.push(newO);
     }
-    res.render('adminproduct', { arr: arr, isAdmin: true })
+    res.render('adminproduct', { arr: arr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 });
 
 
@@ -140,7 +140,7 @@ router.get('/category', checkadminLogin, async (req, res) => {
         arr: categories,
         currentPage: page,
         totalPages,
-        isAdmin: true
+        isAdmin: true, isadminlogin: req.session.isAdminLoggin
     });
     clearCache(res);
 });
@@ -164,7 +164,7 @@ router.post('/category-search', checkadminLogin, async (req, res) => {
         };
         arr.push(newO);
     }
-    res.render('admincategory', { arr: arr, isAdmin: true })
+    res.render('admincategory', { arr: arr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 });
 
 
@@ -194,7 +194,7 @@ router.get('/brand', checkadminLogin, async (req, res) => {
         arr: brands,
         currentPage: page,
         totalPages,
-        isAdmin: true
+        isAdmin: true, isadminlogin: req.session.isAdminLoggin
     });
     clearCache(res);
 });
@@ -215,11 +215,11 @@ router.post('/brand-search', checkadminLogin, async (req, res) => {
         };
         arr.push(newO);
     }
-    res.render('adminbrand', { arr: arr, isAdmin: true })
+    res.render('adminbrand', { arr: arr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 });
 
 router.get('/dashboard', checkadminLogin, (req, res) => {
-    return res.render('admindashboard', { isAdmin: true });
+    return res.render('admindashboard', { isAdmin: true, isadminlogin: req.session.isAdminLoggin });
 });
 
 router.get('/login', (req, res) => {
@@ -227,7 +227,7 @@ router.get('/login', (req, res) => {
     req.session.message = "";
     clearCache(res);
 
-    res.render('adminlogin', { msg, isAdmin: true });
+    res.render('adminlogin', { msg, isAdmin: true, isadminlogin: req.session.isAdminLoggin });
 });
 
 router.post('/adminloginsubmit', async (req, res) => {
@@ -244,7 +244,7 @@ router.post('/adminloginsubmit', async (req, res) => {
     }
 });
 
-router.get('/user', async (req, res) => {
+router.get('/user',checkadminLogin, async (req, res) => {
 
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
@@ -273,12 +273,12 @@ router.get('/user', async (req, res) => {
         arr: users,
         currentPage: page,
         totalPages,
-        isAdmin: true
+        isAdmin: true, isadminlogin: req.session.isAdminLoggin
     });
     clearCache(res);
 });
 
-router.post('/user-search', async (req, res) => {
+router.post('/user-search',checkadminLogin, async (req, res) => {
 
     const userdata = await getusersearch(req.body.search);
     clearCache(res);
@@ -296,14 +296,14 @@ router.post('/user-search', async (req, res) => {
         };
         arr.push(newO);
     }
-    res.render('adminusers', { arr: arr, isAdmin: true })
+    res.render('adminusers', { arr: arr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 })
 
 router.get('/add-category', checkadminLogin, (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
     // console.log("msg", msg);
-    return res.render('addcategory', { isAdmin: true, msg: msg })
+    return res.render('addcategory', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, msg: msg })
 });
 
 router.post('/add-categorysubmit', async (req, res) => {
@@ -337,7 +337,7 @@ router.get('/add-brand', checkadminLogin, (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
     // console.log("msg = ",msg);
-    return res.render('addbrand', { isAdmin: true, msg: msg })
+    return res.render('addbrand', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, msg: msg })
 });
 
 router.post('/add-brandsubmit', async (req, res) => {
@@ -378,7 +378,7 @@ router.get('/add-product', checkadminLogin, async (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
 
-    return res.render('addproduct', { arr: data, arr2: info, sizeArr: sizeArr, msg: msg, colorArr: colorArr, isAdmin: true })
+    return res.render('addproduct', { arr: data, arr2: info, sizeArr: sizeArr, msg: msg, colorArr: colorArr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 });
 
 router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
@@ -485,7 +485,7 @@ router.get('/edit-category/:id', checkadminLogin, async (req, res) => {
     const data = await getCategoryDatabyId(val)
     //  console.log(data);
 
-    return res.render('editcategory', { category: data, msg: msg, isAdmin: true })
+    return res.render('editcategory', { category: data, msg: msg, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 });
 
 router.post('/edit-categorysubmit/:id', checkadminLogin, async (req, res) => {
@@ -507,7 +507,7 @@ router.get('/edit-brand/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
     const data = await getBrandDatabyId(val)
     // console.log("editbrand-data", data)
-    return res.render('editbrand', { brand: data, isAdmin: true })
+    return res.render('editbrand', { brand: data, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 });
 router.post('/edit-brandsubmit/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
@@ -590,7 +590,7 @@ router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
         newColorArr.push(obj);
     }
     // console.log(newColorArr);
-    return res.render('editproduct', { products: product, arr: newCategories, arr2: newbrands, newSizeArr: newSizeArr, newColorArr: newColorArr, isAdmin: true });
+    return res.render('editproduct', { products: product, arr: newCategories, arr2: newbrands, newSizeArr: newSizeArr, newColorArr: newColorArr, isAdmin: true, isadminlogin: req.session.isAdminLoggin });
 });
 
 
@@ -669,7 +669,7 @@ router.get('/view-product/:id', async (req, res) => {
             brandName = brands[i].name;
         }
     }
-    return res.render('adminProductview', { product: product, categoryName: catName, brandname: brandName, createdAtDate: createdDate[0], updatedAtDate: updatedDate[0], isAdmin: true });
+    return res.render('adminProductview', { product: product, categoryName: catName, brandname: brandName, createdAtDate: createdDate[0], updatedAtDate: updatedDate[0], isAdmin: true, isadminlogin: req.session.isAdminLoggin });
 });
 
 function clearCache(res) {
