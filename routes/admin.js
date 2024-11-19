@@ -16,6 +16,7 @@ const { getcategorydata,
 const Products = require("../models/products.model");
 const Category = require("../models/categories.model");
 const Users = require("../models/users.model");
+const Brand = require('../models/brands.model');
 
 var router = express.Router();
 
@@ -27,8 +28,8 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + "-" + random() + "-" + file.originalname);
     }
 });
+
 const hbs = require('hbs');
-const Brand = require('../models/brands.model');
 
 hbs.registerHelper('range', (start, end) => {
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
@@ -485,7 +486,7 @@ router.get('/edit-category/:id', checkadminLogin, async (req, res) => {
     const data = await getCategoryDatabyId(val)
     //  console.log(data);
 
-    return res.render('editcategory', { category: data, msg: msg, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
+    return res.render('editcategory', { category: data, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 });
 
 router.post('/edit-categorysubmit/:id', checkadminLogin, async (req, res) => {
