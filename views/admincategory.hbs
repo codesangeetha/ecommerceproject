@@ -34,7 +34,11 @@
             {{#each arr}}
             <tr>
                 <th>{{slno}}</th>
-                <td>{{name}}</td>
+                <td>
+                    <span onclick="openPopup('{{_id}}')" data-bs-toggle="modal"
+                        data-bs-target="#categoryModal" style="cursor:pointer;">{{name}}</span>
+                </td>
+
                 <td>{{description}}</td>
                 <td><img src="/uploads/{{image}}" alt="Cart Image" class="uploadImg-cls">
                 </td>
@@ -46,9 +50,13 @@
                             class="btn btn-sm btn-danger">
                             <i class="fas fa-trash-alt"></i>
                         </button></a>
-                          <a href="view-product/{{_id}}"><button class="btn btn-sm btn-warning me-2">
+                    {{!-- <a href="view-product/{{_id}}"><button class="btn btn-sm btn-warning me-2">
                             <i class="fa-solid fa-eye"></i>
-                        </button></a>
+                        </button></a> --}}
+                    <button class="btn btn-sm btn-warning me-2" onclick="openPopup('{{_id}}')" data-bs-toggle="modal"
+                        data-bs-target="#categoryModal">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
                 </td>
             </tr>
 
@@ -88,12 +96,50 @@
 </div>
 </section>
 
+
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="width: 620px;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalLabel">Category Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+            </div>
+            <div class="modal-body">
+                <div id="categoryDetails">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     function confirmDelete() {
         return confirm("Are you want to delete this category?");
     }
+
+    async function openPopup(categoryId) {
+        try {
+            const response = await fetch(`/admin/view-category/${categoryId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch category details');
+            }
+            const categoryHtml = await response.text();
+            console.log("html",categoryHtml);
+            document.getElementById('categoryDetails').innerHTML = categoryHtml;
+        } catch (error) {
+            console.error('Error fetching category details:', error);
+            document.getElementById('categoryDetails').innerHTML =
+                '<p class="text-danger">Failed to load category details. Please try again later.</p>';
+        }
+
+    }
+
+
 </script>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </html>

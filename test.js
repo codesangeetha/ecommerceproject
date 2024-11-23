@@ -139,9 +139,9 @@ for (let i = 0; i < students.length; i++) {
 console.log(students); */
 
 const books = [
-    { id: 101, title: "1984", author: "George Orwell", price: 20, pages: 328, genre: "Fiction", tags: ["Classic", "Dystopian","Fantasy"] },
+    { id: 101, title: "1984", author: "George Orwell", price: 20, pages: 328, genre: "Fiction", tags: ["Classic", "Dystopian", "Fantasy"] },
     { id: 102, title: "To Kill a Mockingbird", author: "Harper Lee", price: 18, pages: 281, genre: "Fiction", tags: ["Classic"] },
-    { id: 103, title: "Sapiens", author: "Yuval Noah Harari", price: 22, pages: 443, genre: "Non-Fiction", tags: ["History", "Anthropology","Fantasy"] },
+    { id: 103, title: "Sapiens", author: "Yuval Noah Harari", price: 22, pages: 443, genre: "Non-Fiction", tags: ["History", "Anthropology", "Fantasy"] },
     { id: 104, title: "Harry Potter", author: "J.K. Rowling", price: 25, pages: 500, genre: "Fantasy", tags: ["Magic", "Adventure"] },
     { id: 105, title: "Dune", author: "Frank Herbert", price: 28, pages: 412, genre: "Science Fiction", tags: ["Classic", "Epic"] },
 ];
@@ -228,3 +228,79 @@ console.log(count); */
     }
 }
 console.log(books); */
+
+ const products = [
+    {
+        product: {
+           
+            name: 'Nike Air Jordan',
+            description: 'very attractive',
+            price: 5000,
+            brand: '6734ec1efd59e36d59667467',
+            image: '1731834084394-10000-shoe1.webp',
+            category: '67339292d6197f4fb6bb4911',
+            isdeleted: false,
+            sizes_available: ['12', '13'],
+            colors_available: ['Blue'],
+            editUser: 'manu',
+            stock: 5,
+            __v: 0,
+        },
+
+        quantity: 2,
+        size: '12',
+        color: 'Blue',
+      
+    },
+    {
+        product: {
+           
+            name: 'Nike Air Jordan',
+            description: 'very attractive',
+            price: 5000,
+            brand: '6734ec1efd59e36d59667467',
+            image: '1731834084394-10000-shoe1.webp',
+            category: '67339292d6197f4fb6bb4911',
+            isdeleted: false,
+            sizes_available: ['12', '13'],
+            colors_available: ['Blue'],
+            editUser: 'manu',
+            stock: 5,
+            __v: 0,
+
+        },
+        quantity: 2,
+        size: '13',
+        color: 'Blue',
+       
+    },
+    {
+        product: {
+            
+            name: 'Nike Air Jordan',
+            description: 'very attractive',
+            price: 5000,
+            brand: '6734ec1efd59e36d59667467',
+            image: '1731834084394-10000-shoe1.webp',
+            category: '67339292d6197f4fb6bb4911',
+            isdeleted: false,
+            sizes_available: ['12', '13'],
+            colors_available: ['Blue'],
+            editUser: 'manu',
+            stock: 5,
+            __v: 0,
+
+        },
+        quantity: 2,
+        size: '10',
+        color: 'Blue',
+        
+    }
+]
+
+let result = 0;
+for (let i = 0; i < products.length; i++) {
+    let sum = products[i].product.price * products[i].quantity;
+    result = result +sum;
+  }
+  console.log(result);

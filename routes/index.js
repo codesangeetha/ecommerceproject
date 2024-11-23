@@ -54,7 +54,7 @@ router.get('/cart', checkLogin, async (req, res) => {
 
     try {
         const cart = await Cart.findOne({ user: userId }).populate('products.product');
-        // console.log('cart', cart);
+        //  console.log('cart', cart);
         res.render('cart', { cart });
     } catch (error) {
         console.error(error);
@@ -63,7 +63,7 @@ router.get('/cart', checkLogin, async (req, res) => {
 });
 
 
-router.post('/cart/add', async (req, res) => {
+router.post('/cart/add', checkLogin, async (req, res) => {
     // console.log('body', req.body);
     const { productId, quantity, size, color } = req.body;
     const userId = req.session.userId;
@@ -73,7 +73,7 @@ router.post('/cart/add', async (req, res) => {
         if (!cart) {
             cart = new Cart({ user: userId, products: [] });
         }
-
+        console.log(cart);
         const productIndex = cart.products.findIndex(p => {
             return p.product.toString() === productId && p.size === size && p.color === color;
         });
@@ -134,8 +134,8 @@ router.post("/loginsubmit", async (req, res) => {
     } else {
         req.session.isLoggin = true;
         req.session.name = req.body.username;
-        req.session.userId = loginvalue._id;
-        // console.log("loginvalue",req.session.userId)
+        req.session.userId = loginvalue.result._id;
+        console.log("loginvalue", req.session.userId)
 
         return res.redirect('/');
     }
@@ -209,14 +209,22 @@ router.get('/checkout', checkLogin, async (req, res) => {
         console.log('cart', cart);
         console.log('prod', cart.products[0].product);
 
-        res.render('checkout', { cart, user });
+        let result = 0;
+        for (let i = 0; i < cart.products.length; i++) {
+            let sum = cart.products[i].product.price * cart.products[i].quantity;
+            result = result + sum;
+        }
+        console.log("sum is", result);
+        let total = result+100;
+
+        res.render('checkout', { cart, user,result,total });
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
     }
 });
 
-router.post('/checkout', checkLogin, async (req, res) => {
+router.post('/checkout-submit', checkLogin, async (req, res) => {
     const { fullname, address, city, state, pincode, email } = req.body;
     const userId = req.session.userId;
 
@@ -243,90 +251,90 @@ router.get('/payment', (req, res) => {
 });
 
 router.get('/forgot-password', (req, res) => {
-    res.render('forgot-password'); 
-  });
+    res.render('forgot-password');
+});
 
-  
+
 
 router.post('/forgot-password-submit', async (req, res) => {
-  const { email } = req.body;
+    const { email } = req.body;
 
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).send('User not found');
-    }
-    const token = crypto.randomBytes(32).toString('hex');
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        const token = crypto.randomBytes(32).toString('hex');
 
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-    await user.save();
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+        await user.save();
 
-    const resetURL = `http://${req.headers.host}/reset-password/${token}`;
-    const mailBody = `You are receiving this because you requested to reset your password.\n\n
+        const resetURL = `http://${req.headers.host}/reset-password/${token}`;
+        const mailBody = `You are receiving this because you requested to reset your password.\n\n
     Please click on the following link, or paste it into your browser to complete the process:\n\n
     ${resetURL}\n\n
     If you did not request this, please ignore this email.\n`;
 
-    await sendEmail(user.email, 'Password Reset', mailBody);
+        await sendEmail(user.email, 'Password Reset', mailBody);
 
-    res.send('Password reset email sent!');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error occurred');
-  }
+        res.send('Password reset email sent!');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error occurred');
+    }
 });
 
 router.get('/reset-password/:token', async (req, res) => {
     const { token } = req.params;
-  
-    try {
-      const user = await User.findOne({
-        resetPasswordToken: token,
-        resetPasswordExpires: { $gt: Date.now() }, 
-      });
-  
-      if (!user) {
-        return res.status(400).send('Password reset token is invalid or has expired.');
-      }
-  
-      res.render('reset-password', { token }); 
-    } catch (err) {
-      console.error(err);
-      res.status(500).send('Error occurred');
-    }
-  });
 
-  router.post('/reset-password-submit/:token', async (req, res) => {
+    try {
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
+
+        if (!user) {
+            return res.status(400).send('Password reset token is invalid or has expired.');
+        }
+
+        res.render('reset-password', { token });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error occurred');
+    }
+});
+
+router.post('/reset-password-submit/:token', async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-  
-    try {
-      const user = await User.findOne({
-        resetPasswordToken: token,
-        resetPasswordExpires: { $gt: Date.now() },
-      });
-  
-      if (!user) {
-        return res.status(400).send('Password reset token is invalid or has expired.');
-      }
-  
-      user.password = hashedPassword;
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-  
-      await user.save();
-      res.send('Password has been reset successfully!');
-    } catch (err) {
-      console.error(err);
-      res.status(500).send('Error occurred');
-    }
-  });
-  
-  
 
-  
+    try {
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
+
+        if (!user) {
+            return res.status(400).send('Password reset token is invalid or has expired.');
+        }
+
+        user.password = hashedPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        await user.save();
+        res.send('Password has been reset successfully!');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error occurred');
+    }
+});
+
+
+
+
 
 
 module.exports = router;

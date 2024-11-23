@@ -255,12 +255,15 @@ exports.sendEmail = async (toEmail, subject, message) => {
 exports.dashboradCount = async () => {
     /* const userCount = await Users.countDocuments();
     const prodCount = await Products.countDocuments(); */
-    const [userCount, prodCount] = await Promise.all([
+    const [userCount, prodCount,cateCount,brandCount] = await Promise.all([
         Users.countDocuments(),
-        Products.countDocuments()
+        Products.countDocuments(),
+        Category.countDocuments(),
+        Brand.countDocuments()
+
     ])
     /* console.log('userCount', userCount);
     console.log('prodCount', prodCount); */
-    return { userCount, prodCount };
+    return { userCount, prodCount,cateCount,brandCount };
 }
 

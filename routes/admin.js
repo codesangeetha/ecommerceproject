@@ -234,6 +234,7 @@ router.get('/dashboard', checkadminLogin, async (req, res) => {
     return res.render('admindashboard', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, obj });
 });
 
+
 router.get('/login', (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
@@ -256,7 +257,7 @@ router.post('/adminloginsubmit', async (req, res) => {
     }
 });
 
-router.get('/user',checkadminLogin, async (req, res) => {
+router.get('/user', checkadminLogin, async (req, res) => {
 
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
@@ -290,7 +291,7 @@ router.get('/user',checkadminLogin, async (req, res) => {
     clearCache(res);
 });
 
-router.post('/user-search',checkadminLogin, async (req, res) => {
+router.post('/user-search', checkadminLogin, async (req, res) => {
 
     const userdata = await getusersearch(req.body.search);
     clearCache(res);
@@ -318,7 +319,7 @@ router.get('/add-category', checkadminLogin, (req, res) => {
     return res.render('addcategory', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, msg: msg })
 });
 
-router.post('/add-categorysubmit',upload.single('image'), async (req, res) => {
+router.post('/add-categorysubmit', upload.single('image'), async (req, res) => {
 
     if (req.body.categoryName === "") {
         req.session.message = "Category Name is empty";
@@ -453,7 +454,7 @@ router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
         sizes_available: sizearr,
         colors_available: colorarr,
         stock: req.body.stock,
-        status: true
+        status: req.body.status ? true : false
     }
     // console.log(obj);
     const data = await insertproduct(obj)
@@ -501,15 +502,23 @@ router.get('/edit-category/:id', checkadminLogin, async (req, res) => {
     return res.render('editcategory', { category: data, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 });
 
-router.post('/edit-categorysubmit/:id', checkadminLogin, async (req, res) => {
+router.post('/edit-categorysubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {
     const val2 = req.params.id;
 
 
     let obj = {
         name: req.body.categoryName,
         description: req.body.description,
-        editUser: req.session.adminName
+        editUser: req.session.adminName,
+        image: req.file ? req.file.filename : null,
     };
+
+    if (req.file) {
+        obj.image = req.file.filename;
+    } else if (req.body.removeImage) {
+        obj.image = null;
+    }
+
     // console.log(obj);
     const data = await editcategory(val2, obj);
     // console.log(data);
@@ -608,6 +617,8 @@ router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
 
 
 router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {
+
+    console.log('req.body', req.body);
     const val2 = req.params.id;
     let sizearr = req.body.size;
     if (!Array.isArray(req.body.size)) {
@@ -627,7 +638,8 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), 
         colors_available: colorarr,
         editUser: req.session.adminName,
         image: req.file ? req.file.filename : null,
-        stock: req.body.stock
+        stock: req.body.stock,
+        status: req.body.status ? true : false
     };
 
     // Handle new image upload
@@ -651,7 +663,7 @@ router.get('/bantoggle/:id', async (req, res) => {
     res.redirect('/admin/user')
 });
 
-router.get('/view-product/:id', async (req, res) => {
+/* router.get('/view-product/:id', async (req, res) => {
     const val = req.params.id;
     const product = await getProductDatabyId(val)
     console.log("product document:", product);
@@ -683,7 +695,104 @@ router.get('/view-product/:id', async (req, res) => {
         }
     }
     return res.render('adminProductview', { product: product, categoryName: catName, brandname: brandName, createdAtDate: createdDate[0], updatedAtDate: updatedDate[0], isAdmin: true, isadminlogin: req.session.isAdminLoggin });
+}); */
+
+router.get('/view-product/:id', async (req, res) => {
+    const val = req.params.id;
+    const product = await getProductDatabyId(val);
+    const categories = await getcategorydata();
+    const brands = await getbranddata();
+
+    let categoryName = categories.find(cat => cat._id.toString() === product.category)?.name || 'N/A';
+    let brandName = brands.find(brand => brand._id.toString() === product.brand)?.name || 'N/A';
+
+    const createdAtDate = product.createdAt ? product.createdAt.toISOString().split('T')[0] : 'N/A';
+    const updatedAtDate = product.updatedAt ? product.updatedAt.toISOString().split('T')[0] : 'N/A';
+
+    res.render('partials/productModalContent', {
+        layout: false, // Render without the main layout
+        product,
+        categoryName,
+        brandName,
+        createdAtDate,
+        updatedAtDate
+    });
 });
+
+router.get('/view-category/:id', async (req, res) => {
+    try {
+        const val = req.params.id; // Category ID from the request params
+
+        const categories = await getcategorydata(); // Fetch all categories
+        console.log("categories", categories);
+        // Find the category by ID
+        const category = categories.find(cat => cat._id.toString() === val);
+
+        // Handle case where category is not found
+        if (!category) {
+            return res.status(404).send('<p class="text-danger">Category not found</p>');
+        }
+
+        // Format dates
+        const createdAtDate = category.createdAt
+            ? category.createdAt.toISOString().split('T')[0]
+            : 'N/A';
+        const updatedAtDate = category.updatedAt
+            ? category.updatedAt.toISOString().split('T')[0]
+            : 'N/A';
+
+        // Render the modal content
+        res.render('partials/categoryModalContent', {
+            layout: false, // Render only the partial, not the entire layout
+            categoryName: category.name,
+            description: category.description,
+            editUser: category.editUser || 'N/A',
+            createdAtDate,
+            updatedAtDate,
+            image: category.image || 'default.png', // Default image fallback
+        });
+    } catch (error) {
+        console.error('Error fetching category data:', error);
+        res.status(500).send('<p class="text-danger">Internal server error</p>');
+    }
+});
+
+router.get('/view-brand/:id', async (req, res) => {
+    try {
+        const val = req.params.id;
+
+        const brands = await getbranddata();
+        console.log("brand", brands);
+
+        const brand = brands.find(cat => cat._id.toString() === val);
+
+        if (!brand) {
+            return res.status(404).send('<p class="text-danger">Brand not found</p>');
+        }
+
+        const createdAtDate = brand.createdAt
+            ? brand.createdAt.toISOString().split('T')[0]
+            : 'N/A';
+        const updatedAtDate = brand.updatedAt
+            ? brand.updatedAt.toISOString().split('T')[0]
+            : 'N/A';
+
+
+        res.render('partials/brandModalContent', {
+            layout: false,
+            brandName: brand.name,
+            description: brand.description,
+            editUser: brand.editUser || 'N/A',
+            createdAtDate,
+            updatedAtDate,
+
+        });
+    } catch (error) {
+        console.error('Error fetching brand data:', error);
+        res.status(500).send('<p class="text-danger">Internal server error</p>');
+    }
+});
+
 
 function clearCache(res) {
     res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private');
