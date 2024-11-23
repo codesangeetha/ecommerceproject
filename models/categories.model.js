@@ -5,7 +5,8 @@ const categorySchema = new mongoose.Schema({
     description: String,
     isdeleted: Boolean,
     editUser: String,
-    status:Boolean
+    status:Boolean,
+    image: String,
 },
     {
         timestamps: true

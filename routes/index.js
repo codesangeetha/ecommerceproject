@@ -125,8 +125,11 @@ router.post("/loginsubmit", async (req, res) => {
     // console.log(req.body);
     const loginvalue = await finduser(req.body.username, req.body.password);
     console.log(loginvalue);
-    if (loginvalue == null) {
-        req.session.message = "Invalid username/password";
+    if (loginvalue.result == null) {
+        req.session.message = loginvalue.msg;
+        return res.redirect('/login');
+    } if (loginvalue.status == false) {
+        req.session.message = "You are disabled by admin";
         return res.redirect('/login');
     } else {
         req.session.isLoggin = true;
@@ -138,6 +141,15 @@ router.post("/loginsubmit", async (req, res) => {
     }
 });
 
+router.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            return res.status(500).send("Couldn't log out");
+        }
+        res.redirect('/');
+    });
+});
 
 
 router.get('/signup', (req, res) => {
@@ -193,6 +205,9 @@ router.get('/checkout', checkLogin, async (req, res) => {
     try {
         const cart = await Cart.findOne({ user: userId }).populate('products.product');
         const user = await User.findById(userId);
+
+        console.log('cart', cart);
+        console.log('prod', cart.products[0].product);
 
         res.render('checkout', { cart, user });
     } catch (error) {

@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const { MailtrapClient } = require("mailtrap");
 const TOKEN = "a72cedfa02a11c174c1e8596b1bc1f14";
 const ENDPOINT = "https://send.api.mailtrap.io/";
-const client = new MailtrapClient({ endpoint: ENDPOINT, token:TOKEN});
+const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
 
 
 exports.getcategorydata = async () => {
@@ -124,7 +124,7 @@ exports.getusersdata = async () => {
 
 exports.getusersearch = async (str) => {
     if (!str.trim()) {
-        return await Users.find({}).sort({ createdAt: -1 }); 
+        return await Users.find({}).sort({ createdAt: -1 });
     }
     const searchConditions = [
         { name: { $regex: str, $options: 'i' } },
@@ -136,7 +136,7 @@ exports.getusersearch = async (str) => {
         $or: searchConditions,
     };
 
-    const data = await Users.find(searchQuery).sort({createdAt:-1});
+    const data = await Users.find(searchQuery).sort({ createdAt: -1 });
     return data;
 };
 
@@ -193,24 +193,37 @@ exports.banusers = async (id) => {
     return data;
 }
 
-exports.finduser = async (username, pwd) => {
-    const user = await Users.findOne({ username: username });
+exports.finduser = async (username_email, pwd) => {
+    const user = await Users.findOne({ $or: [{ username: username_email }, { email: username_email }] });
     if (!user) {
-        return null; 
+        return {
+            result: null,
+            msg: "Username is invalid"
+        };
     }
 
     const isMatch = await bcrypt.compare(pwd, user.password);
-    return isMatch ? user : null; 
+    if(isMatch){
+        return {
+            result: user,
+            msg: "Successfully logged in"
+        }
+    } else {
+        return {
+            result: null,
+            msg: "Password is invalid"
+        }
+    }
 };
 
 exports.finduseradmin = async (username, pwd) => {
     const user = await Adminusers.findOne({ username: username });
     if (!user) {
-        return null; 
+        return null;
     }
 
     const isMatch = await bcrypt.compare(pwd, user.password);
-    return isMatch ? user : null; 
+    return isMatch ? user : null;
 }
 
 exports.sendEmail = async (toEmail, subject, message) => {
@@ -237,5 +250,17 @@ exports.sendEmail = async (toEmail, subject, message) => {
     } catch (error) {
         console.error('Error sending email:', error);
     }
+}
+
+exports.dashboradCount = async () => {
+    /* const userCount = await Users.countDocuments();
+    const prodCount = await Products.countDocuments(); */
+    const [userCount, prodCount] = await Promise.all([
+        Users.countDocuments(),
+        Products.countDocuments()
+    ])
+    /* console.log('userCount', userCount);
+    console.log('prodCount', prodCount); */
+    return { userCount, prodCount };
 }
 

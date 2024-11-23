@@ -10,7 +10,7 @@
             <h3 class="text-center mb-4">Login</h3>
             <form  action="/loginsubmit" method="post"  onsubmit="return validateForm()" >
               <div class="mb-4">
-                <label for="username" class="form-label">Username</label>
+                <label for="username" class="form-label">Username / Email</label>
                 <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" >
                 <div id="error-name" class="error-message"></div>
               </div>
@@ -33,4 +33,4 @@
       </div>
     </div>
   </section>
-  <script src="javascripts/adminlogin.js"></script>
+  {{!-- <script src="javascripts/adminlogin.js"></script> --}}

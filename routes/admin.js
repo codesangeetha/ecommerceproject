@@ -12,7 +12,8 @@ const { getcategorydata,
     getproductsearch,
     getbranddata, insertbrand, getBrandDatabyId, editbrand,
     deletebrand, getbrandsearch,
-    getusersearch } = require('../helpers/functions');
+    getusersearch,
+    dashboradCount } = require('../helpers/functions');
 const Products = require("../models/products.model");
 const Category = require("../models/categories.model");
 const Users = require("../models/users.model");
@@ -61,7 +62,16 @@ const checkadminLogin = (req, res, next) => {
     }
 }
 
+/* function clearCache(req, res, next) {
+    res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private');
+    next(); // Pass control to the next middleware or route handler
+}
+
+router.use(clearCache()); */
+
+
 router.get('/product', checkadminLogin, async (req, res) => {
+    clearCache(res);
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
 
@@ -83,13 +93,12 @@ router.get('/product', checkadminLogin, async (req, res) => {
 
     const totalPages = Math.ceil(totalProducts / perPage);
 
-    res.render('adminproduct', {
+    return res.render('adminproduct', {
         arr: products,
         currentPage: page,
         totalPages,
         isAdmin: true, isadminlogin: req.session.isAdminLoggin
     });
-    clearCache(res);
 });
 
 
@@ -132,6 +141,7 @@ router.get('/category', checkadminLogin, async (req, res) => {
         _id: o._id,
         name: o.name,
         description: o.description.substring(0, 20),
+        image: o.image
 
     }));
 
@@ -219,8 +229,9 @@ router.post('/brand-search', checkadminLogin, async (req, res) => {
     res.render('adminbrand', { arr: arr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 });
 
-router.get('/dashboard', checkadminLogin, (req, res) => {
-    return res.render('admindashboard', { isAdmin: true, isadminlogin: req.session.isAdminLoggin });
+router.get('/dashboard', checkadminLogin, async (req, res) => {
+    const obj = await dashboradCount();
+    return res.render('admindashboard', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, obj });
 });
 
 router.get('/login', (req, res) => {
@@ -307,7 +318,7 @@ router.get('/add-category', checkadminLogin, (req, res) => {
     return res.render('addcategory', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, msg: msg })
 });
 
-router.post('/add-categorysubmit', async (req, res) => {
+router.post('/add-categorysubmit',upload.single('image'), async (req, res) => {
 
     if (req.body.categoryName === "") {
         req.session.message = "Category Name is empty";
@@ -324,7 +335,8 @@ router.post('/add-categorysubmit', async (req, res) => {
         description: req.body.description,
         isdeleted: false,
         status: true,
-        editUser: req.session.adminName
+        editUser: req.session.adminName,
+        image: req.file ? req.file.filename : null,
     }
     // console.log(obj);
     const data = await insertcategory(obj);
@@ -674,7 +686,7 @@ router.get('/view-product/:id', async (req, res) => {
 });
 
 function clearCache(res) {
-    res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private')
+    res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private');
 }
 
 module.exports = router;

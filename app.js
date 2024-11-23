@@ -39,6 +39,14 @@ app.use(session({
   cookie: { secure: false }
 }));
 
+function clearCache(req, res, next) {
+  res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private');
+  next(); 
+}
+
+app.use(clearCache);
+
+
 app.use('/uploads', express.static('uploads'));
 
 app.use('/', indexRouter);
