@@ -505,12 +505,13 @@ router.get('/edit-category/:id', checkadminLogin, async (req, res) => {
 router.post('/edit-categorysubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {
     const val2 = req.params.id;
 
-
+    const oldimg = await getCategoryDatabyId(val2);
+    console.log("oldimage -", oldimg);
     let obj = {
         name: req.body.categoryName,
         description: req.body.description,
         editUser: req.session.adminName,
-        image: req.file ? req.file.filename : null,
+        image: req.file ? req.file.filename : oldimg.image,
         status: req.body.status ? true : false
     };
 
@@ -632,6 +633,7 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), 
 
     const oldimg = await getProductDatabyId(val2);
     console.log("oldimage -", oldimg);
+
     let obj = {
         name: req.body.productName,
         price: req.body.price,
@@ -693,19 +695,14 @@ router.get('/view-product/:id', async (req, res) => {
 
 router.get('/view-category/:id', async (req, res) => {
     try {
-        const val = req.params.id; // Category ID from the request params
-
-        const categories = await getcategorydata(); // Fetch all categories
-        console.log("categories", categories);
-        // Find the category by ID
-        const category = categories.find(cat => cat._id.toString() === val);
-
-        // Handle case where category is not found
+        const val = req.params.id;
+        const category = await getCategoryDatabyId(val);
+        console.log("categories", category);
+       
         if (!category) {
             return res.status(404).send('<p class="text-danger">Category not found</p>');
         }
 
-        // Format dates
         const createdAtDate = category.createdAt
             ? category.createdAt.toISOString().split('T')[0]
             : 'N/A';
@@ -713,15 +710,15 @@ router.get('/view-category/:id', async (req, res) => {
             ? category.updatedAt.toISOString().split('T')[0]
             : 'N/A';
 
-        // Render the modal content
         res.render('partials/categoryModalContent', {
-            layout: false, // Render only the partial, not the entire layout
+            layout: false, 
             categoryName: category.name,
             description: category.description,
             editUser: category.editUser || 'N/A',
+            status: category.status,
             createdAtDate,
             updatedAtDate,
-            image: category.image || 'default.png', // Default image fallback
+            image: category.image || 'default.png',
         });
     } catch (error) {
         console.error('Error fetching category data:', error);

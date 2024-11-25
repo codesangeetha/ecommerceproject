@@ -2,8 +2,7 @@ function validateAddCategory() {
     var name = document.getElementById("categoryName").value;
     var description = document.getElementById("description").value;
     var img = document.getElementById("image").value;
-
-
+    var preview = document.getElementById("existing-image-preview");
 
     var errormsg1 = document.getElementById("error-name");
     var errormsg2 = document.getElementById("error-description");
@@ -23,10 +22,14 @@ function validateAddCategory() {
         errormsg2.innerHTML = "Please enter description.";
         isValid = false;
     }
-    if (img == "") {
-        errormsg3.innerHTML = "Please add category's image.";
-        isValid = false;
+    if (preview.innerHTML.trim() == "") {
+        if (img == "") {
+            errormsg3.innerHTML = "Please add category's image.";
+            isValid = false;
+        }
+        return isValid;
     }
+
     return isValid;
 
 }

@@ -35,8 +35,8 @@
             <tr>
                 <th>{{slno}}</th>
                 <td>
-                    <span onclick="openPopup('{{_id}}')" data-bs-toggle="modal"
-                        data-bs-target="#categoryModal" style="cursor:pointer;">{{name}}</span>
+                    <span onclick="openPopup('{{_id}}')" data-bs-toggle="modal" data-bs-target="#categoryModal"
+                        style="cursor:pointer;">{{name}}</span>
                 </td>
 
                 <td>{{description}}</td>
@@ -46,13 +46,13 @@
                     <a href="edit-category/{{_id}}"><button class="btn btn-sm btn-warning me-2">
                             <i class="fas fa-edit"></i>
                         </button></a>
-                    <a href="deletecategory/{{_id}}" onclick="return confirmDelete()"><button
+
+                    <a href="deleteproduct/{{_id}}" onclick="return confirmDelete()"><button
                             class="btn btn-sm btn-danger">
                             <i class="fas fa-trash-alt"></i>
                         </button></a>
-                    {{!-- <a href="view-product/{{_id}}"><button class="btn btn-sm btn-warning me-2">
-                            <i class="fa-solid fa-eye"></i>
-                        </button></a> --}}
+
+
                     <button class="btn btn-sm btn-warning me-2" onclick="openPopup('{{_id}}')" data-bs-toggle="modal"
                         data-bs-target="#categoryModal">
                         <i class="fa-solid fa-eye"></i>
@@ -106,7 +106,7 @@
             </div>
             <div class="modal-body">
                 <div id="categoryDetails">
-                    <!-- Dynamic content will be inserted here -->
+
                 </div>
             </div>
         </div>
@@ -126,7 +126,7 @@
                 throw new Error('Failed to fetch category details');
             }
             const categoryHtml = await response.text();
-            console.log("html",categoryHtml);
+            console.log("html", categoryHtml);
             document.getElementById('categoryDetails').innerHTML = categoryHtml;
         } catch (error) {
             console.error('Error fetching category details:', error);

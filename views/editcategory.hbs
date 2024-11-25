@@ -34,6 +34,20 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="status" name="status" value="true" {{#if
+                                category.status}}checked{{/if}}>
+                            <label class="form-check-label" for="status">
+                                {{#if category.status}}Active{{else}}Inactive{{/if}}
+                            </label>
+                        </div>
+                        <div id="error-status" class="error-msg"></div>
+                    </div>
+
+
+
+                    <div class="mb-3">
                         <label for="image" class="form-label">Category Image</label>
                         <input type="file" class="form-control" id="image" name="image" accept="image/*">
 
@@ -111,7 +125,7 @@
     </script>
 
 
-    <script src="/javascripts/addcategory.js"></script>
+    <script src="/javascripts/editcategory.js"></script>
     </body>
 
     </html>
