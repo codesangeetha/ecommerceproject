@@ -68,11 +68,10 @@ function validateAddProduct() {
         errormsg8.innerHTML = "Stock can' be empty";
         isValid = false;
     }
-
-    if (img == "") {
+ if (img == "") {
         errormsg9.innerHTML = "Please add product's image.";
         isValid = false;
-    }
+    } 
 
     return isValid;
 

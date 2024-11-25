@@ -71,7 +71,7 @@ router.use(clearCache()); */
 
 
 router.get('/product', checkadminLogin, async (req, res) => {
-    clearCache(res);
+
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
 
@@ -104,7 +104,6 @@ router.get('/product', checkadminLogin, async (req, res) => {
 
 router.post('/product-search', checkadminLogin, async (req, res) => {
     const productdata = await getproductsearch(req.body.search);
-    clearCache(res);
     // console.log("productdata", productdata);
     const arr = [];
     for (let i = 0; i < productdata.length; i++) {
@@ -338,6 +337,7 @@ router.post('/add-categorysubmit', upload.single('image'), async (req, res) => {
         status: true,
         editUser: req.session.adminName,
         image: req.file ? req.file.filename : null,
+        status: req.body.status ? true : false
     }
     // console.log(obj);
     const data = await insertcategory(obj);
@@ -511,6 +511,7 @@ router.post('/edit-categorysubmit/:id', checkadminLogin, upload.single('image'),
         description: req.body.description,
         editUser: req.session.adminName,
         image: req.file ? req.file.filename : null,
+        status: req.body.status ? true : false
     };
 
     if (req.file) {
@@ -546,7 +547,7 @@ router.post('/edit-brandsubmit/:id', checkadminLogin, async (req, res) => {
 router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
     const product = await getProductDatabyId(val)
-    console.log(product);
+    console.log("product data:", product);
 
     const categories = await getcategorydata();
     const newCategories = [];
@@ -628,6 +629,9 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), 
     if (!Array.isArray(req.body.color)) {
         colorarr = [req.body.color];
     }
+
+    const oldimg = await getProductDatabyId(val2);
+    console.log("oldimage -", oldimg);
     let obj = {
         name: req.body.productName,
         price: req.body.price,
@@ -637,7 +641,7 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), 
         sizes_available: sizearr,
         colors_available: colorarr,
         editUser: req.session.adminName,
-        image: req.file ? req.file.filename : null,
+        image: req.file ? req.file.filename : oldimg.image,
         stock: req.body.stock,
         status: req.body.status ? true : false
     };
@@ -663,39 +667,7 @@ router.get('/bantoggle/:id', async (req, res) => {
     res.redirect('/admin/user')
 });
 
-/* router.get('/view-product/:id', async (req, res) => {
-    const val = req.params.id;
-    const product = await getProductDatabyId(val)
-    console.log("product document:", product);
-    const categories = await getcategorydata();
-    let catName = "";
-    for (let i = 0; i < categories.length; i++) {
-        if (product.category == categories[i]._id) {
-            catName = categories[i].name;
-        }
-    }
-    let createdDate = "";
-    if (product.createdAt) {
-        const createdAtDateArr = product.createdAt.toISOString().split("T");
-        createdDate = createdAtDateArr;
-    }
 
-    let updatedDate = "";
-    if (product.updatedAt) {
-        const updatedAtDateArr = product.updatedAt.toISOString().split("T");
-        updatedDate = updatedAtDateArr;
-    }
-
-    const brands = await getbranddata();
-    console.log("brands list", brands);
-    let brandName = "";
-    for (let i = 0; i < brands.length; i++) {
-        if (product.brand == brands[i]._id) {
-            brandName = brands[i].name;
-        }
-    }
-    return res.render('adminProductview', { product: product, categoryName: catName, brandname: brandName, createdAtDate: createdDate[0], updatedAtDate: updatedDate[0], isAdmin: true, isadminlogin: req.session.isAdminLoggin });
-}); */
 
 router.get('/view-product/:id', async (req, res) => {
     const val = req.params.id;

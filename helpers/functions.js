@@ -88,9 +88,7 @@ exports.getproductsdata = async () => {
     return data;
 }
 exports.getproductsearch = async (str) => {
-    // Trim whitespace and check if the search string is empty
     if (!str.trim()) {
-        // If the search string is empty, return all non-deleted products
         return await Products.find({ isdeleted: false }).sort({ createdAt: -1 });
     }
 
@@ -203,7 +201,7 @@ exports.finduser = async (username_email, pwd) => {
     }
 
     const isMatch = await bcrypt.compare(pwd, user.password);
-    if(isMatch){
+    if (isMatch) {
         return {
             result: user,
             msg: "Successfully logged in"
@@ -255,7 +253,7 @@ exports.sendEmail = async (toEmail, subject, message) => {
 exports.dashboradCount = async () => {
     /* const userCount = await Users.countDocuments();
     const prodCount = await Products.countDocuments(); */
-    const [userCount, prodCount,cateCount,brandCount] = await Promise.all([
+    const [userCount, prodCount, cateCount, brandCount] = await Promise.all([
         Users.countDocuments(),
         Products.countDocuments(),
         Category.countDocuments(),
@@ -264,6 +262,6 @@ exports.dashboradCount = async () => {
     ])
     /* console.log('userCount', userCount);
     console.log('prodCount', prodCount); */
-    return { userCount, prodCount,cateCount,brandCount };
+    return { userCount, prodCount, cateCount, brandCount };
 }
 

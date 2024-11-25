@@ -8,7 +8,8 @@ function validateEditProduct() {
     var color = document.getElementById("color").value;
     var stock = document.getElementById("stock").value;
     var img = document.getElementById("image").value;
-    
+    var preview = document.getElementById("existing-image-preview");
+
     var errormsg1 = document.getElementById("error-name");
     var errormsg2 = document.getElementById("error-brand");
     var errormsg3 = document.getElementById("error-price");
@@ -18,7 +19,7 @@ function validateEditProduct() {
     var errormsg7 = document.getElementById("error-color");
     var errormsg8 = document.getElementById("error-stock");
     var errormsg9 = document.getElementById("error-image");
-    
+
 
     errormsg1.innerHTML = "";
     errormsg2.innerHTML = "";
@@ -46,7 +47,7 @@ function validateEditProduct() {
         errormsg3.innerHTML = "Please enter  price.";
         isValid = false;
     }
-   
+
     if (description == "") {
         errormsg4.innerHTML = "Please enter description.";
         isValid = false;
@@ -69,11 +70,17 @@ function validateEditProduct() {
         isValid = false;
     }
 
-    if (img == "") {
-        errormsg9.innerHTML = "Please add product's image.";
-        isValid = false;
+console.log("preview data :",preview.innerHTML.trim());
+console.log("img :",img.innerHTML);
+
+    if (preview.innerHTML.trim() == "") {
+        if (img == "") {
+            errormsg9.innerHTML = "Please add product's image.";
+            isValid = false;
+        }
+        return isValid;
     }
 
-    return isValid;
+
 
 }

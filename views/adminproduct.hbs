@@ -35,7 +35,8 @@
             <tr>
                 <th>{{slno}}</th>
                 <td>
-                    <span onclick="openPopup('{{_id}}')" data-bs-toggle="modal" data-bs-target="#productModal"style="cursor:pointer;">{{name}}</span>
+                    <span onclick="openPopup('{{_id}}')" data-bs-toggle="modal" data-bs-target="#productModal"
+                        style="cursor:pointer;">{{name}}</span>
                 </td>
                 <td>₹ {{price}}</td>
                 <td>{{description}}</td>
@@ -50,11 +51,10 @@
                             class="btn btn-sm btn-danger">
                             <i class="fas fa-trash-alt"></i>
                         </button></a>
-                    <button class="btn btn-sm btn-warning me-2" onclick="openPopup('{{_id}}')" data-bs-toggle="modal" data-bs-target="#productModal">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-                    {{!-- <button onclick="openPopup('{{_id}}')" class="btn btn-primary" data-id="{{_id}}"
-                        data-bs-toggle="modal" data-bs-target="#productModal">View</button> --}}
+                    <button class="btn btn-sm btn-warning me-2" onclick="openPopup('{{_id}}')" data-bs-toggle="modal"
+                        data-bs-target="#productModal">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
                 </td>
             </tr>
             {{/each}}
