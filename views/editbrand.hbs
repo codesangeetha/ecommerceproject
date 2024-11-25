@@ -2,52 +2,64 @@
 
 
 
-                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                    <h2 class="text-center my-4">Edit brand</h2>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <h2 class="text-center my-4">Edit brand</h2>
 
 
-                    <div class="row mb-3">
-                        <div class="col-md-8 col-sm-12 mb-2">
+        <div class="row mb-3">
+            <div class="col-md-8 col-sm-12 mb-2">
 
+            </div>
+            <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
+
+            </div>
+
+        </div>
+        <div class="col-md-6">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <form action="/admin/edit-brandsubmit/{{brand._id}}" method="POST"
+                        onsubmit="return validateBrand()">
+
+                        <div class="mb-3">
+                            <label for="brandName" class="form-label">Brand Name</label>
+                            <input type="text" class="form-control" id="brandName" name="brandName"
+                                value="{{brand.name}}">
+                            <div id="error-name" class="error-msg"></div>
                         </div>
-                        <div class="col-md-4 col-sm-12 text-md-end text-sm-start">
-                            
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" name="description"
+                                id="description">{{brand.description}}</textarea>
+                            <div id="error-description" class="error-msg"></div>
                         </div>
-
-                    </div>
-                    <div class="col-md-6">
-
-                        <div class="card">
-
-                            <div class="card-body">
-
-                                <form action="/admin/edit-brandsubmit/{{brand._id}}" method="POST"onsubmit="return validateBrand()">
-
-                                    <div class="mb-3">
-                                        <label for="brandName" class="form-label">Brand Name</label>
-                                        <input type="text" class="form-control" id="brandName" name="brandName"
-                                            value="{{brand.name}}">
-                                            <div id="error-name" class="error-msg"></div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="description" class="form-label">Description</label>
-                                        <textarea class="form-control" name="description" id="description"
-                                           >{{brand.description}}</textarea>
-                                           <div id="error-description" class="error-msg"></div>
-                                    </div>
-
-
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </div>
-                                </form>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="status" name="status" value="true"
+                                    {{#if brand.status}}checked{{/if}}>
+                                <label class="form-check-label" for="status">
+                                    {{#if brand.status}}Active{{else}}Inactive{{/if}}
+                                </label>
                             </div>
+                            <div id="error-status" class="error-msg"></div>
                         </div>
-                    </div>
+
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </section>
-      <script src="/javascripts/brandValidation.js"></script>
+        </div>
+        </div>
+        </section>
+        <script src="/javascripts/brandValidation.js"></script>
 </body>
 
 </html>

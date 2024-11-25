@@ -334,7 +334,6 @@ router.post('/add-categorysubmit', upload.single('image'), async (req, res) => {
         name: req.body.categoryName,
         description: req.body.description,
         isdeleted: false,
-        status: true,
         editUser: req.session.adminName,
         image: req.file ? req.file.filename : null,
         status: req.body.status ? true : false
@@ -370,8 +369,8 @@ router.post('/add-brandsubmit', async (req, res) => {
         name: req.body.brandName,
         description: req.body.description,
         isdeleted: false,
-        status: true,
-        editUser: req.session.adminName
+        editUser: req.session.adminName,
+        status: req.body.status ? true : false
     }
     // console.log(obj);
     const data = await insertbrand(obj)
@@ -538,7 +537,8 @@ router.post('/edit-brandsubmit/:id', checkadminLogin, async (req, res) => {
     let obj = {
         name: req.body.brandName,
         description: req.body.description,
-        editUser: req.session.adminName
+        editUser: req.session.adminName,
+        status: req.body.status ? true : false
     };
     // console.log("ready to edit",obj);
     const data = await editbrand(val, obj);
@@ -698,7 +698,7 @@ router.get('/view-category/:id', async (req, res) => {
         const val = req.params.id;
         const category = await getCategoryDatabyId(val);
         console.log("categories", category);
-       
+
         if (!category) {
             return res.status(404).send('<p class="text-danger">Category not found</p>');
         }
@@ -711,7 +711,7 @@ router.get('/view-category/:id', async (req, res) => {
             : 'N/A';
 
         res.render('partials/categoryModalContent', {
-            layout: false, 
+            layout: false,
             categoryName: category.name,
             description: category.description,
             editUser: category.editUser || 'N/A',
@@ -730,11 +730,10 @@ router.get('/view-brand/:id', async (req, res) => {
     try {
         const val = req.params.id;
 
-        const brands = await getbranddata();
-        console.log("brand", brands);
+        const brand = await getBrandDatabyId(val);
+        console.log("brand", brand);
 
-        const brand = brands.find(cat => cat._id.toString() === val);
-
+        
         if (!brand) {
             return res.status(404).send('<p class="text-danger">Brand not found</p>');
         }
@@ -752,6 +751,7 @@ router.get('/view-brand/:id', async (req, res) => {
             brandName: brand.name,
             description: brand.description,
             editUser: brand.editUser || 'N/A',
+            status: brand.status,
             createdAtDate,
             updatedAtDate,
 

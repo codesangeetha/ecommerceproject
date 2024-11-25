@@ -33,7 +33,12 @@
             {{#each arr}}
             <tr>
                 <th>{{slno}}</th>
-                <td>{{name}}</td>
+
+                <td>
+                    <span onclick="openPopup('{{_id}}')" data-bs-toggle="modal" data-bs-target="#brandModal"
+                        style="cursor:pointer;">{{name}}</span>
+                </td>
+
                 <td>{{description}}</td>
                 <td>
                     <a href="edit-brand/{{_id}}"><button class="btn btn-sm btn-warning me-2">
