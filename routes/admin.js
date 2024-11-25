@@ -43,8 +43,6 @@ hbs.registerHelper('gt', (a, b) => a > b);
 hbs.registerHelper('lt', (a, b) => a < b);
 
 
-
-
 function random() {
     return Math.floor(Math.random() + 9000) + 1000;
 }
@@ -73,10 +71,10 @@ router.get('/product', checkadminLogin, async (req, res) => {
     let query = { isdeleted: false };
 
     if (startDate) {
-        query.createdAt = { ...query.createdAt,  $gte: new Date(`${startDate}T00:00:00.000Z`) };
+        query.createdAt = { ...query.createdAt, $gte: new Date(`${startDate}T00:00:00.000Z`) };
     }
     if (endDate) {
-        query.createdAt = { ...query.createdAt,  $lte: new Date(`${endDate}T23:59:59.999Z`) };
+        query.createdAt = { ...query.createdAt, $lte: new Date(`${endDate}T23:59:59.999Z`) };
     }
     console.log("query :", query);
 
@@ -187,7 +185,7 @@ router.get('/category', checkadminLogin, async (req, res) => {
     const totalPages = Math.ceil(totalcategories / perPage);
 
     res.render('admincategory', {
-        
+
         arr: categories,
         currentPage: page,
         totalPages,
@@ -200,15 +198,15 @@ router.get('/category', checkadminLogin, async (req, res) => {
 
 
 router.post('/category-search', checkadminLogin, async (req, res) => {
-    const searchQuery = req.body.search.trim(); 
-    const page = parseInt(req.query.page) || 1; 
+    const searchQuery = req.body.search.trim();
+    const page = parseInt(req.query.page) || 1;
     const perPage = 4; // Number of items per page
 
     let query = { isdeleted: false };
     if (searchQuery) {
         query = {
             ...query,
-            name: { $regex: searchQuery, $options: "i" }, 
+            name: { $regex: searchQuery, $options: "i" },
         };
     }
 
@@ -235,20 +233,30 @@ router.post('/category-search', checkadminLogin, async (req, res) => {
         totalPages,
         isAdmin: true,
         isadminlogin: req.session.isAdminLoggin,
-        searchQuery, 
+        searchQuery,
     });
 });
-
 
 
 router.get('/brand', checkadminLogin, async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
 
-    const totalbrands = await Brand.countDocuments({ isdeleted: false });
+    const { startDate, endDate } = req.query;
 
+    let query = { isdeleted: false };
 
-    const branddata = await Brand.find({ isdeleted: false })
+    if (startDate) {
+        query.createdAt = { ...query.createdAt, $gte: new Date(`${startDate}T00:00:00.000Z`) };
+    }
+    if (endDate) {
+        query.createdAt = { ...query.createdAt, $lte: new Date(`${endDate}T23:59:59.999Z`) };
+    }
+    console.log("query :", query);
+
+    const totalbrands = await Brand.countDocuments(query);
+
+    const branddata = await Brand.find(query)
         .sort({ createdAt: -1 })
         .skip((page - 1) * perPage)
         .limit(perPage);
@@ -269,26 +277,47 @@ router.get('/brand', checkadminLogin, async (req, res) => {
         totalPages,
         isAdmin: true, isadminlogin: req.session.isAdminLoggin
     });
-    clearCache(res);
 });
 
 router.post('/brand-search', checkadminLogin, async (req, res) => {
-    const branddata = await getbrandsearch(req.body.search);
-    console.log("branddata", branddata);
-    clearCache(res);
-    const arr = [];
-    for (let i = 0; i < branddata.length; i++) {
-        const o = branddata[i];
-        const newDesc = o.description.substring(0, 20);
-        const newO = {
-            slno: i + 1,
-            _id: o._id,
-            name: o.name,
-            description: newDesc
+
+    const searchQuery = req.body.search.trim();
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 4; // Number of items per page
+
+    let query = { isdeleted: false };
+    if (searchQuery) {
+        query = {
+            ...query,
+            name: { $regex: searchQuery, $options: "i" },
         };
-        arr.push(newO);
     }
-    res.render('adminbrand', { arr: arr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
+
+    const totalbrands = await Brand.countDocuments(query);
+
+    const branddata = await Brand.find(query)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * perPage)
+        .limit(perPage);
+
+    const brands = branddata.map((o, index) => ({
+        slno: (page - 1) * perPage + index + 1,
+        _id: o._id,
+        name: o.name,
+        description: o.description.substring(0, 20),
+    }));
+
+    const totalPages = Math.ceil(totalbrands / perPage);
+
+    res.render('adminbrand', {
+        arr: brands,
+        currentPage: page,
+        totalPages,
+        isAdmin: true,
+        isadminlogin: req.session.isAdminLoggin,
+        searchQuery,
+    });
+
 });
 
 router.get('/dashboard', checkadminLogin, async (req, res) => {
@@ -321,14 +350,26 @@ router.post('/adminloginsubmit', async (req, res) => {
 
 router.get('/user', checkadminLogin, async (req, res) => {
 
+// console.log("req.query",req.query)
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
+const { startDate, endDate } = req.query;
+
+    let query = {};
+
+    if (startDate) {
+        query.createdAt = { ...query.createdAt, $gte: new Date(`${startDate}T00:00:00.000Z`) };
+    }
+    // console.log("startdate:",query);
+    if (endDate) {
+        query.createdAt = { ...query.createdAt, $lte: new Date(`${endDate}T23:59:59.999Z`) };
+    }
+    console.log("query :", query);
+
+    const totalUsers = await Users.countDocuments(query);
 
 
-    const totalUsers = await Users.countDocuments();
-
-
-    const usersdata = await Users.find({})
+    const usersdata = await Users.find(query)
         .sort({ createdAt: -1 })
         .skip((page - 1) * perPage)
         .limit(perPage);
@@ -348,31 +389,59 @@ router.get('/user', checkadminLogin, async (req, res) => {
         arr: users,
         currentPage: page,
         totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin
+        isAdmin: true, isadminlogin: req.session.isAdminLoggin,
+        startDate,
+        endDate
     });
-    clearCache(res);
+    
 });
 
-router.post('/user-search', checkadminLogin, async (req, res) => {
 
-    const userdata = await getusersearch(req.body.search);
-    clearCache(res);
-    console.log("userdata", userdata);
-    const arr = [];
-    for (let i = 0; i < userdata.length; i++) {
-        const o = userdata[i];
-        const newO = {
-            slno: i + 1,
-            _id: o._id,
-            name: o.name,
-            email: o.email,
-            status: o.status,
-            username: o.username
+router.post('/user-search', checkadminLogin, async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 4;
+    const searchQuery = req.body.search?.trim(); 
+
+    let query = {};
+
+    if (searchQuery) {
+        query = {
+            $or: [
+                { name: { $regex: searchQuery, $options: "i" } },
+                { email: { $regex: searchQuery, $options: "i" } },
+                { username: { $regex: searchQuery, $options: "i" } }
+            ]
         };
-        arr.push(newO);
     }
-    res.render('adminusers', { arr: arr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
-})
+
+    const totalUsers = await Users.countDocuments(query);
+
+    // Fetch paginated results
+    const userdata = await Users.find(query)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * perPage)
+        .limit(perPage);
+
+    const users = userdata.map((o, index) => ({
+        slno: (page - 1) * perPage + index + 1,
+        _id: o._id,
+        name: o.name,
+        email: o.email,
+        status: o.status,
+        username: o.username
+    }));
+
+    const totalPages = Math.ceil(totalUsers / perPage);
+
+    res.render('adminusers', {
+        arr: users,
+        currentPage: page,
+        totalPages,
+        isAdmin: true,
+        isadminlogin: req.session.isAdminLoggin,
+        searchQuery // Pass the search query back to the view
+    });
+});
 
 router.get('/add-category', checkadminLogin, (req, res) => {
     const msg = req.session.message;
