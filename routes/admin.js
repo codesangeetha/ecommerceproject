@@ -62,22 +62,27 @@ const checkadminLogin = (req, res, next) => {
     }
 }
 
-/* function clearCache(req, res, next) {
-    res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private');
-    next(); // Pass control to the next middleware or route handler
-}
-
-router.use(clearCache()); */
 
 
 router.get('/product', checkadminLogin, async (req, res) => {
 
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
+    const { startDate, endDate } = req.query;
 
-    const totalProducts = await Products.countDocuments({ isdeleted: false });
+    let query = { isdeleted: false };
 
-    const productdata = await Products.find({ isdeleted: false })
+    if (startDate) {
+        query.createdAt = { ...query.createdAt,  $gte: new Date(`${startDate}T00:00:00.000Z`) };
+    }
+    if (endDate) {
+        query.createdAt = { ...query.createdAt,  $lte: new Date(`${endDate}T23:59:59.999Z`) };
+    }
+    console.log("query :", query);
+
+    const totalProducts = await Products.countDocuments(query);
+
+    const productdata = await Products.find(query)
         .sort({ createdAt: -1 })
         .skip((page - 1) * perPage)
         .limit(perPage);
@@ -97,40 +102,75 @@ router.get('/product', checkadminLogin, async (req, res) => {
         arr: products,
         currentPage: page,
         totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin
+        isAdmin: true, isadminlogin: req.session.isAdminLoggin,
+        startDate,
+        endDate
     });
 });
 
-
 router.post('/product-search', checkadminLogin, async (req, res) => {
-    const productdata = await getproductsearch(req.body.search);
-    // console.log("productdata", productdata);
-    const arr = [];
-    for (let i = 0; i < productdata.length; i++) {
-        const o = productdata[i];
-        const newDesc = o.description.substring(0, 20);
-        const newO = {
-            slno: i + 1,
-            _id: o._id,
-            name: o.name,
-            description: newDesc,
-            price: o.price,
-            image: o.image
+    const searchQuery = req.body.search?.trim(); // Handle whitespace-only input
+    const page = parseInt(req.query.page) || 1; // Enable pagination
+    const perPage = 4; // Number of items per page
+
+    let query = { isdeleted: false };
+
+    // Add search condition if searchQuery is not empty
+    if (searchQuery) {
+        query = {
+            ...query,
+            name: { $regex: searchQuery, $options: "i" }, // Case-insensitive search
         };
-        arr.push(newO);
     }
-    res.render('adminproduct', { arr: arr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
+
+    const totalProducts = await Products.countDocuments(query);
+
+    const productdata = await Products.find(query)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * perPage)
+        .limit(perPage);
+
+    const products = productdata.map((o, index) => ({
+        slno: (page - 1) * perPage + index + 1,
+        _id: o._id,
+        name: o.name,
+        description: o.description.substring(0, 20),
+        price: o.price,
+        image: o.image
+    }));
+
+    const totalPages = Math.ceil(totalProducts / perPage);
+
+    res.render('adminproduct', {
+        arr: products,
+        currentPage: page,
+        totalPages,
+        isAdmin: true,
+        isadminlogin: req.session.isAdminLoggin,
+        searchQuery // Pass the search query back for persistence in the input field
+    });
 });
+
 
 
 router.get('/category', checkadminLogin, async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
+    const { startDate, endDate } = req.query;
 
-    const totalcategories = await Category.countDocuments({ isdeleted: false });
+    let query = { isdeleted: false };
 
+    if (startDate) {
+        query.createdAt = { ...query.createdAt, $gte: new Date(`${startDate}T00:00:00.000Z`) };
+    }
+    if (endDate) {
+        query.createdAt = { ...query.createdAt, $lte: new Date(`${endDate}T23:59:59.999Z`) };
+    }
+    console.log("query :", query);
 
-    const categorydata = await Category.find({ isdeleted: false })
+    const totalcategories = await Category.countDocuments(query);
+
+    const categorydata = await Category.find(query)
         .sort({ createdAt: -1 })
         .skip((page - 1) * perPage)
         .limit(perPage);
@@ -147,35 +187,58 @@ router.get('/category', checkadminLogin, async (req, res) => {
     const totalPages = Math.ceil(totalcategories / perPage);
 
     res.render('admincategory', {
+        
         arr: categories,
         currentPage: page,
         totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin
+        isAdmin: true, isadminlogin: req.session.isAdminLoggin,
+        startDate,
+        endDate
     });
-    clearCache(res);
+
 });
 
 
 router.post('/category-search', checkadminLogin, async (req, res) => {
-    // console.log("search form : ", req.body);
-    // console.log('hello');
-    const categorydata = await getcategorysearch(req.body.search);
-    // console.log("categorydata", categorydata);
-    clearCache(res);
-    const arr = [];
-    for (let i = 0; i < categorydata.length; i++) {
-        const o = categorydata[i];
-        const newDesc = o.description.substring(0, 20);
-        const newO = {
-            slno: i + 1,
-            _id: o._id,
-            name: o.name,
-            description: newDesc
+    const searchQuery = req.body.search.trim(); 
+    const page = parseInt(req.query.page) || 1; 
+    const perPage = 4; // Number of items per page
+
+    let query = { isdeleted: false };
+    if (searchQuery) {
+        query = {
+            ...query,
+            name: { $regex: searchQuery, $options: "i" }, 
         };
-        arr.push(newO);
     }
-    res.render('admincategory', { arr: arr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
+
+    const totalcategories = await Category.countDocuments(query);
+
+    const categorydata = await Category.find(query)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * perPage)
+        .limit(perPage);
+
+    const categories = categorydata.map((o, index) => ({
+        slno: (page - 1) * perPage + index + 1,
+        _id: o._id,
+        name: o.name,
+        description: o.description.substring(0, 20),
+        image: o.image
+    }));
+
+    const totalPages = Math.ceil(totalcategories / perPage);
+
+    res.render('admincategory', {
+        arr: categories,
+        currentPage: page,
+        totalPages,
+        isAdmin: true,
+        isadminlogin: req.session.isAdminLoggin,
+        searchQuery, 
+    });
 });
+
 
 
 router.get('/brand', checkadminLogin, async (req, res) => {
@@ -733,7 +796,7 @@ router.get('/view-brand/:id', async (req, res) => {
         const brand = await getBrandDatabyId(val);
         console.log("brand", brand);
 
-        
+
         if (!brand) {
             return res.status(404).send('<p class="text-danger">Brand not found</p>');
         }
