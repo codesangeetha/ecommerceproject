@@ -1,58 +1,144 @@
 <link rel="stylesheet" href="/stylesheets/productstyle.css">
-<scetion>
+<link rel="stylesheet" href="/stylesheets/hearticon.css">
+<div>
+    <button id="favorite-btn" class="{{#if isFavorited}}favorited{{/if}}" style="border: none; background: none;">
+        {{#if isFavorited}}
+        <i class="fas fa-heart" style="color: red;"></i>
+        {{else}}
+        <i class="far fa-heart" style="color: gray;"></i>
+        {{/if}}
+    </button>
+</div>
+
+<section>
     <div class="container mt-5">
         <div class="row">
+            <!-- Product Image Section -->
             <div class="col-md-6 mb-6">
-                <div class="card" style="width: 18rem mr-10;">
-                    <img class="card-img-top" src="/uploads/{{product.image}}" alt="Card image cap">
+                <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {{#each product.images}}
+                        <div class="carousel-item {{#if @first}}active{{/if}}">
+                            <img src="/uploads/{{this}}" class="d-block w-100" style="height: 500px;" alt="Product Image">
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+                <div class="thumbnails mt-3">
+                    {{#each product.images}}
+                    <img src="/uploads/{{this}}" alt="Thumbnail"
+                        style="width: 50px; margin-right: 5px; cursor: pointer;"
+                        onclick="document.querySelector('#productCarousel .carousel-item.active img').src = '/uploads/{{this}}';">
+                    {{/each}}
+                </div>
 
+                <!-- Social Media Share Section -->
+                <div style="margin-top: 20px;">
+                    <h5>Share this product:</h5>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{productShareUrl}}" target="_blank"
+                        style="margin-right: 10px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/2048px-2023_Facebook_icon.svg.png"
+                            alt="Facebook" style="width: 30px;">
+                    </a>
+                    <a href="https://twitter.com/intent/tweet?url={{productShareUrl}}&text=Check out this product!"
+                        target="_blank" style="margin-right: 10px;">
+                        <img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg"
+                            alt="Twitter" style="width: 30px;">
+                    </a>
+                    <a href="https://api.whatsapp.com/send?text=Check out this product: {{productShareUrl}}"
+                        target="_blank">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/WhatsApp_icon.png" alt="WhatsApp"
+                            style="width: 30px;">
+                    </a>
+                    <a href="https://www.instagram.com" target="_blank" style="margin-right: 10px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png"
+                            alt="Instagram" style="width: 30px;">
+                    </a>
                 </div>
             </div>
+
+            <!-- Product Details Section -->
             <div class="col-md-6 mb-6">
                 <form action="/cart/add" method="post">
-                    <div class="card pro-2div" style="width: 18rem mr-10;">
-                        <p class="pro-description ">{{product.name}}</p>
+                    <div class="card pro-2div" style="width: 18rem;">
+                        <p class="pro-description">{{product.name}}</p>
                         <div>
-                            <span class="pro-disc">-52%</span>
+
                             <span class="pro-price">₹ {{product.price}}</span>
                         </div>
-                    
-                        <div style="margin-left: 10px;margin-top: 20px;margin-bottom: 20px;">
-                            <label for="color" class="form-label"style="font-weight: bold;">Size</label>
-                            <select class="form-control" id="size" name="size" style="width: 60px;font-weight :bold">
-                                {{!-- <option value="1" selected>1</option> --}}
+
+                        <!-- Size Dropdown -->
+                        <div style="margin: 20px 10px;">
+                            <label for="size" class="form-label" style="font-weight: bold;">Size</label>
+                            <select class="form-control" id="size" name="size" style="width: 60px; font-weight: bold;">
                                 {{#each product.sizes_available}}
                                 <option value="{{this}}">{{this}}</option>
                                 {{/each}}
                             </select>
                         </div>
-                        
-                        <div style="margin-left: 10px;margin-top: 20px;margin-bottom: 20px;">
+
+                        <!-- Color Dropdown -->
+                        <div style="margin: 20px 10px;">
                             <label for="color" class="form-label" style="font-weight: bold;">Color</label>
-                            <select class="form-control" id="color" name="color" style="width: 90px;font-weight :bold">
-                                {{!-- <option value="1" selected>1</option> --}}
+                            <select class="form-control" id="color" name="color"
+                                style="width: 90px; font-weight: bold;">
                                 {{#each product.colors_available}}
                                 <option value="{{this}}">{{this}}</option>
                                 {{/each}}
                             </select>
                         </div>
-                        <div style="margin-left: 10px;margin-top: 20px;margin-bottom: 20px;">
-                            <label for="quantity" class="form-label"style="font-weight: bold;">Quantity</label>
-                            <select class="form-control" id="quantity" name="quantity" style="width: 60px; font-weight :bold">
+
+                        <!-- Quantity Dropdown -->
+                        <div style="margin: 20px 10px;">
+                            <label for="quantity" class="form-label" style="font-weight: bold;">Quantity</label>
+                            <select class="form-control" id="quantity" name="quantity"
+                                style="width: 60px; font-weight: bold;">
                                 <option value="1" selected>1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
                                 <option value="4">4</option>
-
                             </select>
                         </div>
-                        <input type="hidden" name="productId" value="{{product._id}}" />
-                        <button type="submit" class="btn  pro-cartButton">Add to cart</button>
 
+                        <input type="hidden" name="productId" value="{{product._id}}" />
+                        <button type="submit" class="btn pro-cartButton">Add to cart</button>
                     </div>
                 </form>
-            </div>
 
+
+            </div>
         </div>
     </div>
-    </section>
+</section>
+<script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const favoriteBtn = document.getElementById('favorite-btn');
+        const productId = '{{product._id}}';
+
+        favoriteBtn.addEventListener('click', async () => {
+            const isFavorited = favoriteBtn.classList.contains('favorited');
+            const url = `/product/${productId}/${isFavorited ? 'unfavorite' : 'favorite'}`;
+
+            try {
+                const response = await fetch(url, { method: 'POST' });
+                const result = await response.json();
+
+                if (result.success) {
+                    favoriteBtn.classList.toggle('favorited');
+                    favoriteBtn.innerHTML = isFavorited
+                        ? '<i class="far fa-heart"></i>'
+                        : '<i class="fas fa-heart"></i>';
+                } else {
+                    alert('Something went wrong!');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+
+
+
+</script>

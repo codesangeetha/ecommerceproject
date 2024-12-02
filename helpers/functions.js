@@ -11,7 +11,7 @@ const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
 
 
 exports.getcategorydata = async () => {
-    const data = await Category.find({ isdeleted: false }).sort({ createdAt: -1 });
+    const data = await Category.find({ isdeleted: false, status: true }).sort({ createdAt: -1 });
     return data;
 }
 

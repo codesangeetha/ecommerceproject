@@ -5,18 +5,18 @@ const productsSchema = new mongoose.Schema({
     description: String,
     price: Number,
     brand: String,
-    image: String,
+    images: [String], // Change from 'image' to 'images'
     category: String,
     isdeleted: Boolean,
     sizes_available: [String],
     colors_available: [String],
     editUser: String,
     stock: { type: Number, required: true },
-    status:Boolean
-},
-    {
-        timestamps: true
-    }
-);
+    status: Boolean,
+    favoriteBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+}, {
+    timestamps: true
+});
+
 const Products = mongoose.model('products', productsSchema);
 module.exports = Products;

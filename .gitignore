@@ -1,3 +1,5 @@
 /node_modules
 /mail.js
 /test.js
+/uploads
+.env

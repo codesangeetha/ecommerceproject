@@ -4,21 +4,22 @@ const session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const passport = require('./passportConfig');
+const flash = require('connect-flash');
 
 
 
 const mongoose = require('mongoose');
-const uri = 'mongodb://localhost:27017/solewave_db';
+const uri = process.env.MONGOURI;
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch((error) => console.error('Connection error', error));
 
-
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
+var authRouter = require('./routes/authRoutes');
 
 var app = express();
 
@@ -39,24 +40,47 @@ app.use(session({
   cookie: { secure: false }
 }));
 
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+app.use((req, res, next) => {
+  const flashObj = req.flash();
+  /* console.log("flash: ", req.flash());
+  console.log("flash error: ", flashObj["error"]);
+  console.log("condition: ", flashObj["error"] && flashObj["error"].length > 0);
+  console.log("mesg: ", (flashObj?.error?.length > 0 ) ? flashObj["error"][0]: "");
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg'); */
+  res.locals.message = (flashObj?.error?.length > 0) ? flashObj?.error[0] : ""; // For Passport error messages
+  next();
+});
+
+
+
+app.use('/uploads', express.static('uploads'));
+app.use(authRouter);
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/admin', adminRouter);
+
+
+
 function clearCache(req, res, next) {
   res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private');
-  next(); 
+  next();
 }
 
 app.use(clearCache);
 
 
-app.use('/uploads', express.static('uploads'));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/admin', adminRouter);
-
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
+
+
 
 // error handler
 app.use(function (err, req, res, next) {

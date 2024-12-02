@@ -1,17 +1,23 @@
-.login-signup{
-color: rgb(45, 175, 250);
-cursor: pointer;
+.login-signup {
+  color: rgb(45, 175, 250);
+  cursor: pointer;
 }
-.color-cls{
-    background-color: rgb(194, 247, 247);
-    color: black;
-    font-weight: bold;
-    border-radius: px;
-    margin-left: 130px;
-  }
 
-  .error-message {
-    color: red;
-    font-size: 15px;
-    margin-top: 5px;
-  }
+.color-cls {
+  background-color: rgb(194, 247, 247);
+  color: black;
+  font-weight: bold;
+  border-radius: px;
+  margin-left: 130px;
+}
+
+.error-message {
+  color: red;
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+.google-login {
+  text-align: center;
+  margin-top: 30px;
+}

@@ -10,10 +10,14 @@ const usersSchema = new mongoose.Schema({
         houseNo: String,
         city: String,
         state: String,
-        pincode: String
+        pincode: String,
+        phone:String
     },
     resetPasswordToken: String,
-    resetPasswordExpires: Date
+    resetPasswordExpires: Date,
+    googleId: String,
+    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
+
 },
     {
         timestamps: true

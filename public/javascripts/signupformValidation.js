@@ -8,6 +8,7 @@ function validateSignupForm() {
     var city = document.getElementById("city").value.trim();
     var state = document.getElementById("state").value.trim();
     var pincode = document.getElementById("pincode").value.trim();
+    var phone = document.getElementById("phone").value.trim();
 
 
     var errorName = document.getElementById("error-name");
@@ -18,6 +19,7 @@ function validateSignupForm() {
     var errorCity = document.getElementById("error-city");
     var errorState = document.getElementById("error-state");
     var errorPincode = document.getElementById("error-pincode");
+    var errorPhone = document.getElementById("error-phone");
 
   
     errorName.innerHTML = "";
@@ -28,6 +30,7 @@ function validateSignupForm() {
     errorCity.innerHTML = "";
     errorState.innerHTML = "";
     errorPincode.innerHTML = "";
+    errorPhone.innerHTML = "";
 
     var isValid = true;
 
@@ -71,6 +74,10 @@ function validateSignupForm() {
     }
     if (pincode === "") {
         errorPincode.innerHTML = "Please enter your pincode.";
+        isValid = false;
+    }
+    if (phone === "") {
+        errorPhone.innerHTML = "Please enter your phone number.";
         isValid = false;
     }
 

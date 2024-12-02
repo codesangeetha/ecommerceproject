@@ -76,7 +76,7 @@ function validateAddProduct() {
     return isValid;
 
 }
-
+/* 
 document.addEventListener("DOMContentLoaded", () => {
     const imageInput = document.getElementById("image");
     const previewContainer = document.getElementById("image-preview");
@@ -110,5 +110,59 @@ document.addEventListener("DOMContentLoaded", () => {
             };
             reader.readAsDataURL(file);
         }
+    });
+});
+ */
+
+document.addEventListener("DOMContentLoaded", () => {
+    const imageInput = document.getElementById("images");
+    const previewContainer = document.getElementById("image-preview");
+
+    // Function to display the image previews
+    imageInput.addEventListener("change", () => {
+        previewContainer.innerHTML = ""; // Clear existing previews
+
+        const files = Array.from(imageInput.files);
+        files.forEach((file, index) => {
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imgContainer = document.createElement("div");
+                    imgContainer.className = "preview-item";
+                    imgContainer.style.position = "relative";
+                    imgContainer.style.display = "inline-block";
+                    imgContainer.style.marginRight = "10px";
+
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.alt = `Image ${index + 1}`;
+                    img.style.width = "100px";
+                    img.style.height = "100px";
+                    img.style.objectFit = "cover";
+                    img.className = "img-thumbnail";
+
+                    const removeBtn = document.createElement("button");
+                    removeBtn.textContent = "Remove";
+                    removeBtn.className = "btn btn-danger btn-sm";
+                    removeBtn.style.position = "absolute";
+                    removeBtn.style.top = "5px";
+                    removeBtn.style.right = "5px";
+
+                    // Remove image from preview and file input
+                    removeBtn.onclick = () => {
+                        files.splice(index, 1); // Remove file from files array
+                        const dt = new DataTransfer();
+                        files.forEach(file => dt.items.add(file));
+                        imageInput.files = dt.files; // Update input files
+                        imgContainer.remove(); // Remove preview
+                    };
+
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(removeBtn);
+                    previewContainer.appendChild(imgContainer);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
     });
 });

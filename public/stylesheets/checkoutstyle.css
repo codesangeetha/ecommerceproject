@@ -1,26 +1,37 @@
-.checkout-addressbtn{
+.checkout-addressbtn {
     background-color: rgb(194, 247, 247);
     color: black;
     font-weight: bold;
     border-color: black;
     cursor: pointer;
-    
+
 }
-.checkout-nextbtn{
+
+.checkout-nextbtn {
     background-color: rgb(194, 247, 247);
     color: black;
     font-weight: bold;
-    margin-left:600px;
+    margin-top: 50px;
+    margin-bottom: 100px;
     border-radius: 5px;
     border-color: black;
+    width: 100px;
+    padding: 7px;
 }
-.checkout-paybtn{
+
+.checkout-paybtn {
     color: black;
     font-weight: bold;
     border-color: black;
     cursor: pointer;
     background-color: rgb(218, 224, 224);
 }
-.checkout-ordersummary{
+
+.checkout-ordersummary {
     margin-left: 90px;
 }
+.error-msg {
+    color: red;
+    font-size: 15px;
+    margin-top: 5px;
+  }

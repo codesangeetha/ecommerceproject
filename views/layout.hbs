@@ -39,9 +39,12 @@
                                 <a class="nav-link" href="/admin/brand">Brands</a>
                             </li>
                             <li class="nav-item">
-                               <a  class="nav-link" href="/admin/logout">Logout</a>
+                                <a class="nav-link" href="/admin/orders">Orders</a>
                             </li>
-                            
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/logout">Logout</a>
+                            </li>
+
                         </ul>
                     </div>
                 </nav>
@@ -68,20 +71,55 @@
 
                 <body>
                     <header>
-                        <nav class="navbar navbar-expand-lg navbar-light  nav-class">
-                            <a class="navbar-brand  title-cls" href="/">SoleWave</a>
-                            <button class="navbar-toggler" type="button" data-toggle="collapse"
-                                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                                aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
 
-                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <nav class="navbar navbar-expand-lg navbar-light nav-class">
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-1">
+                                    <a class="navbar-brand title-cls" href="/">SoleWave</a>
+                                </div>
+                                <div class="col-md-2">
 
-                                <form class="form-inline my-2 my-lg-0">
-                                    <input class="form-control mr-sm-2  search-class" type="search" placeholder="Search"
-                                        aria-label="Search">
-                                    <i class="fa-solid fa-magnifying-glass hand-cls"></i>
+                                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                        aria-expanded="false" aria-label="Toggle navigation">
+                                        <span class="navbar-toggler-icon"></span>
+                                    </button>
+
+                                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                        <ul class="navbar-nav mr-auto">
+                                            <li class="nav-item dropdown">
+                                                <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown"
+                                                    role="button" data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                    Categories
+                                                </a>
+                                                <div class="dropdown-menu" aria-labelledby="categoryDropdown">
+                                                    {{#each categories}}
+                                                    <a class="dropdown-item {{#if (eq _id ../selectedCategory)}}active{{/if}}"
+                                                        href="/?category={{_id}}">
+                                                        {{name}}
+                                                    </a>
+                                                    {{/each}}
+                                                </div>
+
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-4">
+
+                                    <form class="form-inline" method="get" action="/">
+                                        <input class="form-control search-class" type="search" name="q"
+                                            placeholder="Search" value="{{searchQuery}}" aria-label="Search">
+                                        <button type="submit" class="btn btn-outline-success hand-cls">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="col-md-1">
 
                                     {{#if isLogin}}
                                     <a href="/logout">
@@ -94,12 +132,13 @@
                                             type="button">Login</button>
                                     </a>
                                     {{/if}}
-                                    <span class="text-cls">Returns and orders</span>
+
+                                </div>
+                                <div class="col-md-1">
                                     <a href="/cart" style="text-decoration: none; color: inherit;"><span
                                             class="hand-cls"><i class="fas fa-shopping-cart cart-icon"></i> <span
                                                 class="text-cart">Cart</span></span></a>
-
-                                </form>
+                                </div>
                             </div>
                         </nav>
                     </header>
@@ -122,3 +161,22 @@
 
 </html>
 {{/if}}
+
+<style>
+    .form-inline {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        /* Add spacing between input and button */
+    }
+
+    .search-class {
+        flex: 1;
+        /* Adjust width if needed */
+    }
+
+    .hand-cls {
+        white-space: nowrap;
+        /* Ensure button content doesn't wrap */
+    }
+</style>

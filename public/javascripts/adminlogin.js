@@ -1,5 +1,5 @@
 function validateForm() {
-    var username = document.getElementById("username").value;
+    var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
     var errorMessage1 = document.getElementById("error-name");
     var errorMessage2 = document.getElementById("error-pwd");
@@ -9,8 +9,8 @@ function validateForm() {
 
     var isValid = true;
 
-    if (username == "") {
-        errorMessage1.innerHTML = "Please enter your username.";
+    if (email == "") {
+        errorMessage1.innerHTML = "Please enter your email.";
         isValid = false;
     }
     if (password == "") {

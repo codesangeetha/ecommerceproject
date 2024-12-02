@@ -104,22 +104,27 @@
 
 
                     <div class="mb-3">
-                        <label for="image" class="form-label">Product Image</label>
-                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <label for="images" class="form-label">Product Images</label>
+                        <input type="file" class="form-control" id="images" name="images" accept="image/*" multiple>
 
-
-                        <div id="existing-image-preview" class="mt-3">
-                            {{#if products.image}}
-                            <img src="/uploads/{{products.image}}" alt="Current Product Image" class="img-thumbnail"
-                                style="width: 150px; height: 150px; object-fit: cover;">
-                            <button type="button" class="btn btn-danger btn-sm mt-2"
-                                id="remove-existing-image">Remove</button>
+                        <!-- Existing Images Preview -->
+                        <div id="existing-images-preview" class="mt-3">
+                            {{#if products.images}}
+                            {{#each products.images}}
+                            <div class="preview-item">
+                                <img src="/uploads/{{this}}" alt="Existing Product Image" class="img-thumbnail"
+                                    style="width: 100px; height: 100px; object-fit: cover;">
+                                <button type="button" class="btn btn-danger btn-sm mt-2 remove-existing-image"
+                                    data-image="{{this}}">Remove</button>
+                            </div>
+                            {{/each}}
                             {{/if}}
                         </div>
 
+                        <!-- New Images Preview -->
                         <div id="image-preview" class="mt-3"></div>
-                        <div id="error-image" class="error-msg"></div>
                     </div>
+
 
 
                     <div class="d-grid">
@@ -134,46 +139,62 @@
     </section>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const imageInput = document.getElementById("image");
+            const imageInput = document.getElementById("images");
             const previewContainer = document.getElementById("image-preview");
-            const existingImagePreview = document.getElementById("existing-image-preview");
-            const removeExistingImageBtn = document.getElementById("remove-existing-image");
+            const existingImagesPreview = document.getElementById("existing-images-preview");
 
-            // Handle new image preview
+            const removedImages = []; // To store removed images
+
+            // Handle new image previews
             imageInput.addEventListener("change", () => {
-                previewContainer.innerHTML = ""; // Clear existing preview
+                previewContainer.innerHTML = ""; // Clear previous previews
 
-                const file = imageInput.files[0];
-                if (file) {
+                Array.from(imageInput.files).forEach((file) => {
                     const reader = new FileReader();
                     reader.onload = (e) => {
+                        const imgContainer = document.createElement("div");
+                        imgContainer.className = "preview-item";
+
                         const img = document.createElement("img");
                         img.src = e.target.result;
                         img.alt = "Selected Product Image";
-                        img.style.width = "150px";
-                        img.style.height = "150px";
-                        img.style.objectFit = "cover";
                         img.className = "img-thumbnail";
+                        img.style.width = "100px";
+                        img.style.height = "100px";
+                        img.style.objectFit = "cover";
 
                         const removeBtn = document.createElement("button");
                         removeBtn.textContent = "Remove";
                         removeBtn.className = "btn btn-danger btn-sm mt-2";
                         removeBtn.onclick = () => {
-                            imageInput.value = ""; // Reset file input
-                            previewContainer.innerHTML = ""; // Clear preview
+                            imgContainer.remove(); // Remove preview
                         };
 
-                        previewContainer.appendChild(img);
-                        previewContainer.appendChild(removeBtn);
+                        imgContainer.appendChild(img);
+                        imgContainer.appendChild(removeBtn);
+                        previewContainer.appendChild(imgContainer);
                     };
                     reader.readAsDataURL(file);
-                }
+                });
             });
 
-            // Handle removing existing image
-            if (removeExistingImageBtn) {
-                removeExistingImageBtn.addEventListener("click", () => {
-                    existingImagePreview.innerHTML = ""; // Clear existing image preview
+            // Handle removing existing images
+            if (existingImagesPreview) {
+                existingImagesPreview.addEventListener("click", (e) => {
+                    if (e.target.classList.contains("remove-existing-image")) {
+                        const image = e.target.dataset.image;
+                        removedImages.push(image); // Add to removed images list
+
+                        // Append a hidden input to the form to send removed image data
+                        const form = e.target.closest("form");
+                        const input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = "removedImages";
+                        input.value = image;
+                        form.appendChild(input);
+
+                        e.target.closest(".preview-item").remove(); // Remove preview
+                    }
                 });
             }
         });

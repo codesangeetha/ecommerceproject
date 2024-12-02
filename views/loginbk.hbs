@@ -1,0 +1,36 @@
+
+<link rel="stylesheet" href="/stylesheets/loginstyle.css">
+  <section>
+    <div class="container justify-content-center">
+      <div class="row mt-5">
+        <div class="col-md-3"></div>
+        <div class="col-md-5">
+
+          <div class="card p-4 shadow-sm">
+            <h3 class="text-center mb-4">Login</h3>
+            <form  action="/loginsubmit" method="post"  onsubmit="return validateForm()" >
+              <div class="mb-4">
+                <label for="username" class="form-label">Username / Email</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" >
+                <div id="error-name" class="error-message"></div>
+              </div>
+              <div class="mb-5">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" >
+                <div id="error-pwd" class="error-message"></div>
+              </div>
+              <div class="error-message">{{msg}}</div>
+              <button type="submit" class="btn btn-primary  mb-4 color-cls w-90">Login</button>
+            
+              <div><a href="/forgot-password">Forgot password?</a></div>
+              <div>
+                Not a member ? <a class="login-signup" href="/signup">Signup</a> now
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-md-4"></div>
+      </div>
+    </div>
+  </section>
+  <script src="javascripts/adminlogin.js"></script>

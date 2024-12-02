@@ -1,0 +1,17 @@
+<h5>Order ID: {{order._id}}</h5>
+<p>Customer Name: {{order.user.name}}</p>
+<p>Email: {{order.user.email}}</p>
+<p>Total Amount: ₹ {{order.totalAmount}}</p>
+<p>Payment Status: {{order.paymentDetails.paymentStatus}}</p>
+<p>Payment Method: {{order.paymentDetails.paymentMethod}}</p>
+<p>Address: {{order.address.fullname}}, {{order.address.houseNo}}, {{order.address.city}}, {{order.address.state}}, {{order.address.pincode}}</p>
+<p>Phone: {{order.address.phone}}</p>
+
+<h5>Products:</h5>
+<ul>
+    {{#each order.cartDetails}}
+    <li>
+        {{product.name}} - ₹ {{product.price}} x {{quantity}} (Size: {{size}}, Color: {{color}})
+    </li>
+    {{/each}}
+</ul>

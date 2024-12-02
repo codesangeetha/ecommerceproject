@@ -18,17 +18,45 @@ const Products = require("../models/products.model");
 const Category = require("../models/categories.model");
 const Users = require("../models/users.model");
 const Brand = require('../models/brands.model');
+const Order = require("../models/order.model");
 
 var router = express.Router();
 
-const storage = multer.diskStorage({
+/* const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/');
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + "-" + random() + "-" + file.originalname);
     }
+}); */
+
+// const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/'); // Set upload directory
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname)); // Unique file name
+    }
 });
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
+    fileFilter: function (req, file, cb) {
+        if (!file.mimetype.startsWith('image/')) {
+            return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+    }
+});
+
+module.exports = upload;
+
 
 const hbs = require('hbs');
 
@@ -47,7 +75,7 @@ function random() {
     return Math.floor(Math.random() + 9000) + 1000;
 }
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
 
 const checkadminLogin = (req, res, next) => {
@@ -91,7 +119,7 @@ router.get('/product', checkadminLogin, async (req, res) => {
         name: o.name,
         description: o.description.substring(0, 20),
         price: o.price,
-        image: o.image
+        image: o.images[0]
     }));
 
     const totalPages = Math.ceil(totalProducts / perPage);
@@ -525,7 +553,7 @@ router.get('/add-product', checkadminLogin, async (req, res) => {
 
     return res.render('addproduct', { arr: data, arr2: info, sizeArr: sizeArr, msg: msg, colorArr: colorArr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 });
-
+/* 
 router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
     // console.log(req.body);
     let sizearr = req.body.size;
@@ -591,7 +619,40 @@ router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
     const data = await insertproduct(obj)
     // console.log(data);
     return res.redirect('/admin/product');
+}); */
+
+router.post('/add-productsubmit', upload.array('images', 5), async (req, res) => {
+    let sizearr = req.body.size;
+    if (!Array.isArray(req.body.size)) {
+        sizearr = [req.body.size];
+    }
+    let colorarr = req.body.color;
+    if (!Array.isArray(req.body.color)) {
+        colorarr = [req.body.color];
+    }
+
+    // Extract file paths for uploaded images
+    const imagePaths = req.files.map(file => file.filename);
+
+    const obj = {
+        name: req.body.productName,
+        brand: req.body.brand,
+        price: req.body.price,
+        description: req.body.description,
+        category: req.body.category,
+        isdeleted: false,
+        editUser: req.session.adminName,
+        images: imagePaths, // Store image paths
+        sizes_available: sizearr,
+        colors_available: colorarr,
+        stock: req.body.stock,
+        status: req.body.status ? true : false
+    };
+
+    const data = await insertproduct(obj);
+    return res.redirect('/admin/product');
 });
+
 
 router.get('/deletecategory/:id', async (req, res) => {
     const val = req.params.id;
@@ -676,7 +737,7 @@ router.post('/edit-brandsubmit/:id', checkadminLogin, async (req, res) => {
     const data = await editbrand(val, obj);
     return res.redirect('/admin/brand')
 });
-
+/* 
 router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
     const product = await getProductDatabyId(val)
@@ -748,8 +809,52 @@ router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
     // console.log(newColorArr);
     return res.render('editproduct', { products: product, arr: newCategories, arr2: newbrands, newSizeArr: newSizeArr, newColorArr: newColorArr, isAdmin: true, isadminlogin: req.session.isAdminLoggin });
 });
+ */
 
 
+router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
+    const val = req.params.id;
+    const product = await getProductDatabyId(val); // Fetch product by ID
+    console.log("product data:", product);
+
+    const categories = await getcategorydata();
+    const newCategories = categories.map((category) => ({
+        _id: category._id,
+        name: category.name,
+        selected: product.category == category._id ? "selected" : "",
+    }));
+
+    const brands = await getbranddata();
+    const newBrands = brands.map((brand) => ({
+        _id: brand._id,
+        name: brand.name,
+        selected: product.brand == brand._id ? "selected" : "",
+    }));
+
+    const sizeArr = [5, 6, 7, 8, 9, 10, 11, 12, 13];
+    const newSizeArr = sizeArr.map((size) => ({
+        size,
+        selected: product.sizes_available.includes(size) ? "selected" : "",
+    }));
+
+    const colorArr = ["Red", "Blue", "White", "Black"];
+    const newColorArr = colorArr.map((color) => ({
+        color,
+        selected: product.colors_available.includes(color) ? "selected" : "",
+    }));
+
+    return res.render('editproduct', {
+        products: product,
+        arr: newCategories,
+        arr2: newBrands,
+        newSizeArr,
+        newColorArr,
+        isAdmin: true,
+        isadminlogin: req.session.isAdminLoggin,
+    });
+});
+
+/* 
 router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {
 
     console.log('req.body', req.body);
@@ -789,6 +894,54 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), 
     }
 
     const data = await editproduct(val2, obj);
+    res.redirect('/admin/product');
+});
+ */
+
+router.post('/edit-productsubmit/:id', checkadminLogin, upload.array('images', 5), async (req, res) => {
+    const val2 = req.params.id;
+    let sizearr = req.body.size;
+    if (!Array.isArray(req.body.size)) {
+        sizearr = [req.body.size];
+    }
+
+    let colorarr = req.body.color;
+    if (!Array.isArray(req.body.color)) {
+        colorarr = [req.body.color];
+    }
+
+    const oldProduct = await getProductDatabyId(val2); // Fetch old product data
+
+    // Process new image uploads
+    const newImages = req.files.map((file) => file.filename);
+
+    // Handle removed images
+    let updatedImages = oldProduct.images || [];
+    if (req.body.removedImages) {
+        const removedImages = Array.isArray(req.body.removedImages)
+            ? req.body.removedImages
+            : [req.body.removedImages];
+        updatedImages = updatedImages.filter((img) => !removedImages.includes(img));
+    }
+
+    // Add new images to the updated image array
+    updatedImages = [...updatedImages, ...newImages];
+
+    const obj = {
+        name: req.body.productName,
+        price: req.body.price,
+        brand: req.body.brand,
+        description: req.body.description,
+        category: req.body.category,
+        sizes_available: sizearr,
+        colors_available: colorarr,
+        editUser: req.session.adminName,
+        images: updatedImages,
+        stock: req.body.stock,
+        status: req.body.status ? true : false,
+    };
+
+    await editproduct(val2, obj);
     res.redirect('/admin/product');
 });
 
@@ -891,6 +1044,66 @@ router.get('/view-brand/:id', async (req, res) => {
     } catch (error) {
         console.error('Error fetching brand data:', error);
         res.status(500).send('<p class="text-danger">Internal server error</p>');
+    }
+});
+
+
+router.get('/orders', checkadminLogin, async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 4;
+    const { startDate, endDate } = req.query;
+
+    let query = {};
+
+    if (startDate) {
+        query.createdAt = { ...query.createdAt, $gte: new Date(`${startDate}T00:00:00.000Z`) };
+    }
+    if (endDate) {
+        query.createdAt = { ...query.createdAt, $lte: new Date(`${endDate}T23:59:59.999Z`) };
+    }
+
+    const totalOrders = await Order.countDocuments(query);
+
+    const orderData = await Order.find(query)
+        .populate('user', 'name email') // Populate user name and email
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * perPage)
+        .limit(perPage);
+
+    const orders = orderData.map((o, index) => ({
+        slno: (page - 1) * perPage + index + 1,
+        _id: o._id,
+        userName: o.user?.name || 'N/A',
+        email: o.user?.email || 'N/A',
+        totalAmount: o.totalAmount,
+        paymentStatus: o.paymentDetails.paymentStatus || 'N/A',
+        createdAt: o.createdAt,
+    }));
+
+    const totalPages = Math.ceil(totalOrders / perPage);
+
+    res.render('adminorders', {
+        orders,
+        currentPage: page,
+        totalPages,
+        isAdmin: true,
+        isadminlogin: req.session.isAdminLoggin,
+        startDate,
+        endDate,
+    });
+});
+
+router.get('/view-order/:id', checkadminLogin, async (req, res) => {
+    const orderId = req.params.id;
+
+    try {
+        const order = await Order.findById(orderId)
+            .populate('user', 'name email')
+            .populate('cartDetails.product', 'name price image'); // Adjust based on your product schema
+
+        res.render('partials/orderDetails', { layout: false, order });
+    } catch (error) {
+        res.status(500).send('<p class="text-danger">Failed to load order details.</p>');
     }
 });
 

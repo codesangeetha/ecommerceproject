@@ -2,8 +2,8 @@
 
 const { MailtrapClient } = require("mailtrap");
 
-const TOKEN = "a72cedfa02a11c174c1e8596b1bc1f14";
-const ENDPOINT = "https://send.api.mailtrap.io/";
+const TOKEN = process.env.TOKEN;
+const ENDPOINT = process.env.ENDPOINT;
 const client = new MailtrapClient({ endpoint: ENDPOINT, token:TOKEN});
 
 sendEmail("sangeetharenganath98@gmail.com", "test", "test msg");

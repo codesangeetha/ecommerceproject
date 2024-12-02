@@ -1,0 +1,13 @@
+.favorited {
+    color: red;
+}
+
+#favorite-btn i {
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+#favorite-btn i:hover {
+    color: darkred;
+}
