@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheets/signupstyle.css">
+    <link rel="stylesheet" href="/stylesheets/loginstyle.css">
+    <title>Profile</title>
+</head>
+<body>
+    <section>
+        <div class="container justify-content-center">
+            <div class="row mt-5">
+                <div class="col-md-3"></div>
+                <div class="col-md-5">
+                    <div class="card p-4 shadow-sm">
+                        <h3 class="text-center mb-4">Profile</h3>
+                        <form action="/profile" method="post">
+                            <div class="mb-3">
+                                <label for="houseNo" class="form-label">House No</label>
+                                <input type="text" class="form-control" id="houseNo" name="houseNo" 
+                                    value="{{user.address.houseNo}}" placeholder="Enter your house number" required>
+                                <div id="error-houseNo" class="error-style"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" class="form-control" id="city" name="city" 
+                                    value="{{user.address.city}}" placeholder="Enter your city" required>
+                                <div id="error-city" class="error-style"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" class="form-control" id="state" name="state" 
+                                    value="{{user.address.state}}" placeholder="Enter your state" required>
+                                <div id="error-state" class="error-style"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="pincode" class="form-label">Pincode</label>
+                                <input type="text" class="form-control" id="pincode" name="pincode" 
+                                    value="{{user.address.pincode}}" placeholder="Enter your pincode" required>
+                                <div id="error-pincode" class="error-style"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="text" class="form-control" id="phone" name="phone" 
+                                    value="{{user.address.phone}}" placeholder="Enter your phone number" required>
+                                <div id="error-phone" class="error-style"></div>
+                            </div>
+                            <button type="submit" class="btn btn-success mb-4 signup-btncls w-65">Save Changes</button>
+                        </form>
+                        <div>Want to change your password? <a href="/change-password" class="signup-login">Click here</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {{!-- <script src="javascripts/signupformvalidation.js"></script> --}}
+</body>
+</html>

@@ -1,0 +1,15 @@
+<h1>Favorites</h1>
+<div class="favorites-container">
+    {{#if favorites.length}}
+        {{#each favorites}}
+        <div class="favorite-item">
+            <img src="/uploads/{{this.image}}" alt="{{this.name}}" style="width: 100px;">
+            <p>{{this.name}}</p>
+            <p>₹ {{this.price}}</p>
+            <a href="/product/{{this._id}}">View Product</a>
+        </div>
+        {{/each}}
+    {{else}}
+        <p>No favorites added yet.</p>
+    {{/if}}
+</div>

@@ -120,20 +120,28 @@
                                 </div>
                                 <div class="col-md-1"></div>
                                 <div class="col-md-1">
-
                                     {{#if isLogin}}
-                                    <a href="/logout">
-                                        <button class="btn btn-outline-success my-2 my-sm-0  login-cls  "
-                                            type="button">Logout</button>
-                                    </a>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-success dropdown-toggle login-cls" type="button"
+                                            id="userMenu" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                            {{username}}
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="userMenu">
+                                            <a class="dropdown-item" href="/profile">Profile</a>
+                                            {{!-- <a class="dropdown-item" href="/favorites">Favorites</a> --}}
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="/logout">Logout</a>
+                                        </div>
+                                    </div>
                                     {{else}}
                                     <a href="/login">
-                                        <button class="btn btn-outline-success my-2 my-sm-0  login-cls  "
+                                        <button class="btn btn-outline-success my-2 my-sm-0 login-cls"
                                             type="button">Login</button>
                                     </a>
                                     {{/if}}
-
                                 </div>
+
                                 <div class="col-md-1">
                                     <a href="/cart" style="text-decoration: none; color: inherit;"><span
                                             class="hand-cls"><i class="fas fa-shopping-cart cart-icon"></i> <span
