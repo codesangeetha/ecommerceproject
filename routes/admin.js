@@ -553,73 +553,6 @@ router.get('/add-product', checkadminLogin, async (req, res) => {
 
     return res.render('addproduct', { arr: data, arr2: info, sizeArr: sizeArr, msg: msg, colorArr: colorArr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
 });
-/* 
-router.post('/add-productsubmit', upload.single('image'), async (req, res) => {
-    // console.log(req.body);
-    let sizearr = req.body.size;
-    if (!Array.isArray(req.body.size)) {
-        sizearr = [req.body.size];
-    }
-    let colorarr = req.body.color;
-    if (!Array.isArray(req.body.color)) {
-        colorarr = [req.body.color];
-    }
-
-    if (req.body.productName === "") {
-        req.session.message = "Product name is empty";
-        return res.redirect("/admin/add-product")
-    }
-    if (req.body.brand === "") {
-        req.session.message = "Product brand is empty";
-        return res.redirect("/admin/add-product")
-    }
-    if (req.body.price === "") {
-        req.session.message = "Product price is empty";
-        return res.redirect("/admin/add-product")
-    }
-    if (req.body.description === "") {
-        req.session.message = "Product description is empty";
-        return res.redirect("/admin/add-product")
-    }
-    if (req.body.category === "") {
-        req.session.message = "Product category is empty";
-        return res.redirect("/admin/add-product")
-    }
-    if (req.body.size === "") {
-        req.session.message = "Product size is empty";
-        return res.redirect("/admin/add-product")
-    }
-    if (req.body.color === "") {
-        req.session.message = "Product color is empty";
-        return res.redirect("/admin/add-product")
-    }
-    if (req.body.stock === "") {
-        req.session.message = "Product stock is empty";
-        return res.redirect("/admin/add-product")
-    }
-    if (req.body.image === "") {
-        req.session.message = "Product image is empty";
-        return res.redirect("/admin/add-product")
-    }
-    const obj = {
-        name: req.body.productName,
-        brand: req.body.brand,
-        price: req.body.price,
-        description: req.body.description,
-        category: req.body.category,
-        isdeleted: false,
-        editUser: req.session.adminName,
-        image: req.file ? req.file.filename : null,
-        sizes_available: sizearr,
-        colors_available: colorarr,
-        stock: req.body.stock,
-        status: req.body.status ? true : false
-    }
-    // console.log(obj);
-    const data = await insertproduct(obj)
-    // console.log(data);
-    return res.redirect('/admin/product');
-}); */
 
 router.post('/add-productsubmit', upload.array('images', 5), async (req, res) => {
     let sizearr = req.body.size;
@@ -631,7 +564,7 @@ router.post('/add-productsubmit', upload.array('images', 5), async (req, res) =>
         colorarr = [req.body.color];
     }
 
-    // Extract file paths for uploaded images
+    
     const imagePaths = req.files.map(file => file.filename);
 
     const obj = {
@@ -737,84 +670,10 @@ router.post('/edit-brandsubmit/:id', checkadminLogin, async (req, res) => {
     const data = await editbrand(val, obj);
     return res.redirect('/admin/brand')
 });
-/* 
-router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
-    const val = req.params.id;
-    const product = await getProductDatabyId(val)
-    console.log("product data:", product);
-
-    const categories = await getcategorydata();
-    const newCategories = [];
-
-    for (let i = 0; i < categories.length; i++) {
-        let selectVal = "";
-        if (product.category == categories[i]._id) {
-            selectVal = "selected";
-        }
-        const obj = {
-            _id: categories[i]._id,
-            name: categories[i].name,
-            selected: selectVal
-        };
-        newCategories.push(obj);
-    }
-
-    const brands = await getbranddata();
-    const newbrands = [];
-
-    for (let i = 0; i < brands.length; i++) {
-        let selectVal = "";
-        if (product.brand == brands[i]._id) {
-            selectVal = "selected";
-        }
-        const obj = {
-            _id: brands[i]._id,
-            name: brands[i].name,
-            selected: selectVal
-        };
-        newbrands.push(obj);
-    }
-
-    const sizeArr = [5, 6, 7, 8, 9, 10, 11, 12, 13];
-    const newSizeArr = [];
-    for (let i = 0; i < sizeArr.length; i++) {
-        let selectVal = "";
-
-        if (product.sizes_available.includes(sizeArr[i])) {
-            selectVal = "selected";
-        }
-
-        const obj = {
-            size: sizeArr[i],
-            selected: selectVal
-        }
-        newSizeArr.push(obj);
-    }
-
-    const colorArr = ["Red", "Blue", "White", "Black"];
-    const newColorArr = [];
-    for (let i = 0; i < colorArr.length; i++) {
-        let selectVal = "";
-
-        if (product.colors_available.includes(colorArr[i])) {
-            selectVal = "selected";
-        }
-
-        const obj = {
-            color: colorArr[i],
-            selected: selectVal
-        }
-        newColorArr.push(obj);
-    }
-    // console.log(newColorArr);
-    return res.render('editproduct', { products: product, arr: newCategories, arr2: newbrands, newSizeArr: newSizeArr, newColorArr: newColorArr, isAdmin: true, isadminlogin: req.session.isAdminLoggin });
-});
- */
-
 
 router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
     const val = req.params.id;
-    const product = await getProductDatabyId(val); // Fetch product by ID
+    const product = await getProductDatabyId(val);
     console.log("product data:", product);
 
     const categories = await getcategorydata();
@@ -854,49 +713,6 @@ router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
     });
 });
 
-/* 
-router.post('/edit-productsubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {
-
-    console.log('req.body', req.body);
-    const val2 = req.params.id;
-    let sizearr = req.body.size;
-    if (!Array.isArray(req.body.size)) {
-        sizearr = [req.body.size];
-    }
-    let colorarr = req.body.color;
-    if (!Array.isArray(req.body.color)) {
-        colorarr = [req.body.color];
-    }
-
-    const oldimg = await getProductDatabyId(val2);
-    console.log("oldimage -", oldimg);
-
-    let obj = {
-        name: req.body.productName,
-        price: req.body.price,
-        brand: req.body.brand,
-        description: req.body.description,
-        category: req.body.category,
-        sizes_available: sizearr,
-        colors_available: colorarr,
-        editUser: req.session.adminName,
-        image: req.file ? req.file.filename : oldimg.image,
-        stock: req.body.stock,
-        status: req.body.status ? true : false
-    };
-
-    // Handle new image upload
-    if (req.file) {
-        obj.image = req.file.filename;
-    } else if (req.body.removeImage) {
-        obj.image = null; // Clear the existing image
-        // Optionally, delete the old image file from the server
-    }
-
-    const data = await editproduct(val2, obj);
-    res.redirect('/admin/product');
-});
- */
 
 router.post('/edit-productsubmit/:id', checkadminLogin, upload.array('images', 5), async (req, res) => {
     const val2 = req.params.id;
@@ -946,7 +762,6 @@ router.post('/edit-productsubmit/:id', checkadminLogin, upload.array('images', 5
 });
 
 
-
 router.get('/bantoggle/:id', async (req, res) => {
     const val = req.params.id;
 
@@ -969,7 +784,7 @@ router.get('/view-product/:id', async (req, res) => {
     const updatedAtDate = product.updatedAt ? product.updatedAt.toISOString().split('T')[0] : 'N/A';
 
     res.render('partials/productModalContent', {
-        layout: false, // Render without the main layout
+        layout: false, 
         product,
         categoryName,
         brandName,

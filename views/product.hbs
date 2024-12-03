@@ -1,14 +1,6 @@
 <link rel="stylesheet" href="/stylesheets/productstyle.css">
 <link rel="stylesheet" href="/stylesheets/hearticon.css">
-<div>
-    <button id="favorite-btn" class="{{#if isFavorited}}favorited{{/if}}" style="border: none; background: none;">
-        {{#if isFavorited}}
-        <i class="fas fa-heart" style="color: red;"></i>
-        {{else}}
-        <i class="far fa-heart" style="color: gray;"></i>
-        {{/if}}
-    </button>
-</div>
+
 
 <section>
     <div class="container mt-5">
@@ -19,7 +11,8 @@
                     <div class="carousel-inner">
                         {{#each product.images}}
                         <div class="carousel-item {{#if @first}}active{{/if}}">
-                            <img src="/uploads/{{this}}" class="d-block w-100" style="height: 500px;" alt="Product Image">
+                            <img src="/uploads/{{this}}" class="d-block w-100" style="height: 500px;"
+                                alt="Product Image">
                         </div>
                         {{/each}}
                     </div>
@@ -30,6 +23,17 @@
                         style="width: 50px; margin-right: 5px; cursor: pointer;"
                         onclick="document.querySelector('#productCarousel .carousel-item.active img').src = '/uploads/{{this}}';">
                     {{/each}}
+                </div>
+
+                <div>
+                    <button id="favorite-btn" class="{{#if isFavorited}}favorited{{/if}}"
+                        style="border: none; background: none;">
+                        {{#if isFavorited}}
+                        <i class="fas fa-heart" style="color: red;"></i>
+                        {{else}}
+                        <i class="far fa-heart" style="color: gray;"></i>
+                        {{/if}}
+                    </button>
                 </div>
 
                 <!-- Social Media Share Section -->
@@ -55,6 +59,7 @@
                             alt="Instagram" style="width: 30px;">
                     </a>
                 </div>
+
             </div>
 
             <!-- Product Details Section -->

@@ -1,6 +1,8 @@
 const Cart = require('../models/cart.model');
 const Product = require('../models/products.model');
 const User = require('../models/users.model');
+const Order = require('../models/order.model');
+const { Cashfree } = require("cashfree-pg");
 
 
 exports.getCheckout=async (req, res) => {
@@ -46,5 +48,97 @@ exports.checkoutSubmit=async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
+    }
+};
+
+exports.paymentOrder=async (req, res) => {
+    const { total, phone, email, name, houseNo, city, state, pincode } = req.body;
+    console.log('Create order');
+    try {
+
+        Cashfree.XClientId = process.env.XCLIENTID;
+        Cashfree.XClientSecret = process.env.XCLIENTSECRET;
+        Cashfree.XEnvironment = Cashfree.Environment.SANDBOX;
+
+        const orderId = `order_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+
+        const userCart = await Cart.findOne({ user: req.user._id }).populate('products.product');
+        if (!userCart) return res.status(400).send('Cart not found');
+
+
+        const address = {
+            fullname: name,
+            houseNo: req.body.houseNo || "NA",
+            city: req.body.city || "NA",
+            state: req.body.state || "NA",
+            pincode: req.body.pincode || "NA",
+            phone: phone,
+        };
+
+        // Create order in database
+        const newOrder = await Order.create({
+            user: req.user._id,
+            orderId,
+            cartDetails: userCart.products,
+            address,
+            paymentDetails: { paymentStatus: 'Pending' },
+            totalAmount: total,
+        });
+
+        var request = {
+            "order_amount": parseInt(total),
+            "order_currency": "INR",
+            "order_id": orderId,
+            "customer_details": {
+                "customer_id": req.user._id.toString(),
+                "customer_name": name,
+                "customer_email": email,
+                "customer_houseNo": houseNo,
+                "customer_city": city,
+                "customer_state": state,
+                "customer_pincode": pincode,
+                "customer_phone": phone.toString(),
+            },
+            "order_meta": {
+                "return_url": `http://localhost:3000/payment/thankyou?order_id=${orderId}`,
+            },
+        };
+
+        const response = await Cashfree.PGCreateOrder("2023-08-01", request);
+
+        console.log('Order created successfully:', response.data);
+
+        const res_obj = {
+            msg: "Order created",
+            payment_session_id: response.data.payment_session_id,
+            order_id: orderId
+        };
+        res.json(res_obj);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error occurred');
+    }
+};
+
+exports.thankyoupage=async (req, res) => {
+    const { order_id } = req.query;
+
+    try {
+        // Fetch the order by order ID
+        const order = await Order.findOne({ orderId: order_id }).populate('cartDetails.product');
+        if (!order) return res.status(404).send('Order not found');
+
+        // Update payment status
+        order.paymentDetails.paymentStatus = 'Success';
+        await order.save();
+
+        // Clear the user's cart
+        await Cart.findOneAndDelete({ user: req.user._id });
+
+        // Render thank you page with order details
+        res.render('thankyou', { order });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error occurred');
     }
 };
