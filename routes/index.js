@@ -6,7 +6,7 @@ const { insertuser } = require('../helpers/functions');
 
 const { getAllProducts, getProductById, addToFavorites, removeFromFavorites } = require('../controllers/productController');
 const { addToCart, getCart, updateCartItem, removeFromCart, updateSize,updateColor } = require('../controllers/cartController');
-const { signupget,signupSubmit,forgotPassword,forgotPasswordSubmit,resetPassword,resetPasswordSuccess,postresetPassword,getProfile,postProfile,getFavorites } = require('../controllers/userController');
+const { signupget,signupSubmit,forgotPassword,forgotPasswordSubmit,resetPassword,resetPasswordSuccess,postresetPassword,getProfile,postProfile,getFavorites,getChangePassword, postChangepassword } = require('../controllers/userController');
 const { getCheckout,checkoutSubmit,paymentOrder,thankyoupage } = require('../controllers/checkoutController');
 
 const Cart = require("../models/cart.model");
@@ -35,6 +35,26 @@ router.use(async (req, res, next) => {
         res.locals.categories = categories; // Make categories available in Handlebars
 
         res.locals.username = req?.user?.name?.substring(0, 7) || "";
+        next();
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        next(error);
+    }
+});
+
+router.use(async (req, res, next) => {
+    try {
+        let cartItems = "";
+        if(req?.user?._id){
+            const cart = await Cart.findOne({ user: req.user._id });
+            if(cart){
+                const count = cart.products.length;
+                if(count>0){
+                    cartItems = count == 1 ? "1 item" : `${count} items`;
+                }
+            }
+        }
+        res.locals.cartItems = cartItems;
         next();
     } catch (error) {
         console.error('Error fetching categories:', error);
@@ -95,6 +115,11 @@ router.post('/profile', postProfile);
 
 
 router.get('/favorites', getFavorites);
+
+router.get('/changepassword', getChangePassword);
+
+router.post('/changepassword', postChangepassword);
+
 
 
 module.exports = router;

@@ -3,7 +3,13 @@ const Product = require('../models/products.model');
 const User = require('../models/users.model');
 const crypto = require('crypto');
 const bcrypt = require("bcrypt");
-const { sendEmail } = require('../helpers/functions');
+const { 
+    sendEmail, 
+    findUserByEmail, 
+    updateUserByEmail, 
+    insertuser,
+    findUserById, 
+    updatePasswordById } = require('../helpers/functions');
 
 
 exports.signupget = (req, res) => {
@@ -12,10 +18,10 @@ exports.signupget = (req, res) => {
     return res.render('signup', { msg });
 };
 
-exports.signupSubmit = async (req, res) => {
+/* exports.signupSubmit = async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-    if (req.body.name === "") {
+     if (req.body.name === "") {
         req.session.message = "Enter name";
         return res.redirect('/signup');
     }
@@ -31,7 +37,7 @@ exports.signupSubmit = async (req, res) => {
     if (req.body.password === "") {
         req.session.message = "Enter password";
         return res.redirect('/signup');
-    }
+    } 
     console.log("req.body", req.body);
     const obj2 = {
         name: req.body.name,
@@ -52,7 +58,58 @@ exports.signupSubmit = async (req, res) => {
     const data = await insertuser(obj2);
     req.session.message = "Successfully signed up";
     return res.redirect('/login');
+}; */
+
+
+exports.signupSubmit = async (req, res) => {
+    try {
+        const { name, username, email, password, cpassword, houseNo, city, state, pincode, phone } = req.body;
+
+        // Check if passwords match
+        if (password !== cpassword) {
+            req.flash('error', 'Passwords do not match. Please try again.');
+            return res.redirect('/signup'); // Redirect back to signup page
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Prepare user object
+        const userObj = {
+            name,
+            username,
+            email,
+            password: hashedPassword,
+            status: true,
+            address: {
+                houseNo,
+                city,
+                state,
+                pincode,
+                phone,
+            },
+        };
+
+        // Check if user already exists
+        const existingUser = await findUserByEmail(email);
+        if (existingUser) {
+            await updateUserByEmail(email, userObj);
+            req.flash('success', 'User information updated successfully');
+        } else {
+            await insertuser(userObj);
+            req.flash('success', 'Successfully signed up');
+        }
+
+        return res.redirect('/login');
+    } catch (error) {
+        console.error("Error during signup:", error);
+        req.flash('error', 'An error occurred during signup. Please try again later.');
+        res.redirect('/signup'); // Redirect to signup page on error
+    }
 };
+
+
+
 
 exports.forgotPassword = (req, res) => {
     res.render('forgot-password');
@@ -181,3 +238,45 @@ exports.getFavorites = async (req, res) => {
         res.status(500).send('An error occurred');
     }
 };
+
+exports.getChangePassword = (req, res) => {
+    // Ensure the user is logged in
+    if (!req.user._id) {
+        req.flash('error', 'Please log in to change your password.');
+        return res.redirect('/login');
+    }
+
+    res.render('changepassword');
+};
+
+exports.postChangepassword = async (req, res) => {
+    try {
+        const { newPassword, confirmNewPassword } = req.body;
+        const userId = req.user._id;
+
+        // Ensure user is logged in
+        if (!userId) {
+            req.flash('error', 'You must be logged in to change your password.');
+            return res.redirect('/login');
+        }
+
+        // Check if new password and confirm password match
+        if (newPassword !== confirmNewPassword) {
+            req.flash('error', 'New password and confirm password do not match.');
+            return res.redirect('/changepassword');
+        }
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update the password in the database
+        await updatePasswordById(userId, hashedPassword);
+
+        req.flash('success', 'Password changed successfully.');
+        return res.redirect('/changepassword');
+    } catch (error) {
+        console.error('Error changing password:', error);
+        req.flash('error', 'An error occurred. Please try again later.');
+        return res.redirect('/changepassword');
+    }
+}

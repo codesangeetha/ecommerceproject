@@ -129,6 +129,7 @@
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="userMenu">
                                             <a class="dropdown-item" href="/profile">Profile</a>
+                                            <a class="dropdown-item" href="/changepassword">Change Password</a>
                                             {{!-- <a class="dropdown-item" href="/favorites">Favorites</a> --}}
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="/logout">Logout</a>
@@ -145,7 +146,7 @@
                                 <div class="col-md-1">
                                     <a href="/cart" style="text-decoration: none; color: inherit;"><span
                                             class="hand-cls"><i class="fas fa-shopping-cart cart-icon"></i> <span
-                                                class="text-cart">Cart</span></span></a>
+                                                class="text-cart">{{cartItems}}</span></span></a>
                                 </div>
                             </div>
                         </nav>

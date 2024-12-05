@@ -265,3 +265,34 @@ exports.dashboradCount = async () => {
     return { userCount, prodCount, cateCount, brandCount };
 }
 
+exports.findUserByEmail = async (email) =>{
+    return await Users.findOne({ email });
+}
+
+// Update user by email
+exports.updateUserByEmail = async (email, updatedData) => {
+    return await Users.updateOne({ email }, { $set: updatedData });
+}
+
+exports.findUserById = async (userId)=> {
+    try {
+        return await Users.findById(userId);
+    } catch (error) {
+        console.error('Error finding user by ID:', error);
+        throw new Error('Could not find user.');
+    }
+}
+
+exports.updatePasswordById = async (userId, hashedPassword)=> {
+    try {
+        return await Users.findByIdAndUpdate(
+            userId,
+            { password: hashedPassword },
+            { new: true, runValidators: true }
+        );
+    } catch (error) {
+        console.error('Error updating user password:', error);
+        throw new Error('Could not update password.');
+    }
+}
+
