@@ -13,12 +13,15 @@ const { getcategorydata,
     getbranddata, insertbrand, getBrandDatabyId, editbrand,
     deletebrand, getbrandsearch,
     getusersearch,
-    dashboradCount } = require('../helpers/functions');
+    dashboradCount,
+    updatePasswordByIdAdmin } = require('../helpers/functions');
 const Products = require("../models/products.model");
 const Category = require("../models/categories.model");
 const Users = require("../models/users.model");
 const Brand = require('../models/brands.model');
 const Order = require("../models/order.model");
+const bcrypt = require("bcrypt");
+const mongoose = require('mongoose');
 
 const { } = require('../controllers/adminproductController');
 
@@ -362,8 +365,7 @@ router.get('/dashboard', checkadminLogin, async (req, res) => {
 router.get('/login', (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
-    clearCache(res);
-
+   
     res.render('adminlogin', { msg, isAdmin: true, isadminlogin: req.session.isAdminLoggin });
 });
 
@@ -376,7 +378,7 @@ router.post('/adminloginsubmit', async (req, res) => {
     } else {
         req.session.isAdminLoggin = true;
         req.session.adminName = req.body.username;
-        req.session.id = loginvalue._id;
+        req.session.userid = loginvalue._id.toString();
         return res.redirect('/admin/dashboard');
     }
 });
@@ -927,9 +929,49 @@ router.get('/view-order/:id', checkadminLogin, async (req, res) => {
     }
 });
 
+router.get('/changePassword',(req, res) => {
+    
+    if (!req.session.userId) {
+        req.flash('error', 'Please log in to change your password.');
+        return res.redirect('/admin/login');
+    }
+    res.render('adminchangepwd',{isAdmin: true, isadminlogin: req.session.isAdminLoggin,});
+});
+// /admin/changepassword-submit
+router.post('/changepassword-submit', async (req, res) => {
 
-function clearCache(res) {
+    try {
+        const { newPassword, confirmNewPassword } = req.body;
+        const userId =  req.session.userid;
+
+        console.log('userId', userId);
+
+        // Ensure user is logged in
+        if (!userId) {
+            req.flash('error', 'You must be logged in to change your password.');
+            return res.redirect('/admin/login');
+        }
+
+        if (newPassword !== confirmNewPassword) {
+            req.flash('error', 'New password and confirm password do not match.');
+            return res.redirect('/admin/changepassword');
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await updatePasswordByIdAdmin(userId, hashedPassword);
+
+        req.flash('success', 'Password changed successfully.');
+        return res.redirect('/admin/changepassword');
+    } catch (error) {
+        console.error('Error changing password:', error);
+        req.flash('error', 'An error occurred. Please try again later.');
+        return res.redirect('/admin/changepassword');
+    }
+});
+
+/* function clearCache(res) {
     res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private');
-}
+} */
 
 module.exports = router;

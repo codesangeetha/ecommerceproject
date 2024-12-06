@@ -29,7 +29,7 @@
                         </div>
                         {{/if}}
 
-                        <form action="/profile" method="post">
+                        <form action="/profile" method="post" onsubmit="return userProfileValidation()">
                             <div class="mb-3">
                                 <label for="houseNo" class="form-label">House No</label>
                                 <input type="text" class="form-control" id="houseNo" name="houseNo"
@@ -69,8 +69,8 @@
             </div>
         </div>
     </section>
-    {{!--
-    <script src="javascripts/signupformvalidation.js"></script> --}}
+    
+     <script src="javascripts/userProfile.js"></script>
 </body>
 
 </html>

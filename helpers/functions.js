@@ -297,6 +297,19 @@ exports.updatePasswordById = async (userId, hashedPassword)=> {
     }
 }
 
+exports.updatePasswordByIdAdmin = async (userId, hashedPassword)=> {
+    try {
+        return await Adminusers.findByIdAndUpdate(
+            userId,
+            { password: hashedPassword },
+            { new: true, runValidators: true }
+        );
+    } catch (error) {
+        console.error('Error updating user password:', error);
+        throw new Error('Could not update password.');
+    }
+}
+
 exports.sendSMS = async (phoneNumber, message) => {
   const url = 'https://e53vyr.api.infobip.com/sms/3/messages';
   const headers = {

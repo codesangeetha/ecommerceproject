@@ -1,9 +1,10 @@
 function validateSignupForm() {
- 
+
     var name = document.getElementById("name").value.trim();
     var username = document.getElementById("username").value.trim();
     var email = document.getElementById("email").value.trim();
     var password = document.getElementById("password").value.trim();
+    var confirmpassword = document.getElementById("cpassword").value.trim();
     var houseNo = document.getElementById("houseNo").value.trim();
     var city = document.getElementById("city").value.trim();
     var state = document.getElementById("state").value.trim();
@@ -15,17 +16,19 @@ function validateSignupForm() {
     var errorUsername = document.getElementById("error-username");
     var errorEmail = document.getElementById("error-email");
     var errorPassword = document.getElementById("error-password");
+    var errorCpassword = document.getElementById("error-cpassword");
     var errorHouseNo = document.getElementById("error-houseNo");
     var errorCity = document.getElementById("error-city");
     var errorState = document.getElementById("error-state");
     var errorPincode = document.getElementById("error-pincode");
     var errorPhone = document.getElementById("error-phone");
 
-  
+
     errorName.innerHTML = "";
     errorUsername.innerHTML = "";
     errorEmail.innerHTML = "";
     errorPassword.innerHTML = "";
+    errorCpassword.innerHTML = "";
     errorHouseNo.innerHTML = "";
     errorCity.innerHTML = "";
     errorState.innerHTML = "";
@@ -42,7 +45,7 @@ function validateSignupForm() {
         errorName.innerHTML = "Please enter your username.";
         isValid = false;
     }
-   
+
     var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (email === "") {
         errorEmail.innerHTML = "Please enter your email.";
@@ -51,12 +54,17 @@ function validateSignupForm() {
         errorEmail.innerHTML = "Please enter a valid email address.";
         isValid = false;
     }
-    
+
     if (password === "") {
         errorPassword.innerHTML = "Please enter your password.";
         isValid = false;
     } else if (password.length < 6) {
         errorPassword.innerHTML = "Password must be at least 6 characters long.";
+        isValid = false;
+    }
+
+    if (confirmpassword === "") {
+        errorCpassword.innerHTML = "Please enter confirm password.";
         isValid = false;
     }
     if (houseNo === "") {

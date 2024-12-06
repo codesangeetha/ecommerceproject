@@ -14,6 +14,20 @@
                 <div class="col-md-5">
                     <div class="card p-4 shadow-sm">
                         <h3 class="text-center mb-4">Sign Up</h3>
+
+                        <div class="error-message">{{message}}</div>
+                        {{#if successMessage}}
+                        <div class="alert alert-success">
+                            {{successMessage}}
+                        </div>
+                        {{/if}}
+
+                        {{#if errorMessage}}
+                        <div class="alert alert-danger">
+                            {{errorMessage}}
+                        </div>
+                        {{/if}}
+
                         <form action="/signupsubmit" method="post" onsubmit="return validateSignupForm()">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name</label>
@@ -45,7 +59,7 @@
                                     placeholder="Enter your password">
                                 <div id="error-cpassword" class="error-style"></div>
                             </div>
-
+                            
                             <div class="mb-3">
                                 <label for="houseNo" class="form-label">House.No</label>
                                 <input type="textarea" class="form-control" id="houseNo" name="houseNo"
@@ -83,18 +97,7 @@
 
 
                             <button type="submit" class="btn btn-success mb-4 signup-btncls w-65">Sign Up</button>
-                            <div class="error-message">{{message}}</div>
-                            {{#if successMessage}}
-                            <div class="alert alert-success">
-                                {{successMessage}}
-                            </div>
-                            {{/if}}
 
-                            {{#if errorMessage}}
-                            <div class="alert alert-danger">
-                                {{errorMessage}}
-                            </div>
-                            {{/if}}
                         </form>
                         <div>Already have an account ? <a href="/login" class="signup-login">Login</a></div>
                     </div>

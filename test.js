@@ -1,4 +1,4 @@
-/* const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 
 const plainTextPassword = "mySecurePassword";
 const saltRounds = 10;
@@ -16,18 +16,18 @@ async function verifyPassword(plainPassword, hashedPassword) {
 
 // Example Usage
 (async () => {
-    const hashedPassword = await hashPassword("sandeeppwd");
+    const hashedPassword = await hashPassword("test1pwd");
     // await verifyPassword(plainTextPassword, hashedPassword);
-})(); */
+})();
 
 
-const students = [
+/* const students = [
     { id: 1, name: "Alice", age: 20, grade: "A", subjects: ["Math", "Science"] },
     { id: 2, name: "Bob", age: 21, grade: "B", subjects: ["History", "English"] },
     { id: 3, name: "Charlie", age: 19, grade: "A", subjects: ["Science", "English"] },
     { id: 4, name: "Diana", age: 22, grade: "C", subjects: ["Math", "History"] },
     { id: 5, name: "Eve", age: 20, grade: "B", subjects: ["Math", "Science"] }
-];
+]; */
 /* 
 let studentdata = "";
 for (let i = 0; i < students.length; i++) {

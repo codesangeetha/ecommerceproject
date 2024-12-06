@@ -18,7 +18,7 @@
         </div>
         {{/if}}
 
-        <form action="/changepassword" method="POST" onsubmit="return changepasswordValidation()">
+        <form action="/admin/changepassword-submit" method="POST" onsubmit="return changepasswordValidation()">
             <div class="mb-3">
                 <label for="newPassword" class="form-label">New Password</label>
                 <input type="password" id="newPassword" name="newPassword" class="form-control w-50" >
@@ -32,7 +32,7 @@
             <button type="submit" class="btn btn-primary">Change Password</button>
         </form>
     </div>
-    <script src="javascripts/changePwd.js"></script>
+    <script src="/javascripts/changePwd.js"></script>
 </body>
 
 </html>
