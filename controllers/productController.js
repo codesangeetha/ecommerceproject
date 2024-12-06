@@ -1,4 +1,4 @@
-// controllers/productController.js
+
 const { getproductsdata, getProductDatabyId } = require('../helpers/functions');
 const Product = require('../models/products.model');
 const User = require('../models/users.model');

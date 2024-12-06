@@ -3,12 +3,13 @@ const Product = require('../models/products.model');
 const User = require('../models/users.model');
 const crypto = require('crypto');
 const bcrypt = require("bcrypt");
-const { 
-    sendEmail, 
-    findUserByEmail, 
-    updateUserByEmail, 
+const profileSchema = require('../validators/profile.schema');
+const {
+    sendEmail,
+    findUserByEmail,
+    updateUserByEmail,
     insertuser,
-    findUserById, 
+    findUserById,
     updatePasswordById } = require('../helpers/functions');
 
 
@@ -208,23 +209,32 @@ exports.getProfile = async (req, res) => {
         res.status(500).send('An error occurred');
     }
 };
+
 exports.postProfile = async (req, res) => {
     if (!req.isAuthenticated()) return res.redirect('/login');
 
-    const { houseNo, city, state, pincode, phone } = req.body;
+    const { error } = profileSchema.validate(req.body, { abortEarly: false });
+
+    if (error) {
+        req.flash('error', error.details.map((err) => err.message).join(', '));
+        return res.redirect('/profile');
+    }
 
     try {
         await User.findByIdAndUpdate(
             req.user._id,
-            { address: { houseNo, city, state, pincode, phone } },
+            { address: req.body },
             { new: true }
         );
+        req.flash('success', 'Profile updated successfully');
         res.redirect('/profile');
-    } catch (error) {
-        console.error('Error updating profile:', error);
-        res.status(500).send('An error occurred');
+    } catch (err) {
+        console.error('Error updating profile:', err);
+        req.flash('error', 'An error occurred while updating your profile');
+        res.redirect('/profile');
     }
 };
+
 
 exports.getFavorites = async (req, res) => {
     if (!req.isAuthenticated()) return res.redirect('/login');

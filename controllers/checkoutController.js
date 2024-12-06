@@ -3,6 +3,7 @@ const Product = require('../models/products.model');
 const User = require('../models/users.model');
 const Order = require('../models/order.model');
 const { Cashfree } = require("cashfree-pg");
+const { sendSMS } = require('../helpers/functions');
 
 
 exports.getCheckout=async (req, res) => {
@@ -121,37 +122,42 @@ exports.paymentOrder=async (req, res) => {
 };
 
 exports.thankyoupage = async (req, res) => {
-    const { order_id } = req.query;
+  const { order_id } = req.query;
 
-    try {
-        // Fetch the order by order ID
-        const order = await Order.findOne({ orderId: order_id }).populate('cartDetails.product');
-        if (!order) return res.status(404).send('Order not found');
+  try {
+    // Fetch the order by order ID
+    const order = await Order.findOne({ orderId: order_id }).populate('cartDetails.product');
+    if (!order) return res.status(404).send('Order not found');
 
-        // Update payment status
-        order.paymentDetails.paymentStatus = 'Success';
-        await order.save();
+    // Update payment status
+    order.paymentDetails.paymentStatus = 'Success';
+    await order.save();
 
-        // Reduce stock for each product in the order
-        const cartProducts = order.cartDetails;
-        for (let item of cartProducts) {
-            const product = await Product.findById(item.product);
-            if (product) {
-                product.stock -= item.quantity;
-                if (product.stock < 0) {
-                    product.stock = 0; // Ensure stock doesn't go negative
-                }
-                await product.save();
-            }
+    // Reduce stock for each product in the order
+    const cartProducts = order.cartDetails;
+    for (let item of cartProducts) {
+      const product = await Product.findById(item.product);
+      if (product) {
+        product.stock -= item.quantity;
+        if (product.stock < 0) {
+          product.stock = 0; // Ensure stock doesn't go negative
         }
-
-        // Clear the user's cart
-        await Cart.findOneAndDelete({ user: req.user._id });
-
-        // Render thank you page with order details
-        res.render('thankyou', { order });
-    } catch (err) {
-        console.error('Error in thankyoupage:', err);
-        res.status(500).send('Error occurred');
+        await product.save();
+      }
     }
+
+    // Clear the user's cart
+    await Cart.findOneAndDelete({ user: req.user._id });
+
+    // Send SMS notification
+    const phoneNumber = order?.address?.phone; // Assuming `req.user.phone` contains the user's phone number
+    const message = `Thank you for your order! Your order ID is ${order.orderId}.`;
+    await sendSMS(phoneNumber, message);
+
+    // Render thank you page with order details
+    res.render('thankyou', { order });
+  } catch (err) {
+    console.error('Error in thankyoupage:', err);
+    res.status(500).send('Error occurred');
+  }
 };

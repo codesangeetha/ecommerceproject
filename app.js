@@ -46,28 +46,23 @@ app.use(passport.session());
 
 
 app.use((req, res, next) => {
-  /* const flashObj = req.flash();
-  console.log("flash: ", req.flash()); */
   
   const err = req.flash('error');
   const success = req.flash('success');
   console.log("flash: ", err);
   console.log("flash: ", success);
-  // console.log("flashObj", flashObj);
-   /*console.log("flash error: ", flashObj["error"]);
-  console.log("condition: ", flashObj["error"] && flashObj["error"].length > 0);
-  console.log("mesg: ", (flashObj?.error?.length > 0 ) ? flashObj["error"][0]: "");
-  res.locals.success_msg = req.flash('success_msg');
-  res.locals.error_msg = req.flash('error_msg'); */
-  //res.locals.errorMessage = (flashObj?.error?.length > 0) ? flashObj?.error[0] : ""; // For Passport error messages
   res.locals.errorMessage = err.length >0? err[0]: "";
   res.locals.successMessage = success.length>0? success[0]: "";
-
-  //res.locals.successMessage = (flashObj?.success?.length > 0) ? flashObj?.success[0] : "";
   next();
 });
 
 
+function clearCache(req, res, next) {
+  res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private');
+  next();
+}
+
+app.use(clearCache);
 
 app.use('/uploads', express.static('uploads'));
 app.use(authRouter);
@@ -77,12 +72,6 @@ app.use('/admin', adminRouter);
 
 
 
-function clearCache(req, res, next) {
-  res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private');
-  next();
-}
-
-app.use(clearCache);
 
 
 // catch 404 and forward to error handler

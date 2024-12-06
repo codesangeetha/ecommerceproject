@@ -8,6 +8,7 @@ const { MailtrapClient } = require("mailtrap");
 const TOKEN = "a72cedfa02a11c174c1e8596b1bc1f14";
 const ENDPOINT = "https://send.api.mailtrap.io/";
 const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
+const fetch = require('node-fetch');
 
 
 exports.getcategorydata = async () => {
@@ -295,4 +296,38 @@ exports.updatePasswordById = async (userId, hashedPassword)=> {
         throw new Error('Could not update password.');
     }
 }
+
+exports.sendSMS = async (phoneNumber, message) => {
+  const url = 'https://e53vyr.api.infobip.com/sms/3/messages';
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'App 3c53d07473e98e80e8f01ed8161d1311-8518ddb0-2219-4349-ac0c-94b1a9895853'
+  };
+
+  const body = JSON.stringify({
+    messages: [
+      {
+        sender: "InfoSMS",
+        destinations: [
+          { to: phoneNumber }
+        ],
+        content: { text: message }
+      }
+    ]
+  });
+
+  try {
+    const response = await fetch(url, { method: 'POST', headers, body });
+    const data = await response.json();
+
+    if (data.messages && data.messages[0]?.status?.groupName === 'PENDING') {
+      console.log('SMS sent successfully:', data);
+    } else {
+      console.error('Failed to send SMS:', data);
+    }
+  } catch (error) {
+    console.error('Error sending SMS:', error.message);
+  }
+};
+
 

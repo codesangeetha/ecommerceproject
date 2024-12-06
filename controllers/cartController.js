@@ -76,7 +76,7 @@ exports.updateCartItem = async (req, res) => {
         }
 
         await cart.save();
-        res.status(200).json({ message: 'Quantity updated successfully' });
+        res.status(200).json({ message: 'Quantity updated successfully', qty: cart.products[productIndex].quantity });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server Error' });

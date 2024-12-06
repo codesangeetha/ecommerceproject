@@ -20,6 +20,11 @@ const Users = require("../models/users.model");
 const Brand = require('../models/brands.model');
 const Order = require("../models/order.model");
 
+const { } = require('../controllers/adminproductController');
+
+
+
+
 var router = express.Router();
 
 /* const storage = multer.diskStorage({

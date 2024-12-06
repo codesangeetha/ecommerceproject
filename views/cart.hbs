@@ -2,90 +2,80 @@
 
 <body>
 
-    <scetion>
-        <div class="container mt-5">
-            {{#each cart.products}}
-            <div class="row mt-2">
-                <div class="col-md-2">
-                    <div class="card">
-                        <img class="card-img-top" src="/uploads/{{this.product.images.[0]}}" alt="Card image cap">
-                    </div>
+   <section>
+    <div class="container mt-5">
+        <!-- Loop Through Cart Products -->
+        {{#each cart.products}}
+        <div class="row align-items-center mb-4">
+            <!-- Product Image -->
+            <div class="col-md-2">
+                <div class="card">
+                    <img class="card-img-top" src="/uploads/{{this.product.images.[0]}}" alt="{{this.product.name}}" style="max-height: 120px; object-fit: contain;">
                 </div>
-                <div class="col-md-6">
-                    <p class="cart-pcls">{{this.product.name}}</p>
-                    <div style="margin-left: 10px;margin-top: 20px;margin-bottom: 20px;">
-                        <label for="color" class="form-label" style="font-weight: bold;">Color</label>
-                        <select class="form-control" id="color{{this._id}}" name="color"
-                            style="width: 90px;font-weight :bold" onchange="updateColor('{{this._id}}')">
-                            {{!-- <option value="1" selected>1</option> --}}
+            </div>
+
+            <!-- Product Details -->
+            <div class="col-md-6">
+                <p class="cart-pcls mb-2" style="font-weight: bold; font-size: 1.1rem;">{{this.product.name}}</p>
+                
+                <div class="row">
+                    <!-- Color Selection -->
+                    <div class="col-md-4 mb-3">
+                        <label for="color{{this._id}}" class="form-label" style="font-weight: bold;">Color</label>
+                        <select class="form-control" id="color{{this._id}}" name="color" onchange="updateColor('{{this._id}}')">
                             {{#each this.product.colors_available}}
                             <option value="{{this}}" {{#if (eq this ../color)}}selected{{/if}}>{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
 
-                    <div style="margin-left: 10px;margin-top: 20px;margin-bottom: 20px;">
-                        <label for="color" class="form-label" style="font-weight: bold;">Size</label>
-                        <select class="form-control" id="size{{this._id}}" name="size"
-                            style="width: 60px;font-weight :bold" onchange="updateSize('{{this._id}}')">
-                            {{!-- <option value="1" selected>1</option> --}}
+                    <!-- Size Selection -->
+                    <div class="col-md-4 mb-3">
+                        <label for="size{{this._id}}" class="form-label" style="font-weight: bold;">Size</label>
+                        <select class="form-control" id="size{{this._id}}" name="size" onchange="updateSize('{{this._id}}')">
                             {{#each this.product.sizes_available}}
                             <option value="{{this}}" {{#if (eq this ../size)}}selected{{/if}}>{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
 
-
-                    <div class="cart-size">
-                        Qty:
+                    <!-- Quantity Selection -->
+                    <div class="col-md-4">
+                        <label for="quantity{{this._id}}" class="form-label" style="font-weight: bold;">Quantity</label>
                         <div class="input-group">
-                            <button class="btn btn-sm btn-outline-secondary"
-                                onclick="updateQuantity('{{this._id}}', -1)">-</button>
-
-
-                            <input type="text" class="form-control text-center" value="{{this.quantity}}" readonly
-                                style="max-width: 60px;">
-
-
-                            <button class="btn btn-sm btn-outline-secondary"
-                                onclick="updateQuantity('{{this._id}}', 1)">+</button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity('{{this._id}}', -1)">-</button>
+                            <input id="{{this._id}}_qty" type="text" class="form-control text-center" value="{{this.quantity}}" readonly style="max-width: 50px;">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity('{{this._id}}', 1)">+</button>
                         </div>
                     </div>
-
-
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="dropdown mt-2">
-
-                                <a href="delete-cart/{{_id}}" onclick="return confirmDelete()"><button
-                                        class="btn btn-sm btn-danger">
-                                        {{!-- <i class="fas fa-trash-alt"></i> --}}
-                                        Delete
-                                    </button></a>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
-
-
-                <div class="col-md-2 cart-size">₹ {{this.product.price}}</div>
             </div>
 
+            <!-- Product Price -->
+            <div class="col-md-2 text-center">
+                <p class="m-0" style="font-size: 1.2rem; font-weight: bold;">₹ {{this.product.price}}</p>
+            </div>
+
+            <!-- Delete Button -->
+            <div class="col-md-2 text-center">
+                <a href="delete-cart/{{_id}}" onclick="return confirmDelete()" class="btn btn-sm btn-danger">
+                    Delete
+                </a>
+            </div>
         </div>
 
-        <hr style="border-width:2px;">
+        <hr class="my-4">
         {{/each}}
 
-
-        <div>
+        <!-- Checkout Button -->
+        <div class="text-center">
             <a href="/checkout">
-                <button type="button" class="btn btn-secondary cart-buyButton w-90">Proceed to buy</button>
+                <button type="button" class="btn btn-secondary cart-buyButton w-0 ">Proceed to Buy</button>
             </a>
         </div>
+    </div>
+</section>
 
-        </div>
-        </section>
         <script>
             function confirmDelete() {
                 return confirm("Are you want to delete this category?");
@@ -101,7 +91,9 @@
                         body: JSON.stringify({ productId, change }),
                     });
                     if (response.ok) {
-                        location.reload(); // Reload to reflect updated quantity
+                        const resBody = await response.json();
+                        document.getElementById(`${productId}_qty`).value = resBody.qty;
+                        console.log('response.body ',resBody)
                     } else {
                         alert('Error updating quantity');
                     }
@@ -122,7 +114,7 @@
                         body: JSON.stringify({ productId, size }),
                     });
                     if (response.ok) {
-                        location.reload();
+                       
                     } else {
                         alert('Error updating size');
                     }
@@ -142,7 +134,7 @@
                         body: JSON.stringify({ productId, color }),
                     });
                     if (response.ok) {
-                        location.reload();
+                     
                     } else {
                         alert('Error updating color');
                     }

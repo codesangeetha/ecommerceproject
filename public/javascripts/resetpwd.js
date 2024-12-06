@@ -11,4 +11,6 @@ function resetpasswordValidation(){
         isValid = false;
     }
     return isValid;
-}
+};
+
+console.log("hi");
