@@ -23,32 +23,20 @@ const Order = require("../models/order.model");
 const bcrypt = require("bcrypt");
 const mongoose = require('mongoose');
 
-const { } = require('../controllers/adminproductController');
-
-
+const { getProduct,postProductSearch,addProduct,addProductSubmit,getEditProduct,postEditProduct,deleteProduct } = require('../controllers/adminproductController');
 
 
 var router = express.Router();
 
-/* const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + "-" + random() + "-" + file.originalname);
-    }
-}); */
-
-// const multer = require('multer');
 const path = require('path');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/'); 
+        cb(null, 'uploads/');
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname)); 
+        cb(null, uniqueSuffix + path.extname(file.originalname));
     }
 });
 
@@ -83,9 +71,6 @@ function random() {
     return Math.floor(Math.random() + 9000) + 1000;
 }
 
-// const upload = multer({ storage: storage });
-
-
 const checkadminLogin = (req, res, next) => {
     if (req.session.isAdminLoggin && req.session.isAdminLoggin == true) {
         // console.log('hello')
@@ -96,94 +81,19 @@ const checkadminLogin = (req, res, next) => {
     }
 }
 
+router.get('/product', checkadminLogin,getProduct );
 
+router.post('/product-search', checkadminLogin,postProductSearch );
 
-router.get('/product', checkadminLogin, async (req, res) => {
+router.get('/edit-product/:id', checkadminLogin,getEditProduct );
 
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 4;
-    const { startDate, endDate } = req.query;
+router.post('/edit-productsubmit/:id', checkadminLogin, upload.array('images', 5),postEditProduct);
 
-    let query = { isdeleted: false };
+router.get('/add-product', checkadminLogin,addProduct );
 
-    if (startDate) {
-        query.createdAt = { ...query.createdAt, $gte: new Date(`${startDate}T00:00:00.000Z`) };
-    }
-    if (endDate) {
-        query.createdAt = { ...query.createdAt, $lte: new Date(`${endDate}T23:59:59.999Z`) };
-    }
-    console.log("query :", query);
+router.post('/add-productsubmit', upload.array('images', 5), addProductSubmit);
 
-    const totalProducts = await Products.countDocuments(query);
-
-    const productdata = await Products.find(query)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * perPage)
-        .limit(perPage);
-
-    const products = productdata.map((o, index) => ({
-        slno: (page - 1) * perPage + index + 1,
-        _id: o._id,
-        name: o.name,
-        description: o.description.substring(0, 20),
-        price: o.price,
-        image: o.images[0]
-    }));
-
-    const totalPages = Math.ceil(totalProducts / perPage);
-
-    return res.render('adminproduct', {
-        arr: products,
-        currentPage: page,
-        totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin,
-        startDate,
-        endDate
-    });
-});
-
-router.post('/product-search', checkadminLogin, async (req, res) => {
-    const searchQuery = req.body.search?.trim(); // Handle whitespace-only input
-    const page = parseInt(req.query.page) || 1; // Enable pagination
-    const perPage = 4; // Number of items per page
-
-    let query = { isdeleted: false };
-
-    // Add search condition if searchQuery is not empty
-    if (searchQuery) {
-        query = {
-            ...query,
-            name: { $regex: searchQuery, $options: "i" }, // Case-insensitive search
-        };
-    }
-
-    const totalProducts = await Products.countDocuments(query);
-
-    const productdata = await Products.find(query)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * perPage)
-        .limit(perPage);
-
-    const products = productdata.map((o, index) => ({
-        slno: (page - 1) * perPage + index + 1,
-        _id: o._id,
-        name: o.name,
-        description: o.description.substring(0, 20),
-        price: o.price,
-        image: o.image
-    }));
-
-    const totalPages = Math.ceil(totalProducts / perPage);
-
-    res.render('adminproduct', {
-        arr: products,
-        currentPage: page,
-        totalPages,
-        isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
-        searchQuery // Pass the search query back for persistence in the input field
-    });
-});
+router.get('/deleteproduct/:id',deleteProduct);
 
 
 
@@ -365,7 +275,7 @@ router.get('/dashboard', checkadminLogin, async (req, res) => {
 router.get('/login', (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
-   
+
     res.render('adminlogin', { msg, isAdmin: true, isadminlogin: req.session.isAdminLoggin });
 });
 
@@ -385,10 +295,10 @@ router.post('/adminloginsubmit', async (req, res) => {
 
 router.get('/user', checkadminLogin, async (req, res) => {
 
-// console.log("req.query",req.query)
+    // console.log("req.query",req.query)
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
-const { startDate, endDate } = req.query;
+    const { startDate, endDate } = req.query;
 
     let query = {};
 
@@ -428,14 +338,14 @@ const { startDate, endDate } = req.query;
         startDate,
         endDate
     });
-    
+
 });
 
 
 router.post('/user-search', checkadminLogin, async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const perPage = 4;
-    const searchQuery = req.body.search?.trim(); 
+    const searchQuery = req.body.search?.trim();
 
     let query = {};
 
@@ -546,52 +456,7 @@ router.post('/add-brandsubmit', async (req, res) => {
 
 
 
-router.get('/add-product', checkadminLogin, async (req, res) => {
-    const data = await getcategorydata();
-    console.log(data);
-    const info = await getbranddata();
-    console.log("brand data", info);
-    const sizeArr = [5, 6, 7, 8, 9, 10, 11, 12, 13];
-    const colorArr = ["Red", "Blue", "White", "Black"];
-    // console.log("colorarr", colorArr);
 
-    const msg = req.session.message;
-    req.session.message = "";
-
-    return res.render('addproduct', { arr: data, arr2: info, sizeArr: sizeArr, msg: msg, colorArr: colorArr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
-});
-
-router.post('/add-productsubmit', upload.array('images', 5), async (req, res) => {
-    let sizearr = req.body.size;
-    if (!Array.isArray(req.body.size)) {
-        sizearr = [req.body.size];
-    }
-    let colorarr = req.body.color;
-    if (!Array.isArray(req.body.color)) {
-        colorarr = [req.body.color];
-    }
-
-    
-    const imagePaths = req.files.map(file => file.filename);
-
-    const obj = {
-        name: req.body.productName,
-        brand: req.body.brand,
-        price: req.body.price,
-        description: req.body.description,
-        category: req.body.category,
-        isdeleted: false,
-        editUser: req.session.adminName,
-        images: imagePaths, // Store image paths
-        sizes_available: sizearr,
-        colors_available: colorarr,
-        stock: req.body.stock,
-        status: req.body.status ? true : false
-    };
-
-    const data = await insertproduct(obj);
-    return res.redirect('/admin/product');
-});
 
 
 router.get('/deletecategory/:id', async (req, res) => {
@@ -608,12 +473,7 @@ router.get('/deletebrand/:id', async (req, res) => {
     res.redirect('/admin/brand')
 });
 
-router.get('/deleteproduct/:id', async (req, res) => {
-    const val = req.params.id;
-    // console.log(val);
-    const data = await deleteproduct(val);
-    res.redirect('/admin/product')
-});
+
 
 
 router.get('/logout', (req, res) => {
@@ -678,95 +538,10 @@ router.post('/edit-brandsubmit/:id', checkadminLogin, async (req, res) => {
     return res.redirect('/admin/brand')
 });
 
-router.get('/edit-product/:id', checkadminLogin, async (req, res) => {
-    const val = req.params.id;
-    const product = await getProductDatabyId(val);
-    console.log("product data:", product);
-
-    const categories = await getcategorydata();
-    const newCategories = categories.map((category) => ({
-        _id: category._id,
-        name: category.name,
-        selected: product.category == category._id ? "selected" : "",
-    }));
-
-    const brands = await getbranddata();
-    const newBrands = brands.map((brand) => ({
-        _id: brand._id,
-        name: brand.name,
-        selected: product.brand == brand._id ? "selected" : "",
-    }));
-
-    const sizeArr = [5, 6, 7, 8, 9, 10, 11, 12, 13];
-    const newSizeArr = sizeArr.map((size) => ({
-        size,
-        selected: product.sizes_available.includes(size) ? "selected" : "",
-    }));
-
-    const colorArr = ["Red", "Blue", "White", "Black"];
-    const newColorArr = colorArr.map((color) => ({
-        color,
-        selected: product.colors_available.includes(color) ? "selected" : "",
-    }));
-
-    return res.render('editproduct', {
-        products: product,
-        arr: newCategories,
-        arr2: newBrands,
-        newSizeArr,
-        newColorArr,
-        isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
-    });
-});
 
 
-router.post('/edit-productsubmit/:id', checkadminLogin, upload.array('images', 5), async (req, res) => {
-    const val2 = req.params.id;
-    let sizearr = req.body.size;
-    if (!Array.isArray(req.body.size)) {
-        sizearr = [req.body.size];
-    }
 
-    let colorarr = req.body.color;
-    if (!Array.isArray(req.body.color)) {
-        colorarr = [req.body.color];
-    }
 
-    const oldProduct = await getProductDatabyId(val2); // Fetch old product data
-
-    // Process new image uploads
-    const newImages = req.files.map((file) => file.filename);
-
-    // Handle removed images
-    let updatedImages = oldProduct.images || [];
-    if (req.body.removedImages) {
-        const removedImages = Array.isArray(req.body.removedImages)
-            ? req.body.removedImages
-            : [req.body.removedImages];
-        updatedImages = updatedImages.filter((img) => !removedImages.includes(img));
-    }
-
-    // Add new images to the updated image array
-    updatedImages = [...updatedImages, ...newImages];
-
-    const obj = {
-        name: req.body.productName,
-        price: req.body.price,
-        brand: req.body.brand,
-        description: req.body.description,
-        category: req.body.category,
-        sizes_available: sizearr,
-        colors_available: colorarr,
-        editUser: req.session.adminName,
-        images: updatedImages,
-        stock: req.body.stock,
-        status: req.body.status ? true : false,
-    };
-
-    await editproduct(val2, obj);
-    res.redirect('/admin/product');
-});
 
 
 router.get('/bantoggle/:id', async (req, res) => {
@@ -791,7 +566,7 @@ router.get('/view-product/:id', async (req, res) => {
     const updatedAtDate = product.updatedAt ? product.updatedAt.toISOString().split('T')[0] : 'N/A';
 
     res.render('partials/productModalContent', {
-        layout: false, 
+        layout: false,
         product,
         categoryName,
         brandName,
@@ -929,20 +704,20 @@ router.get('/view-order/:id', checkadminLogin, async (req, res) => {
     }
 });
 
-router.get('/changePassword',(req, res) => {
-    
+router.get('/changePassword', (req, res) => {
+
     if (!req.session.userId) {
         req.flash('error', 'Please log in to change your password.');
         return res.redirect('/admin/login');
     }
-    res.render('adminchangepwd',{isAdmin: true, isadminlogin: req.session.isAdminLoggin,});
+    res.render('adminchangepwd', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, });
 });
 // /admin/changepassword-submit
 router.post('/changepassword-submit', async (req, res) => {
 
     try {
         const { newPassword, confirmNewPassword } = req.body;
-        const userId =  req.session.userid;
+        const userId = req.session.userid;
 
         console.log('userId', userId);
 
