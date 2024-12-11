@@ -2,6 +2,8 @@
 const Cart = require('../models/cart.model');
 const Product = require('../models/products.model');
 const User = require('../models/users.model');
+const updatecolorschema = require('../validators/updatecolor.schema');
+const updatesizeschema = require('../validators/updatesize.schema');
 
 // Add product to cart
 exports.addToCart = async (req, res) => {
@@ -107,6 +109,13 @@ exports.removeFromCart = async (req, res) => {
 };
 
 exports.updateSize = async (req, res) => {
+
+    const { error } = updatesizeschema.validate(req.body, { abortEarly: false });
+    if (error) {
+        const err = error.details.map((err) => err.message).join(', ');
+        return res.status(500).json({ message: `Server Error ${err}` });
+    }
+
     const userId = req.user._id;
     const { productId, size } = req.body;
 
@@ -138,6 +147,13 @@ exports.updateSize = async (req, res) => {
 };
 
 exports.updateColor=async (req, res) => {
+
+    const { error } = updatecolorschema.validate(req.body, { abortEarly: false });
+    if (error) {
+        const err = error.details.map((err) => err.message).join(', ');
+        return res.status(500).json({ message: `Server Error ${err}` });
+    }
+
     const userId = req.user._id;
     const { productId, color } = req.body;
 

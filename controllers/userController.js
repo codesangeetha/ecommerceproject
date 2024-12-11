@@ -4,6 +4,7 @@ const User = require('../models/users.model');
 const crypto = require('crypto');
 const bcrypt = require("bcrypt");
 const profileSchema = require('../validators/profile.schema');
+const changepasswordSchema = require('../validators/changepassword.schema');
 const {
     sendEmail,
     findUserByEmail,
@@ -260,6 +261,15 @@ exports.getChangePassword = (req, res) => {
 };
 
 exports.postChangepassword = async (req, res) => {
+    if (!req.isAuthenticated()) return res.redirect('/login');
+
+    const { error } = changepasswordSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+        req.flash('error', error.details.map((err) => err.message).join(', '));
+        return res.redirect('/changepassword');
+    }
+
+
     try {
         const { newPassword, confirmNewPassword } = req.body;
         const userId = req.user._id;

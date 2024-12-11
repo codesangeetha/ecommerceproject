@@ -3,6 +3,8 @@
 <body>
 
     <section>
+        <div class="alert alert-danger" id="errmsg" style="display: none;">
+        </div>
         <div class="container mt-5">
             <!-- Loop Through Cart Products -->
             {{#each cart.products}}
@@ -121,8 +123,13 @@
                     body: JSON.stringify({ productId, size }),
                 });
                 if (response.ok) {
-
+                    document.getElementById("errmsg").style.display = "none";
                 } else {
+                    const resBody = await response.json();
+                    document.getElementById("errmsg").innerHTML = resBody.message;
+                    document.getElementById("errmsg").style.display = "block";
+                    console.log('resBody', resBody);
+
                     alert('Error updating size');
                 }
             } catch (err) {
@@ -143,6 +150,8 @@
                 if (response.ok) {
 
                 } else {
+                    const resBody = await response.json();
+                    console.log('resBody', resBody);
                     alert('Error updating color');
                 }
             }
