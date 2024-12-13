@@ -233,4 +233,25 @@ exports.deleteProduct =  async (req, res) => {
     // console.log(val);
     const data = await deleteproduct(val);
     res.redirect('/admin/product')
-}
+};
+exports.viewProduct = async (req, res) => {
+    const val = req.params.id;
+    const product = await getProductDatabyId(val);
+    const categories = await getcategorydata();
+    const brands = await getbranddata();
+
+    let categoryName = categories.find(cat => cat._id.toString() === product.category)?.name || 'N/A';
+    let brandName = brands.find(brand => brand._id.toString() === product.brand)?.name || 'N/A';
+
+    const createdAtDate = product.createdAt ? product.createdAt.toISOString().split('T')[0] : 'N/A';
+    const updatedAtDate = product.updatedAt ? product.updatedAt.toISOString().split('T')[0] : 'N/A';
+
+    res.render('partials/productModalContent', {
+        layout: false,
+        product,
+        categoryName,
+        brandName,
+        createdAtDate,
+        updatedAtDate
+    });
+};

@@ -23,8 +23,15 @@ const Order = require("../models/order.model");
 const bcrypt = require("bcrypt");
 const mongoose = require('mongoose');
 
-const { getProduct,postProductSearch,addProduct,addProductSubmit,getEditProduct,postEditProduct,deleteProduct } = require('../controllers/adminproductController');
+const { getProduct,postProductSearch,addProduct,addProductSubmit,getEditProduct,postEditProduct,deleteProduct,viewProduct } = require('../controllers/adminproductController');
 
+const{getCategory,addCategory,postaddCategorySubmit,postCategorySearch,deleteCategory,getEditCategory,editCategorySubmit,getViewCategory}= require('../controllers/admincategoryController');
+
+const {getBrand,getAddBrand,addBrandSubmit,brandSearch,deleteBrand,getEditBrand,editBrandSubmit,getViewBrand} = require('../controllers/adminbrandController');
+
+const {getLogin,postAdminloginSubmit,getUser,userSearch,getLogout,getBantoggle} = require('../controllers/adminuserController');
+
+const {getOrders,viewOrders} = require('../controllers/adminOrderController');
 
 var router = express.Router();
 
@@ -93,178 +100,46 @@ router.get('/add-product', checkadminLogin,addProduct );
 
 router.post('/add-productsubmit', upload.array('images', 5), addProductSubmit);
 
+router.get('/view-product/:id', viewProduct);
+
 router.get('/deleteproduct/:id',deleteProduct);
 
 
 
-router.get('/category', checkadminLogin, async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 4;
-    const { startDate, endDate } = req.query;
+router.get('/category', checkadminLogin,getCategory );
 
-    let query = { isdeleted: false };
+router.get('/add-category', checkadminLogin,addCategory);
 
-    if (startDate) {
-        query.createdAt = { ...query.createdAt, $gte: new Date(`${startDate}T00:00:00.000Z`) };
-    }
-    if (endDate) {
-        query.createdAt = { ...query.createdAt, $lte: new Date(`${endDate}T23:59:59.999Z`) };
-    }
-    console.log("query :", query);
+router.post('/add-categorysubmit', upload.single('image'), postaddCategorySubmit);
 
-    const totalcategories = await Category.countDocuments(query);
+router.post('/category-search', checkadminLogin, postCategorySearch);
 
-    const categorydata = await Category.find(query)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * perPage)
-        .limit(perPage);
+router.get('/edit-category/:id', checkadminLogin, getEditCategory);
 
-    const categories = categorydata.map((o, index) => ({
-        slno: (page - 1) * perPage + index + 1,
-        _id: o._id,
-        name: o.name,
-        description: o.description.substring(0, 20),
-        image: o.image
+router.post('/edit-categorysubmit/:id', checkadminLogin, upload.single('image'),editCategorySubmit );
 
-    }));
+router.get('/view-category/:id', getViewCategory);
 
-    const totalPages = Math.ceil(totalcategories / perPage);
-
-    res.render('admincategory', {
-
-        arr: categories,
-        currentPage: page,
-        totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin,
-        startDate,
-        endDate
-    });
-
-});
+router.get('/deletecategory/:id',deleteCategory );
 
 
-router.post('/category-search', checkadminLogin, async (req, res) => {
-    const searchQuery = req.body.search.trim();
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 4; // Number of items per page
 
-    let query = { isdeleted: false };
-    if (searchQuery) {
-        query = {
-            ...query,
-            name: { $regex: searchQuery, $options: "i" },
-        };
-    }
+router.get('/brand', checkadminLogin,getBrand );
 
-    const totalcategories = await Category.countDocuments(query);
+router.get('/add-brand', checkadminLogin, getAddBrand);
 
-    const categorydata = await Category.find(query)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * perPage)
-        .limit(perPage);
+router.post('/add-brandsubmit',addBrandSubmit );
 
-    const categories = categorydata.map((o, index) => ({
-        slno: (page - 1) * perPage + index + 1,
-        _id: o._id,
-        name: o.name,
-        description: o.description.substring(0, 20),
-        image: o.image
-    }));
+router.post('/brand-search', checkadminLogin,brandSearch );
 
-    const totalPages = Math.ceil(totalcategories / perPage);
+router.get('/edit-brand/:id', checkadminLogin,getEditBrand );
 
-    res.render('admincategory', {
-        arr: categories,
-        currentPage: page,
-        totalPages,
-        isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
-        searchQuery,
-    });
-});
+router.post('/edit-brandsubmit/:id', checkadminLogin, editBrandSubmit);
 
+router.get('/view-brand/:id', getViewBrand);
 
-router.get('/brand', checkadminLogin, async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 4;
+router.get('/deletebrand/:id', deleteBrand);
 
-    const { startDate, endDate } = req.query;
-
-    let query = { isdeleted: false };
-
-    if (startDate) {
-        query.createdAt = { ...query.createdAt, $gte: new Date(`${startDate}T00:00:00.000Z`) };
-    }
-    if (endDate) {
-        query.createdAt = { ...query.createdAt, $lte: new Date(`${endDate}T23:59:59.999Z`) };
-    }
-    console.log("query :", query);
-
-    const totalbrands = await Brand.countDocuments(query);
-
-    const branddata = await Brand.find(query)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * perPage)
-        .limit(perPage);
-
-    const brands = branddata.map((o, index) => ({
-        slno: (page - 1) * perPage + index + 1,
-        _id: o._id,
-        name: o.name,
-        description: o.description.substring(0, 20),
-
-    }));
-
-    const totalPages = Math.ceil(totalbrands / perPage);
-
-    res.render('adminbrand', {
-        arr: brands,
-        currentPage: page,
-        totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin
-    });
-});
-
-router.post('/brand-search', checkadminLogin, async (req, res) => {
-
-    const searchQuery = req.body.search.trim();
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 4; // Number of items per page
-
-    let query = { isdeleted: false };
-    if (searchQuery) {
-        query = {
-            ...query,
-            name: { $regex: searchQuery, $options: "i" },
-        };
-    }
-
-    const totalbrands = await Brand.countDocuments(query);
-
-    const branddata = await Brand.find(query)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * perPage)
-        .limit(perPage);
-
-    const brands = branddata.map((o, index) => ({
-        slno: (page - 1) * perPage + index + 1,
-        _id: o._id,
-        name: o.name,
-        description: o.description.substring(0, 20),
-    }));
-
-    const totalPages = Math.ceil(totalbrands / perPage);
-
-    res.render('adminbrand', {
-        arr: brands,
-        currentPage: page,
-        totalPages,
-        isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
-        searchQuery,
-    });
-
-});
 
 router.get('/dashboard', checkadminLogin, async (req, res) => {
     const obj = await dashboradCount();
@@ -272,437 +147,21 @@ router.get('/dashboard', checkadminLogin, async (req, res) => {
 });
 
 
-router.get('/login', (req, res) => {
-    const msg = req.session.message;
-    req.session.message = "";
+router.get('/login', getLogin);
 
-    res.render('adminlogin', { msg, isAdmin: true, isadminlogin: req.session.isAdminLoggin });
-});
+router.post('/adminloginsubmit',postAdminloginSubmit);
 
-router.post('/adminloginsubmit', async (req, res) => {
-    const loginvalue = await finduseradmin(req.body.username, req.body.password);
-    // console.log(loginvalue);
-    if (loginvalue == null) {
-        req.session.message = "Invalid username/password";
-        return res.redirect('/admin/login');
-    } else {
-        req.session.isAdminLoggin = true;
-        req.session.adminName = req.body.username;
-        req.session.userid = loginvalue._id.toString();
-        return res.redirect('/admin/dashboard');
-    }
-});
+router.get('/user', checkadminLogin, getUser);
 
-router.get('/user', checkadminLogin, async (req, res) => {
+router.post('/user-search', checkadminLogin, userSearch);
 
-    // console.log("req.query",req.query)
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 4;
-    const { startDate, endDate } = req.query;
+router.get('/logout', getLogout);
 
-    let query = {};
+router.get('/bantoggle/:id', getBantoggle);
 
-    if (startDate) {
-        query.createdAt = { ...query.createdAt, $gte: new Date(`${startDate}T00:00:00.000Z`) };
-    }
-    // console.log("startdate:",query);
-    if (endDate) {
-        query.createdAt = { ...query.createdAt, $lte: new Date(`${endDate}T23:59:59.999Z`) };
-    }
-    console.log("query :", query);
+router.get('/orders', checkadminLogin, getOrders);
 
-    const totalUsers = await Users.countDocuments(query);
-
-
-    const usersdata = await Users.find(query)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * perPage)
-        .limit(perPage);
-
-    const users = usersdata.map((o, index) => ({
-        slno: (page - 1) * perPage + index + 1,
-        _id: o._id,
-        name: o.name,
-        email: o.email,
-        status: o.status
-
-    }));
-    // console.log("users",users)
-    const totalPages = Math.ceil(totalUsers / perPage);
-
-    res.render('adminusers', {
-        arr: users,
-        currentPage: page,
-        totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin,
-        startDate,
-        endDate
-    });
-
-});
-
-
-router.post('/user-search', checkadminLogin, async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 4;
-    const searchQuery = req.body.search?.trim();
-
-    let query = {};
-
-    if (searchQuery) {
-        query = {
-            $or: [
-                { name: { $regex: searchQuery, $options: "i" } },
-                { email: { $regex: searchQuery, $options: "i" } },
-                { username: { $regex: searchQuery, $options: "i" } }
-            ]
-        };
-    }
-
-    const totalUsers = await Users.countDocuments(query);
-
-    // Fetch paginated results
-    const userdata = await Users.find(query)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * perPage)
-        .limit(perPage);
-
-    const users = userdata.map((o, index) => ({
-        slno: (page - 1) * perPage + index + 1,
-        _id: o._id,
-        name: o.name,
-        email: o.email,
-        status: o.status,
-        username: o.username
-    }));
-
-    const totalPages = Math.ceil(totalUsers / perPage);
-
-    res.render('adminusers', {
-        arr: users,
-        currentPage: page,
-        totalPages,
-        isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
-        searchQuery // Pass the search query back to the view
-    });
-});
-
-router.get('/add-category', checkadminLogin, (req, res) => {
-    const msg = req.session.message;
-    req.session.message = "";
-    // console.log("msg", msg);
-    return res.render('addcategory', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, msg: msg })
-});
-
-router.post('/add-categorysubmit', upload.single('image'), async (req, res) => {
-
-    if (req.body.categoryName === "") {
-        req.session.message = "Category Name is empty";
-        return res.redirect("/admin/add-category");
-    }
-
-    if (req.body.description === "") {
-        req.session.message = "Category description is empty";
-        return res.redirect("/admin/add-category");
-    }
-
-    const obj = {
-        name: req.body.categoryName,
-        description: req.body.description,
-        isdeleted: false,
-        editUser: req.session.adminName,
-        image: req.file ? req.file.filename : null,
-        status: req.body.status ? true : false
-    }
-    // console.log(obj);
-    const data = await insertcategory(obj);
-    // console.log(data);
-    return res.redirect('/admin/category');
-});
-
-
-
-router.get('/add-brand', checkadminLogin, (req, res) => {
-    const msg = req.session.message;
-    req.session.message = "";
-    // console.log("msg = ",msg);
-    return res.render('addbrand', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, msg: msg })
-});
-
-router.post('/add-brandsubmit', async (req, res) => {
-
-    if (req.body.brandName === "") {
-        req.session.message = "Brand name is empty";
-        return res.redirect('/admin/add-brand')
-    }
-
-    if (req.body.description === "") {
-        req.session.message = "Brand descripton is empty";
-        return res.redirect('/admin/add-brand')
-    }
-
-    const obj = {
-        name: req.body.brandName,
-        description: req.body.description,
-        isdeleted: false,
-        editUser: req.session.adminName,
-        status: req.body.status ? true : false
-    }
-    // console.log(obj);
-    const data = await insertbrand(obj)
-    return res.redirect('/admin/brand');
-});
-
-
-
-
-
-
-router.get('/deletecategory/:id', async (req, res) => {
-    const val = req.params.id;
-    // console.log(val);
-    const data = await deletecategory(val);
-    res.redirect('/admin/category')
-});
-
-router.get('/deletebrand/:id', async (req, res) => {
-    const val = req.params.id;
-    // console.log(val);
-    const data = await deletebrand(val);
-    res.redirect('/admin/brand')
-});
-
-
-
-
-router.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.error('Error destroying session:', err);
-            return res.status(500).send("Couldn't log out");
-        }
-        res.redirect('/admin/login');
-    });
-});
-
-router.get('/edit-category/:id', checkadminLogin, async (req, res) => {
-    const val = req.params.id;
-    const data = await getCategoryDatabyId(val)
-    //  console.log(data);
-
-    return res.render('editcategory', { category: data, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
-});
-
-router.post('/edit-categorysubmit/:id', checkadminLogin, upload.single('image'), async (req, res) => {
-    const val2 = req.params.id;
-
-    const oldimg = await getCategoryDatabyId(val2);
-    console.log("oldimage -", oldimg);
-    let obj = {
-        name: req.body.categoryName,
-        description: req.body.description,
-        editUser: req.session.adminName,
-        image: req.file ? req.file.filename : oldimg.image,
-        status: req.body.status ? true : false
-    };
-
-    if (req.file) {
-        obj.image = req.file.filename;
-    } else if (req.body.removeImage) {
-        obj.image = null;
-    }
-
-    // console.log(obj);
-    const data = await editcategory(val2, obj);
-    // console.log(data);
-    res.redirect('/admin/category');
-});
-
-router.get('/edit-brand/:id', checkadminLogin, async (req, res) => {
-    const val = req.params.id;
-    const data = await getBrandDatabyId(val)
-    // console.log("editbrand-data", data)
-    return res.render('editbrand', { brand: data, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
-});
-router.post('/edit-brandsubmit/:id', checkadminLogin, async (req, res) => {
-    const val = req.params.id;
-    let obj = {
-        name: req.body.brandName,
-        description: req.body.description,
-        editUser: req.session.adminName,
-        status: req.body.status ? true : false
-    };
-    // console.log("ready to edit",obj);
-    const data = await editbrand(val, obj);
-    return res.redirect('/admin/brand')
-});
-
-
-
-
-
-
-
-router.get('/bantoggle/:id', async (req, res) => {
-    const val = req.params.id;
-
-    const info = await banusers(val);
-    res.redirect('/admin/user')
-});
-
-
-
-router.get('/view-product/:id', async (req, res) => {
-    const val = req.params.id;
-    const product = await getProductDatabyId(val);
-    const categories = await getcategorydata();
-    const brands = await getbranddata();
-
-    let categoryName = categories.find(cat => cat._id.toString() === product.category)?.name || 'N/A';
-    let brandName = brands.find(brand => brand._id.toString() === product.brand)?.name || 'N/A';
-
-    const createdAtDate = product.createdAt ? product.createdAt.toISOString().split('T')[0] : 'N/A';
-    const updatedAtDate = product.updatedAt ? product.updatedAt.toISOString().split('T')[0] : 'N/A';
-
-    res.render('partials/productModalContent', {
-        layout: false,
-        product,
-        categoryName,
-        brandName,
-        createdAtDate,
-        updatedAtDate
-    });
-});
-
-router.get('/view-category/:id', async (req, res) => {
-    try {
-        const val = req.params.id;
-        const category = await getCategoryDatabyId(val);
-        console.log("categories", category);
-
-        if (!category) {
-            return res.status(404).send('<p class="text-danger">Category not found</p>');
-        }
-
-        const createdAtDate = category.createdAt
-            ? category.createdAt.toISOString().split('T')[0]
-            : 'N/A';
-        const updatedAtDate = category.updatedAt
-            ? category.updatedAt.toISOString().split('T')[0]
-            : 'N/A';
-
-        res.render('partials/categoryModalContent', {
-            layout: false,
-            categoryName: category.name,
-            description: category.description,
-            editUser: category.editUser || 'N/A',
-            status: category.status,
-            createdAtDate,
-            updatedAtDate,
-            image: category.image || 'default.png',
-        });
-    } catch (error) {
-        console.error('Error fetching category data:', error);
-        res.status(500).send('<p class="text-danger">Internal server error</p>');
-    }
-});
-
-router.get('/view-brand/:id', async (req, res) => {
-    try {
-        const val = req.params.id;
-
-        const brand = await getBrandDatabyId(val);
-        console.log("brand", brand);
-
-
-        if (!brand) {
-            return res.status(404).send('<p class="text-danger">Brand not found</p>');
-        }
-
-        const createdAtDate = brand.createdAt
-            ? brand.createdAt.toISOString().split('T')[0]
-            : 'N/A';
-        const updatedAtDate = brand.updatedAt
-            ? brand.updatedAt.toISOString().split('T')[0]
-            : 'N/A';
-
-
-        res.render('partials/brandModalContent', {
-            layout: false,
-            brandName: brand.name,
-            description: brand.description,
-            editUser: brand.editUser || 'N/A',
-            status: brand.status,
-            createdAtDate,
-            updatedAtDate,
-
-        });
-    } catch (error) {
-        console.error('Error fetching brand data:', error);
-        res.status(500).send('<p class="text-danger">Internal server error</p>');
-    }
-});
-
-
-router.get('/orders', checkadminLogin, async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 4;
-    const { startDate, endDate } = req.query;
-
-    let query = {};
-
-    if (startDate) {
-        query.createdAt = { ...query.createdAt, $gte: new Date(`${startDate}T00:00:00.000Z`) };
-    }
-    if (endDate) {
-        query.createdAt = { ...query.createdAt, $lte: new Date(`${endDate}T23:59:59.999Z`) };
-    }
-
-    const totalOrders = await Order.countDocuments(query);
-
-    const orderData = await Order.find(query)
-        .populate('user', 'name email') // Populate user name and email
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * perPage)
-        .limit(perPage);
-
-    const orders = orderData.map((o, index) => ({
-        slno: (page - 1) * perPage + index + 1,
-        _id: o._id,
-        userName: o.user?.name || 'N/A',
-        email: o.user?.email || 'N/A',
-        totalAmount: o.totalAmount,
-        paymentStatus: o.paymentDetails.paymentStatus || 'N/A',
-        createdAt: o.createdAt,
-    }));
-
-    const totalPages = Math.ceil(totalOrders / perPage);
-
-    res.render('adminorders', {
-        orders,
-        currentPage: page,
-        totalPages,
-        isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
-        startDate,
-        endDate,
-    });
-});
-
-router.get('/view-order/:id', checkadminLogin, async (req, res) => {
-    const orderId = req.params.id;
-
-    try {
-        const order = await Order.findById(orderId)
-            .populate('user', 'name email')
-            .populate('cartDetails.product', 'name price image'); // Adjust based on your product schema
-
-        res.render('partials/orderDetails', { layout: false, order });
-    } catch (error) {
-        res.status(500).send('<p class="text-danger">Failed to load order details.</p>');
-    }
-});
+router.get('/view-order/:id', checkadminLogin, viewOrders);
 
 router.get('/changePassword', (req, res) => {
 
@@ -712,7 +171,7 @@ router.get('/changePassword', (req, res) => {
     }
     res.render('adminchangepwd', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, });
 });
-// /admin/changepassword-submit
+
 router.post('/changepassword-submit', async (req, res) => {
 
     try {
@@ -744,9 +203,5 @@ router.post('/changepassword-submit', async (req, res) => {
         return res.redirect('/admin/changepassword');
     }
 });
-
-/* function clearCache(res) {
-    res.set('Cache-Control', 'no-store,no-cache,must-revalidate,private');
-} */
 
 module.exports = router;
