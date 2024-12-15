@@ -308,39 +308,23 @@ exports.updatePasswordByIdAdmin = async (userId, hashedPassword)=> {
         console.error('Error updating user password:', error);
         throw new Error('Could not update password.');
     }
-}
-
-exports.sendSMS = async (phoneNumber, message) => {
-  const url = 'https://e53vyr.api.infobip.com/sms/3/messages';
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'App 3c53d07473e98e80e8f01ed8161d1311-8518ddb0-2219-4349-ac0c-94b1a9895853'
-  };
-
-  const body = JSON.stringify({
-    messages: [
-      {
-        sender: "InfoSMS",
-        destinations: [
-          { to: phoneNumber }
-        ],
-        content: { text: message }
-      }
-    ]
-  });
-
-  try {
-    const response = await fetch(url, { method: 'POST', headers, body });
-    const data = await response.json();
-
-    if (data.messages && data.messages[0]?.status?.groupName === 'PENDING') {
-      console.log('SMS sent successfully:', data);
-    } else {
-      console.error('Failed to send SMS:', data);
-    }
-  } catch (error) {
-    console.error('Error sending SMS:', error.message);
-  }
 };
 
+  exports.sendSMS = async (phoneNumber, message) => {
+    const accountSid = process.env.ACCOUNTSIDSMS;
+    const authToken =process.env.AUTHTOKENTWILIO ;
+    const client = require('twilio')(accountSid, authToken);
 
+    try {
+        const smsResponse = await client.messages.create({
+            body: message,
+            from: '+13614912953',
+            to: '+919947455971'
+        });
+        console.log(`Message sent successfully: ${smsResponse.sid}`);
+        return smsResponse;
+    } catch (error) {
+        console.error(`Failed to send message: ${error.message}`);
+        throw error;
+    }
+};

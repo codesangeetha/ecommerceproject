@@ -23,15 +23,15 @@ const Order = require("../models/order.model");
 const bcrypt = require("bcrypt");
 const mongoose = require('mongoose');
 
-const { getProduct,postProductSearch,addProduct,addProductSubmit,getEditProduct,postEditProduct,deleteProduct,viewProduct } = require('../controllers/adminproductController');
+const { getProduct, postProductSearch, addProduct, addProductSubmit, getEditProduct, postEditProduct, deleteProduct, viewProduct } = require('../controllers/adminproductController');
 
-const{getCategory,addCategory,postaddCategorySubmit,postCategorySearch,deleteCategory,getEditCategory,editCategorySubmit,getViewCategory}= require('../controllers/admincategoryController');
+const { getCategory, addCategory, postaddCategorySubmit, postCategorySearch, deleteCategory, getEditCategory, editCategorySubmit, getViewCategory } = require('../controllers/admincategoryController');
 
-const {getBrand,getAddBrand,addBrandSubmit,brandSearch,deleteBrand,getEditBrand,editBrandSubmit,getViewBrand} = require('../controllers/adminbrandController');
+const { getBrand, getAddBrand, addBrandSubmit, brandSearch, deleteBrand, getEditBrand, editBrandSubmit, getViewBrand } = require('../controllers/adminbrandController');
 
-const {getLogin,postAdminloginSubmit,getUser,userSearch,getLogout,getBantoggle} = require('../controllers/adminuserController');
+const { getLogin, postAdminloginSubmit, getUser, userSearch, getLogout, getBantoggle, adminChangePassword, postAdminchangePassword } = require('../controllers/adminuserController');
 
-const {getOrders,viewOrders} = require('../controllers/adminOrderController');
+const { getOrders, viewOrders } = require('../controllers/adminOrderController');
 
 var router = express.Router();
 
@@ -88,27 +88,27 @@ const checkadminLogin = (req, res, next) => {
     }
 }
 
-router.get('/product', checkadminLogin,getProduct );
+router.get('/product', checkadminLogin, getProduct);
 
-router.post('/product-search', checkadminLogin,postProductSearch );
+router.post('/product-search', checkadminLogin, postProductSearch);
 
-router.get('/edit-product/:id', checkadminLogin,getEditProduct );
+router.get('/edit-product/:id', checkadminLogin, getEditProduct);
 
-router.post('/edit-productsubmit/:id', checkadminLogin, upload.array('images', 5),postEditProduct);
+router.post('/edit-productsubmit/:id', checkadminLogin, upload.array('images', 5), postEditProduct);
 
-router.get('/add-product', checkadminLogin,addProduct );
+router.get('/add-product', checkadminLogin, addProduct);
 
 router.post('/add-productsubmit', upload.array('images', 5), addProductSubmit);
 
 router.get('/view-product/:id', viewProduct);
 
-router.get('/deleteproduct/:id',deleteProduct);
+router.get('/deleteproduct/:id', deleteProduct);
 
 
 
-router.get('/category', checkadminLogin,getCategory );
+router.get('/category', checkadminLogin, getCategory);
 
-router.get('/add-category', checkadminLogin,addCategory);
+router.get('/add-category', checkadminLogin, addCategory);
 
 router.post('/add-categorysubmit', upload.single('image'), postaddCategorySubmit);
 
@@ -116,23 +116,23 @@ router.post('/category-search', checkadminLogin, postCategorySearch);
 
 router.get('/edit-category/:id', checkadminLogin, getEditCategory);
 
-router.post('/edit-categorysubmit/:id', checkadminLogin, upload.single('image'),editCategorySubmit );
+router.post('/edit-categorysubmit/:id', checkadminLogin, upload.single('image'), editCategorySubmit);
 
 router.get('/view-category/:id', getViewCategory);
 
-router.get('/deletecategory/:id',deleteCategory );
+router.get('/deletecategory/:id', deleteCategory);
 
 
 
-router.get('/brand', checkadminLogin,getBrand );
+router.get('/brand', checkadminLogin, getBrand);
 
 router.get('/add-brand', checkadminLogin, getAddBrand);
 
-router.post('/add-brandsubmit',addBrandSubmit );
+router.post('/add-brandsubmit', addBrandSubmit);
 
-router.post('/brand-search', checkadminLogin,brandSearch );
+router.post('/brand-search', checkadminLogin, brandSearch);
 
-router.get('/edit-brand/:id', checkadminLogin,getEditBrand );
+router.get('/edit-brand/:id', checkadminLogin, getEditBrand);
 
 router.post('/edit-brandsubmit/:id', checkadminLogin, editBrandSubmit);
 
@@ -149,7 +149,7 @@ router.get('/dashboard', checkadminLogin, async (req, res) => {
 
 router.get('/login', getLogin);
 
-router.post('/adminloginsubmit',postAdminloginSubmit);
+router.post('/adminloginsubmit', postAdminloginSubmit);
 
 router.get('/user', checkadminLogin, getUser);
 
@@ -159,49 +159,13 @@ router.get('/logout', getLogout);
 
 router.get('/bantoggle/:id', getBantoggle);
 
+router.get('/changePassword', adminChangePassword);
+
+router.post('/changepassword-submit', postAdminchangePassword);
+
+
 router.get('/orders', checkadminLogin, getOrders);
 
 router.get('/view-order/:id', checkadminLogin, viewOrders);
-
-router.get('/changePassword', (req, res) => {
-
-    if (!req.session.userId) {
-        req.flash('error', 'Please log in to change your password.');
-        return res.redirect('/admin/login');
-    }
-    res.render('adminchangepwd', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, });
-});
-
-router.post('/changepassword-submit', async (req, res) => {
-
-    try {
-        const { newPassword, confirmNewPassword } = req.body;
-        const userId = req.session.userid;
-
-        console.log('userId', userId);
-
-        // Ensure user is logged in
-        if (!userId) {
-            req.flash('error', 'You must be logged in to change your password.');
-            return res.redirect('/admin/login');
-        }
-
-        if (newPassword !== confirmNewPassword) {
-            req.flash('error', 'New password and confirm password do not match.');
-            return res.redirect('/admin/changepassword');
-        }
-
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        await updatePasswordByIdAdmin(userId, hashedPassword);
-
-        req.flash('success', 'Password changed successfully.');
-        return res.redirect('/admin/changepassword');
-    } catch (error) {
-        console.error('Error changing password:', error);
-        req.flash('error', 'An error occurred. Please try again later.');
-        return res.redirect('/admin/changepassword');
-    }
-});
 
 module.exports = router;

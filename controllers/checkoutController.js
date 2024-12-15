@@ -4,6 +4,7 @@ const User = require('../models/users.model');
 const Order = require('../models/order.model');
 const { Cashfree } = require("cashfree-pg");
 const { sendSMS } = require('../helpers/functions');
+const checkoutSchema = require('../validators/checkout.schema');
 
 
 exports.getCheckout=async (req, res) => {
@@ -53,6 +54,13 @@ exports.checkoutSubmit=async (req, res) => {
 };
 
 exports.paymentOrder=async (req, res) => {
+
+    const { error } = checkoutSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+        const err = error.details.map((err) => err.message).join(', ');
+        return res.status(500).json({ message: `Server Error ${err}` });
+    }
+
     const { total, phone, email, name, houseNo, city, state, pincode } = req.body;
     console.log('Create order');
     try {
@@ -150,12 +158,12 @@ exports.thankyoupage = async (req, res) => {
     await Cart.findOneAndDelete({ user: req.user._id });
 
     // Send SMS notification
-    const phoneNumber = order?.address?.phone; // Assuming `req.user.phone` contains the user's phone number
+    /* const phoneNumber = order?.address?.phone; 
     const message = `Thank you for your order! Your order ID is ${order.orderId}.`;
-    await sendSMS(phoneNumber, message);
+    await sendSMS(phoneNumber, message); */
 
     // Render thank you page with order details
-    res.render('thankyou', { order });
+    res.render('thankyou', { order, isLogin: req.isAuthenticated() });
   } catch (err) {
     console.error('Error in thankyoupage:', err);
     res.status(500).send('Error occurred');

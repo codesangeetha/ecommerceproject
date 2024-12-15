@@ -3,8 +3,10 @@ const Category = require("../models/categories.model");
 const Users = require("../models/users.model");
 const Brand = require('../models/brands.model');
 const Order = require("../models/order.model");
+const bcrypt = require("bcrypt");
+const adminchangepasswordSchema = require('../validators/adminchangepassword.schema');
 
-const{finduseradmin,banusers}=require('../helpers/functions');
+const { finduseradmin, banusers, updatePasswordByIdAdmin } = require('../helpers/functions');
 
 exports.getLogin = (req, res) => {
     const msg = req.session.message;
@@ -138,11 +140,51 @@ exports.getBantoggle = async (req, res) => {
     res.redirect('/admin/user')
 };
 
-/* exports.adminChangePassword = (req, res) => {
+exports.adminChangePassword = (req, res) => {
 
-    if (!req.session.userId) {
+    if (!req.session.userid) {
         req.flash('error', 'Please log in to change your password.');
         return res.redirect('/admin/login');
     }
     res.render('adminchangepwd', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, });
-} */
+};
+
+exports.postAdminchangePassword = async (req, res) => {
+
+    if (!req.session.isAdminLoggin) return res.redirect('/admin/login');
+
+    const { error } = adminchangepasswordSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+        req.flash('error', error.details.map((err) => err.message).join(', '));
+        return res.redirect('/admin/changepassword');
+    }
+
+    try {
+        const { newPassword, confirmNewPassword } = req.body;
+        const userId = req.session.userid;
+
+        console.log('userId', userId);
+
+        // Ensure user is logged in
+        if (!userId) {
+            req.flash('error', 'You must be logged in to change your password.');
+            return res.redirect('/admin/login');
+        }
+
+        if (newPassword !== confirmNewPassword) {
+            req.flash('error', 'New password and confirm password do not match.');
+            return res.redirect('/admin/changepassword');
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await updatePasswordByIdAdmin(userId, hashedPassword);
+
+        req.flash('success', 'Password changed successfully.');
+        return res.redirect('/admin/changepassword');
+    } catch (error) {
+        console.error('Error changing password:', error);
+        req.flash('error', 'An error occurred. Please try again later.');
+        return res.redirect('/admin/changepassword');
+    }
+};

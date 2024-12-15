@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const bcrypt = require("bcrypt");
 const profileSchema = require('../validators/profile.schema');
 const changepasswordSchema = require('../validators/changepassword.schema');
+const { sendSMS } = require('../helpers/functions');
 const {
     sendEmail,
     findUserByEmail,
@@ -110,9 +111,6 @@ exports.signupSubmit = async (req, res) => {
     }
 };
 
-
-
-
 exports.forgotPassword = (req, res) => {
     res.render('forgot-password');
 };
@@ -191,7 +189,11 @@ exports.postresetPassword = async (req, res) => {
         user.resetPasswordExpires = undefined;
 
         await user.save();
-        /* res.send('Password has been reset successfully!'); */
+        //sms
+        /* const phoneNumber = "994745971"; 
+            const message = `Your Password has been reset successfully! `;
+            await sendSMS(phoneNumber, message); */
+       
         res.render('resetpwdsuccess')
     } catch (err) {
         console.error(err);

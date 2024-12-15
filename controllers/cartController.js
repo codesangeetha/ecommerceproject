@@ -4,6 +4,8 @@ const Product = require('../models/products.model');
 const User = require('../models/users.model');
 const updatecolorschema = require('../validators/updatecolor.schema');
 const updatesizeschema = require('../validators/updatesize.schema');
+const updatequantityschema = require('../validators/updatequantity.schema');
+
 
 // Add product to cart
 exports.addToCart = async (req, res) => {
@@ -28,6 +30,7 @@ exports.addToCart = async (req, res) => {
         }
 
         await cart.save();
+
         res.redirect('/cart');
     } catch (error) {
         console.error(error);
@@ -54,6 +57,13 @@ exports.getCart = async (req, res) => {
 
 // Update product quantity in the cart
 exports.updateCartItem = async (req, res) => {
+    
+    const { error } = updatequantityschema.validate(req.body, { abortEarly: false });
+    if (error) {
+        const err = error.details.map((err) => err.message).join(', ');
+        return res.status(500).json({ message: `Server Error ${err}` });
+    }
+
     const userId = req.user._id;
     const { productId, change } = req.body;
 
