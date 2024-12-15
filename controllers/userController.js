@@ -3,12 +3,13 @@ const Product = require('../models/products.model');
 const User = require('../models/users.model');
 const crypto = require('crypto');
 const bcrypt = require("bcrypt");
+const signupSchema = require('../validators/signup.schema');
 const profileSchema = require('../validators/profile.schema');
 const changepasswordSchema = require('../validators/changepassword.schema');
 const { sendSMS } = require('../helpers/functions');
 const {
     sendEmail,
-    findUserByEmail,
+    findUserByEmail, 
     updateUserByEmail,
     insertuser,
     findUserById,
@@ -21,50 +22,15 @@ exports.signupget = (req, res) => {
     return res.render('signup', { msg });
 };
 
-/* exports.signupSubmit = async (req, res) => {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-     if (req.body.name === "") {
-        req.session.message = "Enter name";
-        return res.redirect('/signup');
-    }
-
-    if (req.body.username === "") {
-        req.session.message = "Enter username";
-        return res.redirect('/signup');
-    }
-    if (req.body.email === "") {
-        req.session.message = "Enter email";
-        return res.redirect('/signup');
-    }
-    if (req.body.password === "") {
-        req.session.message = "Enter password";
-        return res.redirect('/signup');
-    } 
-    console.log("req.body", req.body);
-    const obj2 = {
-        name: req.body.name,
-        username: req.body.username,
-        email: req.body.email,
-        password: hashedPassword,
-        status: true,
-        address: {
-            houseNo: req.body.houseNo,
-            city: req.body.city,
-            state: req.body.state,
-            pincode: req.body.pincode,
-            phone: req.body.phone
-        }
-    }
-
-    console.log("obj for no.", obj2);
-    const data = await insertuser(obj2);
-    req.session.message = "Successfully signed up";
-    return res.redirect('/login');
-}; */
-
-
 exports.signupSubmit = async (req, res) => {
+   
+    const { error } = signupSchema.validate(req.body, { abortEarly: false });
+/* console.log("error",error); */
+    if (error) {
+        req.flash('error', error.details.map((err) => err.message).join(', '));
+        return res.redirect('/signup');
+    }
+
     try {
         const { name, username, email, password, cpassword, houseNo, city, state, pincode, phone } = req.body;
 
@@ -77,7 +43,7 @@ exports.signupSubmit = async (req, res) => {
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Prepare user object
+        //  user object
         const userObj = {
             name,
             username,
@@ -89,7 +55,7 @@ exports.signupSubmit = async (req, res) => {
                 city,
                 state,
                 pincode,
-                phone,
+                phone,  
             },
         };
 
