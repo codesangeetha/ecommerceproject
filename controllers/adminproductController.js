@@ -98,7 +98,7 @@ exports.addProduct = async (req, res) => {
     const info = await getbranddata();
     console.log("brand data", info);
     const sizeArr = [5, 6, 7, 8, 9, 10, 11, 12, 13];
-    const colorArr = ["Red", "Blue", "White", "Black"];
+    const colorArr = ["Red", "Blue", "White", "Black"," Beige","Gray"];
     // console.log("colorarr", colorArr);
 
     const msg = req.session.message;
