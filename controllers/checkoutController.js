@@ -158,9 +158,9 @@ exports.thankyoupage = async (req, res) => {
     await Cart.findOneAndDelete({ user: req.user._id });
 
     // Send SMS notification
-    /* const phoneNumber = order?.address?.phone; 
+    const phoneNumber = order?.address?.phone; 
     const message = `Thank you for your order! Your order ID is ${order.orderId}.`;
-    await sendSMS(phoneNumber, message); */
+    //await sendSMS(phoneNumber, message); 
 
     // Render thank you page with order details
     res.render('thankyou', { order, isLogin: req.isAuthenticated() });
