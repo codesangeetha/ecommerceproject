@@ -20,12 +20,18 @@ const signupSchema = Joi.object({
     password: Joi.string()
         .required()
         .label('Password')
-        .messages({ 'string.empty': 'Password is required' }),
+        .messages({
+            'string.empty': 'Password is required',
+            'string.min': 'Password must be at least 6 characters long',
+        }),
 
     cpassword: Joi.string()
         .required()
-        .label('Confirm password')
-        .messages({ 'string.empty': 'Confirm password is required' }),
+        .label('Confirm Password')
+        .valid(Joi.ref('password')) // Ensure it matches the Password
+        .messages({
+            'any.only': 'Confirm password must match the password', // Custom message for mismatch
+        }),
 
     houseNo: Joi.string()
         .required()

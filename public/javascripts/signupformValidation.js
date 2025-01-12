@@ -42,7 +42,7 @@ function validateSignupForm() {
         isValid = false;
     }
     if (username === "") {
-        errorName.innerHTML = "Please enter your username.";
+        errorUsername.innerHTML = "Please enter your username.";
         isValid = false;
     }
 

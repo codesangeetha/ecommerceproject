@@ -225,7 +225,7 @@ exports.getChangePassword = (req, res) => {
         return res.redirect('/login');
     }
 
-    res.render('changepassword');
+    res.render('changepassword',{isLogin: req.isAuthenticated(),});
 };
 
 exports.postChangepassword = async (req, res) => {

@@ -257,7 +257,7 @@ exports.dashboradCount = async () => {
     const [userCount, prodCount, cateCount, brandCount] = await Promise.all([
         Users.countDocuments(),
         Products.countDocuments(),
-        Category.countDocuments(),
+        Category.countDocuments( { isdeleted: false }),
         Brand.countDocuments()
 
     ])
