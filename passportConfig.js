@@ -71,9 +71,9 @@ passport.use(
 
 passport.use(new FacebookStrategy(
   {
-    clientID: '1149756383179111',
-    clientSecret: 'c1e911555042f9fb658ca8d06221c947',
-    callbackURL: 'http://localhost:3000/auth/facebook/callback',
+    clientID: process.env.FACEBOOKCLIENTID,
+    clientSecret: process.env.FACEBOOKCLIENTSECRET,
+    callbackURL: 'https://ecommerceproject-4mp2.onrender.com/auth/facebook/callback',
     profileFields: ['id', 'displayName', 'email', 'photos'], // Request fields
   },
   async (accessToken, refreshToken, profile, done) => {
