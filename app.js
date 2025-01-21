@@ -93,4 +93,8 @@ app.use(function (err, req, res, next) {
 });
 
 
+const hbs = require('hbs');
+hbs.registerHelper('multiply', (a, b) => a * b);
+
+
 module.exports = app;
