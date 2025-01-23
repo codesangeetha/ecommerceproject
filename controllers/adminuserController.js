@@ -71,8 +71,8 @@ exports.getUser = async (req, res) => {
         currentPage: page,
         totalPages,
         isAdmin: true, isadminlogin: req.session.isAdminLoggin,
-        startDate,
-        endDate
+        startDate: startDate || "",
+        endDate: endDate || ""
     });
 
 };

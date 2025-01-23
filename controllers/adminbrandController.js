@@ -4,7 +4,7 @@ const Users = require("../models/users.model");
 const Brand = require('../models/brands.model');
 const Order = require("../models/order.model");
 
-const{insertbrand,deletebrand,getBrandDatabyId,editbrand}=require('../helpers/functions');
+const { insertbrand, deletebrand, getBrandDatabyId, editbrand } = require('../helpers/functions');
 
 exports.getBrand = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
@@ -43,7 +43,9 @@ exports.getBrand = async (req, res) => {
         arr: brands,
         currentPage: page,
         totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin
+        isAdmin: true, isadminlogin: req.session.isAdminLoggin,
+        startDate: startDate || "",
+        endDate: endDate || ""
     });
 };
 

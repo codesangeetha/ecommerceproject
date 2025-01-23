@@ -4,7 +4,7 @@ const Users = require("../models/users.model");
 const Brand = require('../models/brands.model');
 const Order = require("../models/order.model");
 
-const{insertcategory,deletecategory,getCategoryDatabyId,editcategory}=require('../helpers/functions');
+const { insertcategory, deletecategory, getCategoryDatabyId, editcategory } = require('../helpers/functions');
 
 exports.getCategory = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
@@ -45,13 +45,13 @@ exports.getCategory = async (req, res) => {
         currentPage: page,
         totalPages,
         isAdmin: true, isadminlogin: req.session.isAdminLoggin,
-        startDate,
-        endDate
+        startDate: startDate || "",
+        endDate: endDate || ""
     });
 
 };
 
-exports.addCategory =  (req, res) => {
+exports.addCategory = (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
     // console.log("msg", msg);
@@ -163,6 +163,16 @@ exports.editCategorySubmit = async (req, res) => {
     res.redirect('/admin/category');
 };
 
+const formatDate = (date) => {
+    if (!date) return 'N/A';
+    const formattedDate = new Date(date).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    });
+    return formattedDate;
+};
+
 exports.getViewCategory = async (req, res) => {
     try {
         const val = req.params.id;
@@ -173,12 +183,13 @@ exports.getViewCategory = async (req, res) => {
             return res.status(404).send('<p class="text-danger">Category not found</p>');
         }
 
+
         const createdAtDate = category.createdAt
-            ? category.createdAt.toISOString().split('T')[0]
+            ? formatDate(category.createdAt)
             : 'N/A';
         const updatedAtDate = category.updatedAt
-            ? category.updatedAt.toISOString().split('T')[0]
-            : 'N/A';
+            ? formatDate(category.updatedAt)
+            : 'N/A'
 
         res.render('partials/categoryModalContent', {
             layout: false,

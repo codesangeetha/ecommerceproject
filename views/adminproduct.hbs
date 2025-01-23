@@ -22,11 +22,11 @@
         <form action="/admin/product" method="get" class="d-flex align-items-end gap-5">
             <div>
                 <label for="startDate" class="form-label mb-0">Start Date</label>
-                <input type="date" id="startDate" name="startDate" class="form-control">
+                <input type="date" id="startDate" name="startDate" class="form-control" value="{{startDate}}">
             </div>
             <div style="margin-left: 20px;">
                 <label for="endDate" class="form-label mb-0">End Date</label>
-                <input type="date" id="endDate" name="endDate" class="form-control">
+                <input type="date" id="endDate" name="endDate" class="form-control" value="{{endDate}}">
             </div>
             <div style="margin-left: 20px;">
                 <button type="submit" class="btn btn-primary">Filter</button>
@@ -55,7 +55,9 @@
                 </td>
                 <td>₹ {{price}}</td>
                 <td>{{description}}</td>
-                <td><img src="/uploads/{{image}}" alt="Product Image" class="uploadImg-cls">
+
+                <td><img src="/uploads/{{image}}" alt="Product Image" class="uploadImg-cls" onclick="openPopup('{{_id}}')" data-bs-toggle="modal"
+                         data-bs-target="#productModal">
                 </td>
 
 

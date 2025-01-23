@@ -46,8 +46,8 @@ exports.getProduct = async (req, res) => {
         currentPage: page,
         totalPages,
         isAdmin: true, isadminlogin: req.session.isAdminLoggin,
-        startDate,
-        endDate
+         startDate: startDate || "",
+        endDate: endDate || ""
     });
 };
 
@@ -58,10 +58,12 @@ exports.postProductSearch = async (req, res) => {
     let query = { isdeleted: false };
 
     if (searchQuery) {
-        query = {
-            ...query,
-            name: { $regex: searchQuery, $options: "i" }, 
-        };
+        // Check if the searchQuery is a number for exact price search
+        if (!isNaN(searchQuery)) {
+            query.price = parseFloat(searchQuery); // Match exact price
+        } else {
+            query.name = { $regex: searchQuery, $options: "i" }; // Match name (case-insensitive)
+        }
     }
 
     const totalProducts = await Products.countDocuments(query);
@@ -234,6 +236,17 @@ exports.deleteProduct =  async (req, res) => {
     const data = await deleteproduct(val);
     res.redirect('/admin/product')
 };
+
+const formatDate = (date) => {
+    if (!date) return 'N/A';
+    const formattedDate = new Date(date).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    });
+    return formattedDate;
+};
+
 exports.viewProduct = async (req, res) => {
     const val = req.params.id;
     const product = await getProductDatabyId(val);
@@ -243,8 +256,12 @@ exports.viewProduct = async (req, res) => {
     let categoryName = categories.find(cat => cat._id.toString() === product.category)?.name || 'N/A';
     let brandName = brands.find(brand => brand._id.toString() === product.brand)?.name || 'N/A';
 
-    const createdAtDate = product.createdAt ? product.createdAt.toISOString().split('T')[0] : 'N/A';
-    const updatedAtDate = product.updatedAt ? product.updatedAt.toISOString().split('T')[0] : 'N/A';
+    const createdAtDate =  product.createdAt
+    ? formatDate( product.createdAt)
+    : 'N/A';
+const updatedAtDate =  product.createdAt
+    ? formatDate( product.createdAt)
+    : 'N/A'
 
     res.render('partials/productModalContent', {
         layout: false,
