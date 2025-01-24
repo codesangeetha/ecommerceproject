@@ -79,7 +79,7 @@ exports.postProductSearch = async (req, res) => {
         name: o.name,
         description: o.description.substring(0, 20),
         price: o.price,
-        image: o.image
+        image: o.images[0]
     }));
 
     const totalPages = Math.ceil(totalProducts / perPage);

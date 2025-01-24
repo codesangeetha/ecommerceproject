@@ -166,8 +166,13 @@
                         const removeBtn = document.createElement("button");
                         removeBtn.textContent = "Remove";
                         removeBtn.className = "btn btn-danger btn-sm mt-2";
-                        removeBtn.onclick = () => {
-                            imgContainer.remove(); // Remove preview
+                        removeBtn.onclick = (e) => {
+                            // Display confirmation popup
+                            const isConfirmed = confirm("Are you sure you want to remove this image?");
+                            if (isConfirmed) {
+                                imgContainer.remove(); // Remove preview
+                            }
+                            e.preventDefault();
                         };
 
                         imgContainer.appendChild(img);
@@ -182,19 +187,25 @@
             if (existingImagesPreview) {
                 existingImagesPreview.addEventListener("click", (e) => {
                     if (e.target.classList.contains("remove-existing-image")) {
-                        const image = e.target.dataset.image;
-                        removedImages.push(image); // Add to removed images list
+                        // Display confirmation popup
+                        const isConfirmed = confirm("Are you sure you want to remove this image?");
 
-                        // Append a hidden input to the form to send removed image data
-                        const form = e.target.closest("form");
-                        const input = document.createElement("input");
-                        input.type = "hidden";
-                        input.name = "removedImages";
-                        input.value = image;
-                        form.appendChild(input);
+                        if (isConfirmed) {
+                            const image = e.target.dataset.image;
+                            removedImages.push(image); // Add to removed images list
 
-                        e.target.closest(".preview-item").remove(); // Remove preview
+                            // Append a hidden input to the form to send removed image data
+                            const form = e.target.closest("form");
+                            const input = document.createElement("input");
+                            input.type = "hidden";
+                            input.name = "removedImages";
+                            input.value = image;
+                            form.appendChild(input);
+
+                            e.target.closest(".preview-item").remove(); // Remove preview
+                        }
                     }
+
                 });
             }
         });
