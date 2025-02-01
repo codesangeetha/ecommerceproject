@@ -16,7 +16,7 @@
 }
 .login-cls{
     background-color: rgb(153, 235, 153);
-    margin-left:30px;
+    /* margin-left:30px; */
     color: black;
     font-weight: bold;
 }

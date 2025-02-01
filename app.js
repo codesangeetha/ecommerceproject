@@ -34,10 +34,26 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-  secret: 'yourSecretKey',
+  secret: 'site-secret-key',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false }
+  name: 'site-session-id', // Unique name for the site session
+  cookie: {
+      path: '/', // Restrict cookie to site routes
+      maxAge: 3600000, // 1 hour
+  }
+}));
+
+// Admin-side session configuration
+app.use('/admin', session({
+  secret: 'admin-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  name: 'admin-session-id', // Unique name for the admin session
+  cookie: {
+      path: '/admin', // Restrict cookie to admin routes
+      maxAge: 3600000, // 1 hour
+  }
 }));
 
 app.use(flash());

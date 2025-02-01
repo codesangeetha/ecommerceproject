@@ -32,66 +32,66 @@
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name</label>
                                 <input type="text" class="form-control" id="name" name="name"
-                                    placeholder="Enter your name">
+                                    placeholder="Enter your name" value="{{oldInput.name}}" >
                                 <div id="error-name" class="error-style"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="name" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username"
-                                    placeholder="Enter your username">
+                                    placeholder="Enter your username" value="{{oldInput.username}}">
                                 <div id="error-username" class="error-style"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email"
-                                    placeholder="Enter your email">
+                                    placeholder="Enter your email" value="{{oldInput.email}}">
                                 <div id="error-email" class="error-style"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="password" name="password"
-                                    placeholder="Enter your password">
+                                    placeholder="Enter your password" value="{{oldInput.password}}">
                                 <div id="error-password" class="error-style"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Confirm Password</label>
                                 <input type="password" class="form-control" id="cpassword" name="cpassword"
-                                    placeholder="Enter your password">
+                                    placeholder="Enter your password" value="{{oldInput.cpassword}}">
                                 <div id="error-cpassword" class="error-style"></div>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label for="houseNo" class="form-label">House.No</label>
                                 <input type="textarea" class="form-control" id="houseNo" name="houseNo"
-                                    placeholder="Enter your address">
+                                    placeholder="Enter your address" value="{{oldInput.houseNo}}">
                                 <div id="error-houseNo" class="error-style"></div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="city" class="form-label">City</label>
                                 <input type="text" class="form-control" id="city" name="city"
-                                    placeholder="Enter your username">
+                                    placeholder="Enter your username" value="{{oldInput.city}}">
                                 <div id="error-city" class="error-style"></div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="state" class="form-label">State</label>
                                 <input type="text" class="form-control" id="state" name="state"
-                                    placeholder="Enter your state">
+                                    placeholder="Enter your state" value="{{oldInput.state}}">
                                 <div id="error-state" class="error-style"></div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="pincode" class="form-label">Pincode</label>
                                 <input type="text" class="form-control" id="pincode" name="pincode"
-                                    placeholder="Enter your pincode">
+                                    placeholder="Enter your pincode" value="{{oldInput.pincode}}">
                                 <div id="error-pincode" class="error-style"></div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Phone</label>
                                 <input type="text" class="form-control" id="phone" name="phone"
-                                    placeholder="Enter your phone number">
+                                    placeholder="Enter your phone number" value="{{oldInput.phone}}">
                                 <div id="error-phone" class="error-style"></div>
                             </div>
 
@@ -99,7 +99,19 @@
                             <button type="submit" class="btn btn-success mb-4 signup-btncls w-65">Sign Up</button>
 
                         </form>
+
                         <div>Already have an account ? <a href="/login" class="signup-login">Login</a></div>
+                    </div>
+                    <div class="social-login">
+                        <a href="/auth/google" class="login-button google">
+                            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo">
+                            Google
+                        </a>
+                        <a href="/auth/facebook" class="login-button facebook">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjvzC_QRv6moAhgNb5C6e3yicKgFND1g2RwA&s"
+                                alt="Facebook Logo">
+                            Facebook
+                        </a>
                     </div>
                 </div>
             </div>

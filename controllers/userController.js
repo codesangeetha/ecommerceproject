@@ -23,12 +23,17 @@ exports.signupget = (req, res) => {
 };
 
 exports.signupSubmit = async (req, res) => {
-   
     const { error } = signupSchema.validate(req.body, { abortEarly: false });
-/* console.log("error",error); */
+
     if (error) {
+        // Set the flash message
         req.flash('error', error.details.map((err) => err.message).join(', '));
-        return res.redirect('/signup');
+
+        // Render the page with old input and error message
+        return res.render('signup', {
+            oldInput: req.body,
+            errorMessage: req.flash('error'), // Explicitly pass the flash message
+        });
     }
 
     try {
@@ -37,13 +42,16 @@ exports.signupSubmit = async (req, res) => {
         // Check if passwords match
         if (password !== cpassword) {
             req.flash('error', 'Passwords do not match. Please try again.');
-            return res.redirect('/signup'); // Redirect back to signup page
+            return res.render('signup', {
+                oldInput: req.body,
+                errorMessage: req.flash('error'),
+            });
         }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        //  user object
+        // Create user object
         const userObj = {
             name,
             username,
@@ -55,7 +63,7 @@ exports.signupSubmit = async (req, res) => {
                 city,
                 state,
                 pincode,
-                phone,  
+                phone,
             },
         };
 
@@ -71,11 +79,15 @@ exports.signupSubmit = async (req, res) => {
 
         return res.redirect('/login');
     } catch (error) {
-        console.error("Error during signup:", error);
+        console.error('Error during signup:', error);
         req.flash('error', 'An error occurred during signup. Please try again later.');
-        res.redirect('/signup'); // Redirect to signup page on error
+        return res.render('signup', {
+            oldInput: req.body,
+            errorMessage: req.flash('error'),
+        });
     }
 };
+
 
 exports.forgotPassword = (req, res) => {
     res.render('forgot-password');
