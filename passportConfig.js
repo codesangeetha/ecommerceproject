@@ -41,7 +41,6 @@ passport.use(
   )
 );
 
-
 passport.use(
   new GoogleStrategy(
     {
@@ -51,14 +50,21 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Find or create the user in your database
-        let user = await User.findOne({ googleId: profile.id });
-        if (!user) {
+        let user = await User.findOne({ email: profile.emails[0].value });
+
+        if (user) {
+          // If user exists but doesn't have a Google ID, update it
+          if (!user.googleId) {
+            user.googleId = profile.id;
+            await user.save();
+          }
+        } else {
+          // Create a new user
           user = await User.create({
             googleId: profile.id,
             name: profile.displayName,
-            email: profile.emails[0].value, // Use the primary email
-            status: true, // Set default account status
+            email: profile.emails[0].value,
+            status: true,
           });
         }
         return done(null, user);
@@ -68,6 +74,7 @@ passport.use(
     }
   )
 );
+
 
 passport.use(new FacebookStrategy(
   {
