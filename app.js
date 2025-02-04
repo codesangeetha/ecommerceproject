@@ -117,6 +117,16 @@ app.use(function (err, req, res, next) {
 
 const hbs = require('hbs');
 hbs.registerHelper('multiply', (a, b) => a * b);
+hbs.registerHelper('min', function(a, b) {
+  return Math.min(a, b);
+});
 
+hbs.registerHelper('range', function(start, end) {
+  let result = [];
+  for (let i = start; i <= end; i++) {
+      result.push(i);
+  }
+  return result;
+});
 
 module.exports = app;

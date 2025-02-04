@@ -41,8 +41,8 @@
                 <!-- Social Media Share Section -->
                 <div style="margin-top: 20px;">
                     <h5>Share this product:</h5>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{productShareUrl}}&hashtag=%23SoleWave" target="_blank"
-                        style="margin-right: 10px;">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{productShareUrl}}&hashtag=%23SoleWave"
+                        target="_blank" style="margin-right: 10px;">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/2048px-2023_Facebook_icon.svg.png"
                             alt="Facebook" style="width: 30px;">
                     </a>
@@ -56,7 +56,7 @@
                         <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/WhatsApp_icon.png" alt="WhatsApp"
                             style="width: 30px;">
                     </a>
-                   
+
                 </div>
 
             </div>
@@ -93,19 +93,30 @@
                         </div>
 
                         <!-- Quantity Dropdown -->
+                        <!-- Quantity Availability Message -->
                         <div style="margin: 20px 10px;">
+                            {{#if (gt product.stock 0)}}
+                            {{#if (lt product.stock 10)}}
+                            <p style="color: orange; font-weight: bold;">Limited Stock</p>
+                            {{/if}}
                             <label for="quantity" class="form-label" style="font-weight: bold;">Quantity</label>
                             <select class="form-control" id="quantity" name="quantity"
                                 style="width: 60px; font-weight: bold;">
-                                <option value="1" selected>1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
+                                {{#each (range 1 (min 4 product.stock))}}
+                                <option value="{{this}}">{{this}}</option>
+                                {{/each}}
                             </select>
+                            {{else}}
+                            <p style="color: red; font-weight: bold;">Unavailable</p>
+                            {{/if}}
                         </div>
 
+                        <!-- Hide Add to Cart Button if Unavailable -->
+                        {{#if (gt product.stock 0)}}
                         <input type="hidden" name="productId" value="{{product._id}}" />
                         <button type="submit" class="btn pro-cartButton">Add to cart</button>
+                        {{/if}}
+
                     </div>
                 </form>
 

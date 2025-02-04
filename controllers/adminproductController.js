@@ -35,6 +35,7 @@ exports.getProduct = async (req, res) => {
         _id: o._id,
         name: o.name,
         description: o.description.substring(0, 20),
+        stock:o.stock,
         price: o.price,
         image: o.images[0]
     }));
