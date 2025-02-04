@@ -52,7 +52,7 @@ exports.getProductById = async (req, res) => {
             product,
             isLogin: req.isAuthenticated(),
             isFavorited,
-            productShareUrl: `http://localhost:3000/product/${productId}`,
+            productShareUrl: `https://ecommerceproject-4mp2.onrender.com/product/${productId}`,
         });
     } catch (error) {
         console.error(error);

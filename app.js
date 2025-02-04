@@ -33,26 +33,32 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const clientSessionStore = new session.MemoryStore();
 app.use(session({
   secret: 'site-secret-key',
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
+  store: clientSessionStore,
   name: 'site-session-id', // Unique name for the site session
   cookie: {
       path: '/', // Restrict cookie to site routes
       maxAge: 3600000, // 1 hour
+      secure:false
   }
 }));
 
+const adminSessionStore = new session.MemoryStore();
 // Admin-side session configuration
 app.use('/admin', session({
   secret: 'admin-secret-key',
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
+  store: adminSessionStore,
   name: 'admin-session-id', // Unique name for the admin session
   cookie: {
       path: '/admin', // Restrict cookie to admin routes
       maxAge: 3600000, // 1 hour
+      secure:false
   }
 }));
 
