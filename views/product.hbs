@@ -99,6 +99,9 @@
                             {{#if (lt product.stock 20)}}
                             <p style="color: orange; font-weight: bold;">Limited Stock</p>
                             {{/if}}
+                            {{#if (gt product.stock 20)}}
+                            <p style="color: green; font-weight: bold;">In Stock</p>
+                            {{/if}}
                             <label for="quantity" class="form-label" style="font-weight: bold;">Quantity</label>
                             <select class="form-control" id="quantity" name="quantity"
                                 style="width: 60px; font-weight: bold;">
