@@ -74,6 +74,11 @@ exports.signupSubmit = async (req, res) => {
         if (existingUser) {
             await updateUserByEmail(email, userObj);
             req.flash('error', 'User already exist!');
+            return res.render('signup', {
+                oldInput: req.body,
+                errorMessage: req.flash('error'), // Explicitly pass the flash message
+            });
+
         } else {
             await insertuser(userObj);
             req.flash('success', 'Successfully signed up');
