@@ -69,6 +69,9 @@ function validateSignupForm() {
     } else if (confirmpassword.length < 6) {
         errorCpassword.innerHTML = "Password must be at least 6 characters long.";
         isValid = false;
+    }else if (confirmpassword != password ) {
+        errorCpassword.innerHTML = "Password and confirm password are not matchng.";
+        isValid = false;
     }
 
     if (houseNo === "") {

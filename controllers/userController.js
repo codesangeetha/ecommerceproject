@@ -9,11 +9,12 @@ const changepasswordSchema = require('../validators/changepassword.schema');
 const { sendSMS } = require('../helpers/functions');
 const {
     sendEmail,
-    findUserByEmail, 
+    findUserByEmail,
     updateUserByEmail,
     insertuser,
     findUserById,
-    updatePasswordById } = require('../helpers/functions');
+    updatePasswordById,
+    findUserByEmailOrPhone } = require('../helpers/functions');
 
 
 exports.signupget = (req, res) => {
@@ -68,10 +69,11 @@ exports.signupSubmit = async (req, res) => {
         };
 
         // Check if user already exists
-        const existingUser = await findUserByEmail(email);
+        const existingUser = await findUserByEmailOrPhone(email, phone);
+        console.log("existing user",existingUser);
         if (existingUser) {
             await updateUserByEmail(email, userObj);
-            req.flash('success', 'User information updated successfully');
+            req.flash('error', 'User already exist!');
         } else {
             await insertuser(userObj);
             req.flash('success', 'Successfully signed up');
@@ -171,7 +173,7 @@ exports.postresetPassword = async (req, res) => {
         /* const phoneNumber = "994745971"; 
             const message = `Your Password has been reset successfully! `;
             await sendSMS(phoneNumber, message); */
-       
+
         res.render('resetpwdsuccess')
     } catch (err) {
         console.error(err);
@@ -237,7 +239,7 @@ exports.getChangePassword = (req, res) => {
         return res.redirect('/login');
     }
 
-    res.render('changepassword',{isLogin: req.isAuthenticated(),});
+    res.render('changepassword', { isLogin: req.isAuthenticated(), });
 };
 
 exports.postChangepassword = async (req, res) => {

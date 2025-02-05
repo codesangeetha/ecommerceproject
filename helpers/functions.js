@@ -270,6 +270,12 @@ exports.findUserByEmail = async (email) =>{
     return await Users.findOne({ email });
 }
 
+exports.findUserByEmailOrPhone = async (email, phone) => {
+    return await Users.findOne({
+        $or: [{ email }, { "address.phone": phone }]
+    });
+}
+
 // Update user by email
 exports.updateUserByEmail = async (email, updatedData) => {
     return await Users.updateOne({ email }, { $set: updatedData });
