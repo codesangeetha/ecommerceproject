@@ -15,7 +15,9 @@ router.get('/login', (req, res) => {
 router.post('/login', (req, res, next) => {
     passport.authenticate('client-local', { session: false }, (err, user, info) => {
 
+        console.log(err, user);
         if (err || !user) {
+            req.flash('error', 'Invalid username/password');
             return res.redirect('/login');
         }
 
