@@ -9,10 +9,8 @@ const updatequantityschema = require('../validators/updatequantity.schema');
 
 // Add product to cart
 exports.addToCart = async (req, res) => {
-    // console.log('body', req.body);
-    console.log("userId", req.user);
     const { productId, quantity, size, color } = req.body;
-    const userId = req.user._id;
+    const userId = req.session.clientUser._id;
 
     try {
         let cart = await Cart.findOne({ user: userId });
@@ -40,13 +38,13 @@ exports.addToCart = async (req, res) => {
 
 // Get cart details for the logged-in user
 exports.getCart = async (req, res) => {
-    const userId = req.user._id; // Assuming user is logged in and session is set
+    const userId = req.session.clientUser._id; // Assuming user is logged in and session is set
     // if (!userId) return res.redirect('/login');
 
     try {
         const cart = await Cart.findOne({ user: userId }).populate('products.product');
         console.log('cart', cart);
-        res.render('cart', { cart, isLogin: req.isAuthenticated() });
+        res.render('cart', { cart, isLogin: req.session.client== 'client' });
         // console.log("product:",cart.products[0].product);
     } catch (error) {
         console.error(error);
@@ -64,7 +62,7 @@ exports.updateCartItem = async (req, res) => {
         return res.status(500).json({ message: `Server Error ${err}` });
     }
 
-    const userId = req.user._id;
+    const userId = req.session.clientUser._id;
     const { productId, change } = req.body;
 
     try {
@@ -98,7 +96,7 @@ exports.updateCartItem = async (req, res) => {
 // Remove product from cart
 exports.removeFromCart = async (req, res) => {
     const val = req.params.id;
-    const userId = req.user._id;
+    const userId = req.session.clientUser._id;
     //  console.log(val);
     let cart = await Cart.findOne({ user: userId })
     console.log(cart);
@@ -126,7 +124,7 @@ exports.updateSize = async (req, res) => {
         return res.status(500).json({ message: `Server Error ${err}` });
     }
 
-    const userId = req.user._id;
+    const userId = req.session.clientUser._id;
     const { productId, size } = req.body;
 
     try {
@@ -164,7 +162,7 @@ exports.updateColor=async (req, res) => {
         return res.status(500).json({ message: `Server Error ${err}` });
     }
 
-    const userId = req.user._id;
+    const userId = req.session.clientUser._id;
     const { productId, color } = req.body;
 
     try {

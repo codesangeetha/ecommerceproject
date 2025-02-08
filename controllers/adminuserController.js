@@ -12,22 +12,22 @@ exports.getLogin = (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
 
-    res.render('adminlogin', { msg, isAdmin: true, isadminlogin: req.session.isAdminLoggin });
+    res.render('adminlogin', { msg, isAdmin: true, isadminlogin: req.session.admin == 'admin' });
 };
 
-exports.postAdminloginSubmit = async (req, res) => {
+/* exports.postAdminloginSubmit = async (req, res) => {
     const loginvalue = await finduseradmin(req.body.username, req.body.password);
     // console.log(loginvalue);
     if (loginvalue == null) {
         req.session.message = "Invalid username/password";
         return res.redirect('/admin/login');
     } else {
-        req.session.isAdminLoggin = true;
+        req.session.isAdminLoggi1n = true;
         req.session.adminName = req.body.username;
         req.session.userid = loginvalue._id.toString();
         return res.redirect('/admin/dashboard');
     }
-};
+}; */
 
 exports.getUser = async (req, res) => {
 
@@ -70,7 +70,7 @@ exports.getUser = async (req, res) => {
         arr: users,
         currentPage: page,
         totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin,
+        isAdmin: true, isadminlogin: req.session.admin == 'admin',
         startDate: startDate || "",
         endDate: endDate || ""
     });
@@ -118,19 +118,25 @@ exports.userSearch = async (req, res) => {
         currentPage: page,
         totalPages,
         isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
+        isadminlogin: req.session.admin == 'admin',
         searchQuery // Pass the search query back to the view
     });
 };
 
 exports.getLogout = (req, res) => {
-    req.session.destroy((err) => {
+    /* req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);
             return res.status(500).send("Couldn't log out");
         }
         res.redirect('/admin/login');
-    });
+    }); */
+
+    req.logout((err) => {
+        if (err) { return next(err); }
+        res.clearCookie('admin-session-id'); // Clear the admin session cookie
+        res.redirect('/admin/login');
+      });
 };
 
 exports.getBantoggle = async (req, res) => {
@@ -142,16 +148,16 @@ exports.getBantoggle = async (req, res) => {
 
 exports.adminChangePassword = (req, res) => {
 
-    if (!req.session.userid) {
+    if (req.session.admin !== 'admin') {
         req.flash('error', 'Please log in to change your password.');
         return res.redirect('/admin/login');
     }
-    res.render('adminchangepwd', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, });
+    res.render('adminchangepwd', { isAdmin: true, isadminlogin: req.session.admin == 'admin', });
 };
 
 exports.postAdminchangePassword = async (req, res) => {
 
-    if (!req.session.isAdminLoggin) return res.redirect('/admin/login');
+    if (req.session.admin !== 'admin') return res.redirect('/admin/login');
 
     const { error } = adminchangepasswordSchema.validate(req.body, { abortEarly: false });
     if (error) {
@@ -161,7 +167,7 @@ exports.postAdminchangePassword = async (req, res) => {
 
     try {
         const { newPassword, confirmNewPassword } = req.body;
-        const userId = req.session.userid;
+        const userId = req.session.adminUser._id;
 
         console.log('userId', userId);
 

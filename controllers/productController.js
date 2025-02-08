@@ -5,6 +5,9 @@ const User = require('../models/users.model');
 
 // Get all products and filter by search and category
 exports.getAllProducts = async (req, res) => {
+
+
+
     const searchQuery = req.query.q || "";
     const regex = new RegExp(searchQuery, 'i');
     const categoryFilter = req.query.category || undefined;
@@ -31,7 +34,7 @@ exports.getAllProducts = async (req, res) => {
 
         res.render('index', {
             arr: arr,
-            isLogin: req.isAuthenticated(),
+            isLogin: req.session.client== 'client',
             searchQuery, // Pass the search query back to the view
         });
     } catch (error) {
@@ -44,13 +47,15 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductById = async (req, res) => {
     const productId = req.params.id;
 
+    console.log('getProductById');
+
     try {
         const product = await getProductDatabyId(productId);
         const isFavorited = req.user && req.user.favorites.includes(productId);
 
         res.render('product', {
             product,
-            isLogin: req.isAuthenticated(),
+            isLogin: req.session.client== 'client',
             isFavorited,
             productShareUrl: `https://ecommerceproject-4mp2.onrender.com/product/${productId}`,
         });
@@ -62,7 +67,7 @@ exports.getProductById = async (req, res) => {
 
 // Add product to favorites
 exports.addToFavorites = async (req, res) => {
-    const userId = req.user._id;
+    const userId = req.session.clientUser._id;
     const productId = req.params.id;
 
     try {
@@ -87,7 +92,7 @@ exports.addToFavorites = async (req, res) => {
 
 // Remove product from favorites
 exports.removeFromFavorites = async (req, res) => {
-    const userId = req.user._id;
+    const userId = req.session.clientUser._id;
     const productId = req.params.id;
 
     try {

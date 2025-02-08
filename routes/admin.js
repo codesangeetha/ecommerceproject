@@ -79,11 +79,9 @@ function random() {
 }
 
 const checkadminLogin = (req, res, next) => {
-    if (req.session.isAdminLoggin && req.session.isAdminLoggin == true) {
-        // console.log('hello')
+    if (req.session.admin == 'admin') {
         next();
     } else {
-        // console.log("god")
         res.redirect('/admin/login')
     }
 }
@@ -143,19 +141,15 @@ router.get('/deletebrand/:id', deleteBrand);
 
 router.get('/dashboard', checkadminLogin, async (req, res) => {
     const obj = await dashboradCount();
-    return res.render('admindashboard', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, obj });
+    return res.render('admindashboard', { isAdmin: true, isadminlogin: req.session.admin == 'admin', obj });
 });
 
 
 router.get('/login', getLogin);
 
-router.post('/adminloginsubmit', postAdminloginSubmit);
-
 router.get('/user', checkadminLogin, getUser);
 
 router.post('/user-search', checkadminLogin, userSearch);
-
-router.get('/logout', getLogout);
 
 router.get('/bantoggle/:id', getBantoggle);
 

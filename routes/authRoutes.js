@@ -4,32 +4,53 @@ const router = express.Router();
 
 // Render login page
 router.get('/login', (req, res) => {
-  if (req.isAuthenticated()) {
-    return res.redirect('/');
-  }
-  console.log('login get', res.locals.message);
-  res.render('login', { message: res.locals.message });
+    if (req.session.client == 'client') {
+        return res.redirect('/');
+    }
+    console.log('login get', res.locals.message);
+    res.render('login', { message: res.locals.message });
 });
 
-// Handle login POST request
-router.post(
-  '/login',
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: 'Invalid email or password.', // Optional: Display flash messages
-  })
-);
 
-// Handle logout
+router.post('/login', (req, res, next) => {
+    passport.authenticate('client-local', { session: false }, (err, user, info) => {
+
+        if (err || !user) {
+            return res.redirect('/login');
+        }
+
+        req.session.client = 'client';
+        req.session.clientUser = user;
+
+        return res.redirect('/');
+    })(req, res, next);
+});
+
+
+router.post('/admin/adminloginsubmit', (req, res, next) => {
+    passport.authenticate('admin-local', { session: false }, (err, user, info) => {
+        if (err || !user) {
+            req.session.message = "Invalid username/password";
+            return res.redirect('/admin/login');
+        }
+
+        req.session.admin = 'admin';
+        req.session.adminUser = user;
+
+        return res.redirect('/admin/dashboard');
+    })(req, res, next);
+});
+
+router.get('/admin/logout', (req, res) => {
+    req.session.admin = '';
+    req.session.adminId = '';
+    res.redirect('/admin/login');
+});
+
 router.get('/logout', (req, res) => {
-  req.logout(err => {
-    if (err) {
-      return next(err);
-    }
-    
+    req.session.client = '';
+    req.session.clientId = '';
     res.redirect('/login');
-  });
 });
 
 // Redirect to Google for authentication
@@ -37,22 +58,22 @@ router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 
 
 // Handle callback from Google
 router.get(
-  '/auth/google/callback',
-  passport.authenticate('google', {
-    successRedirect: '/', // Redirect after successful login
-    failureRedirect: '/login', // Redirect if login fails
-  })
+    '/auth/google/callback',
+    passport.authenticate('google', {
+        successRedirect: '/', // Redirect after successful login
+        failureRedirect: '/login', // Redirect if login fails
+    })
 );
 
 
 router.get('/auth/facebook', passport.authenticate('facebook'));
 
 router.get(
-  '/auth/facebook/callback',
-  passport.authenticate('facebook', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-  })
+    '/auth/facebook/callback',
+    passport.authenticate('facebook', {
+        successRedirect: '/',
+        failureRedirect: '/login',
+    })
 );
 
 module.exports = router;

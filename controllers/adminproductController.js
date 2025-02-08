@@ -46,7 +46,7 @@ exports.getProduct = async (req, res) => {
         arr: products,
         currentPage: page,
         totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin,
+        isAdmin: true, isadminlogin: req.session.admin == 'admin',
          startDate: startDate || "",
         endDate: endDate || ""
     });
@@ -90,7 +90,7 @@ exports.postProductSearch = async (req, res) => {
         currentPage: page,
         totalPages,
         isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
+        isadminlogin: req.session.admin == 'admin',
         searchQuery
     });
 };
@@ -107,7 +107,7 @@ exports.addProduct = async (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
 
-    return res.render('addproduct', { arr: data, arr2: info, sizeArr: sizeArr, msg: msg, colorArr: colorArr, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
+    return res.render('addproduct', { arr: data, arr2: info, sizeArr: sizeArr, msg: msg, colorArr: colorArr, isAdmin: true, isadminlogin: req.session.admin == 'admin' })
 };
 
 exports.addProductSubmit = async (req, res) => {
@@ -180,7 +180,7 @@ exports.getEditProduct = async (req, res) => {
         newSizeArr,
         newColorArr,
         isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
+        isadminlogin: req.session.admin == 'admin',
     });
 };
 

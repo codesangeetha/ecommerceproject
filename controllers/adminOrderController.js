@@ -45,7 +45,7 @@ exports.getOrders = async (req, res) => {
         currentPage: page,
         totalPages,
         isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
+        isadminlogin: req.session.admin == 'admin',
         startDate: startDate || "",
         endDate: endDate || ""
     });

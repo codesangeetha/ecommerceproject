@@ -1,20 +1,36 @@
-.ul-procatcls{
-    margin-top: 25px;
-    font-weight: bold;
+.ul-procatcls {
+  margin-top: 25px;
+  font-weight: bold;
 }
-.error-msg {
-    color: red;
-    font-size: 15px;
-    margin-top: 5px;
-  }
-  .uploadImg-cls{
-    width:80px;
-    height: 80px;
-    cursor: pointer;
-  }
 
-  .error-message {
-    color: red;
-    font-size: 15px;
-    margin-top: 5px;
-  }
+.error-msg {
+  color: red;
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+.uploadImg-cls {
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+}
+
+.error-message {
+  color: red;
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+a.text-decoration-none:hover {
+  text-decoration: none;
+  /* Remove underline on hover */
+}
+
+a.text-decoration-none .card-title:hover {
+  text-decoration: none;
+  /* Ensures text inside the card doesn’t get underlined */
+}
+
+.btn-close {
+  cursor: pointer;
+}/* for X button

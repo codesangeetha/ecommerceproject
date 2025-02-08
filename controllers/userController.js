@@ -187,10 +187,10 @@ exports.postresetPassword = async (req, res) => {
 };
 
 exports.getProfile = async (req, res) => {
-    if (!req.isAuthenticated()) return res.redirect('/login');
+    if (req.session.client !== 'client') return res.redirect('/login');
 
     try {
-        const user = await User.findById(req.user._id); // Fetch the logged-in user's details
+        const user = await User.findById(req.session.clientUser._id); // Fetch the logged-in user's details
         res.render('profile', { user, isLogin: req.isAuthenticated() });
     } catch (error) {
         console.error('Error fetching user profile:', error);
@@ -199,7 +199,7 @@ exports.getProfile = async (req, res) => {
 };
 
 exports.postProfile = async (req, res) => {
-    if (!req.isAuthenticated()) return res.redirect('/login');
+    if (req.session.client !== 'client') return res.redirect('/login');
 
     const { error } = profileSchema.validate(req.body, { abortEarly: false });
 
@@ -210,7 +210,7 @@ exports.postProfile = async (req, res) => {
 
     try {
         await User.findByIdAndUpdate(
-            req.user._id,
+            req.session.clientUser._id,
             { address: req.body },
             { new: true }
         );
@@ -225,10 +225,10 @@ exports.postProfile = async (req, res) => {
 
 
 exports.getFavorites = async (req, res) => {
-    if (!req.isAuthenticated()) return res.redirect('/login');
+    if (req.session.client !== 'client') return res.redirect('/login');
 
     try {
-        const user = await User.findById(req.user._id).populate('favorites'); // Ensure 'favorites' is populated
+        const user = await User.findById(req.session.clientUser._id).populate('favorites'); // Ensure 'favorites' is populated
         const favorites = user.favorites;
         res.render('favorites', { favorites });
     } catch (error) {
@@ -239,16 +239,16 @@ exports.getFavorites = async (req, res) => {
 
 exports.getChangePassword = (req, res) => {
     // Ensure the user is logged in
-    if (!req.user._id) {
+    if (!req.session.clientUser._id) {
         req.flash('error', 'Please log in to change your password.');
         return res.redirect('/login');
     }
 
-    res.render('changepassword', { isLogin: req.isAuthenticated(), });
+    res.render('changepassword', { isLogin: req.session.client== 'client', });
 };
 
 exports.postChangepassword = async (req, res) => {
-    if (!req.isAuthenticated()) return res.redirect('/login');
+    if (req.session.client !== 'client') return res.redirect('/login');
 
     const { error } = changepasswordSchema.validate(req.body, { abortEarly: false });
     if (error) {
@@ -259,7 +259,7 @@ exports.postChangepassword = async (req, res) => {
 
     try {
         const { newPassword, confirmNewPassword } = req.body;
-        const userId = req.user._id;
+        const userId = req.session.clientUser._id;
 
         // Ensure user is logged in
         if (!userId) {

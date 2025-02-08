@@ -17,6 +17,7 @@ const usersSchema = new mongoose.Schema({
     resetPasswordExpires: Date,
     googleId: String,
     fbId: String,
+    role: { type: String, default: 'client' },
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
 
 },

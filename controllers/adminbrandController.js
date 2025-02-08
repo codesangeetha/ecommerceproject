@@ -20,7 +20,6 @@ exports.getBrand = async (req, res) => {
     if (endDate) {
         query.createdAt = { ...query.createdAt, $lte: new Date(`${endDate}T23:59:59.999Z`) };
     }
-    console.log("query :", query);
 
     const totalbrands = await Brand.countDocuments(query);
 
@@ -43,7 +42,7 @@ exports.getBrand = async (req, res) => {
         arr: brands,
         currentPage: page,
         totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin,
+        isAdmin: true, isadminlogin: req.session.admin == 'admin',
         startDate: startDate || "",
         endDate: endDate || ""
     });
@@ -53,7 +52,7 @@ exports.getAddBrand = (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
     // console.log("msg = ",msg);
-    return res.render('addbrand', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, msg: msg })
+    return res.render('addbrand', { isAdmin: true, isadminlogin: req.session.admin == 'admin' && req.user.role == 'admin', msg: msg })
 };
 
 exports.addBrandSubmit = async (req, res) => {
@@ -115,7 +114,7 @@ exports.brandSearch = async (req, res) => {
         currentPage: page,
         totalPages,
         isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
+        isadminlogin: req.session.admin == 'admin',
         searchQuery,
     });
 
@@ -132,7 +131,7 @@ exports.getEditBrand = async (req, res) => {
     const val = req.params.id;
     const data = await getBrandDatabyId(val)
     // console.log("editbrand-data", data)
-    return res.render('editbrand', { brand: data, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
+    return res.render('editbrand', { brand: data, isAdmin: true, isadminlogin: req.session.admin == 'admin' })
 };
 
 exports.editBrandSubmit = async (req, res) => {

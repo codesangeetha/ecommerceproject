@@ -8,7 +8,6 @@ const passport = require('./passportConfig');
 const flash = require('connect-flash');
 
 
-
 const mongoose = require('mongoose');
 const uri = process.env.MONGOURI;
 
@@ -33,38 +32,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const clientSessionStore = new session.MemoryStore();
 app.use(session({
-  secret: 'site-secret-key',
+  name: 'client_session', // Unique name for client session
+  secret: 'your_client_secret_key',
   resave: false,
-  saveUninitialized: false,
-  store: clientSessionStore,
-  name: 'site-session-id', // Unique name for the site session
-  cookie: {
-      path: '/', // Restrict cookie to site routes
-      maxAge: 3600000, // 1 hour
-      secure:false
-  }
+  saveUninitialized: false
 }));
 
-const adminSessionStore = new session.MemoryStore();
-// Admin-side session configuration
-app.use('/admin', session({
-  secret: 'admin-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  store: adminSessionStore,
-  name: 'admin-session-id', // Unique name for the admin session
-  cookie: {
-      path: '/admin', // Restrict cookie to admin routes
-      maxAge: 3600000, // 1 hour
-      secure:false
-  }
-}));
-
-app.use(flash());
+// Initialize Passport and restore authentication state, if any, from the session for client
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(flash());
 
 
 app.use((req, res, next) => {

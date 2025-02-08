@@ -6,7 +6,8 @@ const adminusersSchema = new mongoose.Schema({
     email: String,
     password: String,
     status: Boolean,
-    address: Object
+    address: Object,
+    role: { type: String, default: 'admin' }
 });
 const Adminusers = mongoose.model('adminusers', adminusersSchema);
 module.exports = Adminusers;

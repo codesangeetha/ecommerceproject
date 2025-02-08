@@ -5,9 +5,9 @@ const { finduser, getproductsdata, getProductDatabyId, sendEmail } = require('..
 const { insertuser } = require('../helpers/functions');
 
 const { getAllProducts, getProductById, addToFavorites, removeFromFavorites } = require('../controllers/productController');
-const { addToCart, getCart, updateCartItem, removeFromCart, updateSize,updateColor } = require('../controllers/cartController');
-const { signupget,signupSubmit,forgotPassword,forgotPasswordSubmit,resetPassword,resetPasswordSuccess,postresetPassword,getProfile,postProfile,getFavorites,getChangePassword, postChangepassword } = require('../controllers/userController');
-const { getCheckout,checkoutSubmit,paymentOrder,thankyoupage } = require('../controllers/checkoutController');
+const { addToCart, getCart, updateCartItem, removeFromCart, updateSize, updateColor } = require('../controllers/cartController');
+const { signupget, signupSubmit, forgotPassword, forgotPasswordSubmit, resetPassword, resetPasswordSuccess, postresetPassword, getProfile, postProfile, getFavorites, getChangePassword, postChangepassword } = require('../controllers/userController');
+const { getCheckout, checkoutSubmit, paymentOrder, thankyoupage } = require('../controllers/checkoutController');
 
 const Cart = require("../models/cart.model");
 const User = require("../models/users.model");
@@ -20,8 +20,7 @@ const Category = require('../models/categories.model');
 var router = express.Router();
 
 const checkLogin = (req, res, next) => {
-    if (req.isAuthenticated() && req.isAuthenticated() == true) {
-        // console.log('hello')
+    if (req.session.client == 'client') {
         next();
     } else {
         res.redirect('/login')
@@ -34,7 +33,7 @@ router.use(async (req, res, next) => {
         const categories = await Category.find({ isdeleted: false, status: true }); // Fetch only active and undeleted categories
         res.locals.categories = categories; // Make categories available in Handlebars
 
-        res.locals.username = req?.user?.name?.substring(0, 7) || "";
+        res.locals.username = req?.session?.clientUser?.name?.substring(0, 7) || "";
         next();
     } catch (error) {
         console.error('Error fetching categories:', error);
@@ -45,11 +44,11 @@ router.use(async (req, res, next) => {
 router.use(async (req, res, next) => {
     try {
         let cartItems = "";
-        if(req?.user?._id){
-            const cart = await Cart.findOne({ user: req.user._id });
-            if(cart){
+        if (req?.session?.clientUser?._id) {
+            const cart = await Cart.findOne({ user: req.session.clientUser._id });
+            if (cart) {
                 const count = cart.products.length;
-                if(count>0){
+                if (count > 0) {
                     cartItems = count == 1 ? "1 item" : `${count} items`;
                 }
             }
@@ -83,25 +82,25 @@ router.post('/cart/update', checkLogin, updateCartItem);
 
 router.post('/cart/updatesize', checkLogin, updateSize);
 
-router.post('/cart/updatecolor', checkLogin,updateColor );
+router.post('/cart/updatecolor', checkLogin, updateColor);
 
 router.get('/signup', signupget);
 
-router.post("/signupsubmit",signupSubmit);
+router.post("/signupsubmit", signupSubmit);
 
-router.get('/checkout', checkLogin,getCheckout );
+router.get('/checkout', checkLogin, getCheckout);
 
 router.post('/checkout-submit', checkLogin, checkoutSubmit);
 
-router.get('/forgot-password',forgotPassword);
+router.get('/forgot-password', forgotPassword);
 
 router.post('/forgot-password-submit', forgotPasswordSubmit);
 
 router.get('/reset-password/:token', resetPassword);
 
-router.get('reset-pwd-success',resetPasswordSuccess);
+router.get('reset-pwd-success', resetPasswordSuccess);
 
-router.post('/reset-password-submit/:token',postresetPassword );
+router.post('/reset-password-submit/:token', postresetPassword);
 
 router.post('/payment/create-order', paymentOrder);
 

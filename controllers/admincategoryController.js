@@ -44,7 +44,7 @@ exports.getCategory = async (req, res) => {
         arr: categories,
         currentPage: page,
         totalPages,
-        isAdmin: true, isadminlogin: req.session.isAdminLoggin,
+        isAdmin: true, isadminlogin: req.session.admin == 'admin',
         startDate: startDate || "",
         endDate: endDate || ""
     });
@@ -55,7 +55,7 @@ exports.addCategory = (req, res) => {
     const msg = req.session.message;
     req.session.message = "";
     // console.log("msg", msg);
-    return res.render('addcategory', { isAdmin: true, isadminlogin: req.session.isAdminLoggin, msg: msg })
+    return res.render('addcategory', { isAdmin: true, isadminlogin: req.session.admin == 'admin', msg: msg })
 };
 
 exports.postaddCategorySubmit = async (req, res) => {
@@ -118,7 +118,7 @@ exports.postCategorySearch = async (req, res) => {
         currentPage: page,
         totalPages,
         isAdmin: true,
-        isadminlogin: req.session.isAdminLoggin,
+        isadminlogin: req.session.admin == 'admin',
         searchQuery,
     });
 };
@@ -135,7 +135,7 @@ exports.getEditCategory = async (req, res) => {
     const data = await getCategoryDatabyId(val)
     //  console.log(data);
 
-    return res.render('editcategory', { category: data, isAdmin: true, isadminlogin: req.session.isAdminLoggin })
+    return res.render('editcategory', { category: data, isAdmin: true, isadminlogin: req.session.admin == 'admin' })
 };
 
 exports.editCategorySubmit = async (req, res) => {

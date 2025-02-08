@@ -8,7 +8,7 @@ const checkoutSchema = require('../validators/checkout.schema');
 
 
 exports.getCheckout=async (req, res) => {
-    const userId = req.user._id;
+    const userId = req.session.clientUser._id;
 
     try {
         const cart = await Cart.findOne({ user: userId }).populate('products.product');
@@ -26,7 +26,7 @@ exports.getCheckout=async (req, res) => {
         // console.log("sum is", result);
         let total = result + 100;
 
-        res.render('checkout', { cart, user, result, total, isLogin: req.isAuthenticated() });
+        res.render('checkout', { cart, user, result, total, isLogin: req.session.client== 'client' });
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
@@ -35,7 +35,7 @@ exports.getCheckout=async (req, res) => {
 
 exports.checkoutSubmit=async (req, res) => {
     const { fullname, address, city, state, pincode, email, phone } = req.body;
-    const userId = req.user._id;
+    const userId = req.session.clientUser._id;
 
     try {
         // Update user address
@@ -71,7 +71,7 @@ exports.paymentOrder=async (req, res) => {
 
         const orderId = `order_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
 
-        const userCart = await Cart.findOne({ user: req.user._id }).populate('products.product');
+        const userCart = await Cart.findOne({ user: req.session.clientUser._id }).populate('products.product');
         if (!userCart) return res.status(400).send('Cart not found');
 
 
@@ -86,7 +86,7 @@ exports.paymentOrder=async (req, res) => {
 
         // Create order in database
         const newOrder = await Order.create({
-            user: req.user._id,
+            user: req.session.clientUser._id,
             orderId,
             cartDetails: userCart.products,
             address,
@@ -99,7 +99,7 @@ exports.paymentOrder=async (req, res) => {
             "order_currency": "INR",
             "order_id": orderId,
             "customer_details": {
-                "customer_id": req.user._id.toString(),
+                "customer_id": req.session.clientUser._id.toString(),
                 "customer_name": name,
                 "customer_email": email,
                 "customer_houseNo": houseNo,
@@ -155,7 +155,7 @@ exports.thankyoupage = async (req, res) => {
     }
 
     // Clear the user's cart
-    await Cart.findOneAndDelete({ user: req.user._id });
+    await Cart.findOneAndDelete({ user: req.session.clientUser._id });
 
     // Send SMS notification
     const phoneNumber = order?.address?.phone; 
@@ -163,7 +163,7 @@ exports.thankyoupage = async (req, res) => {
     await sendSMS(phoneNumber, message); 
 
     // Render thank you page with order details
-    res.render('thankyou', { order, isLogin: req.isAuthenticated() });
+    res.render('thankyou', { order, isLogin: req.session.client== 'client' });
   } catch (err) {
     console.error('Error in thankyoupage:', err);
     res.status(500).send('Error occurred');
