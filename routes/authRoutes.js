@@ -56,7 +56,7 @@ router.get('/logout', (req, res) => {
 });
 
 // Redirect to Google for authentication
-router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
 
 // Handle callback from Google
 router.get(
