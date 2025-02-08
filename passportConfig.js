@@ -105,6 +105,8 @@ passport.use(
                         status: true,
                     });
                 }
+
+                console.log('user2: ', user);
                 return done(null, user );
             } catch (err) {
                 return done(err);
@@ -139,6 +141,7 @@ passport.use(new FacebookStrategy(
 
 
 passport.serializeUser((user, done) => {
+    console.log('serializeUser:', user);
     if (user.role == 'admin') {
         done(null, { id: user.id, role: 'admin' });
     } else if (user.role == 'client') {
@@ -149,6 +152,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (obj, done) => {
+    console.log('deserializeUser:', obj);
     try {
         if (obj.role == 'admin') {
             const user = await Adminusers.findById(obj.id);
