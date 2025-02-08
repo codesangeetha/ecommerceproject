@@ -20,7 +20,7 @@ const Category = require('../models/categories.model');
 var router = express.Router();
 
 const checkLogin = (req, res, next) => {
-    console.log('session: ', user.session);
+    console.log('session: ', req.session);
     if (req.session.client == 'client') {
         next();
     } else {
