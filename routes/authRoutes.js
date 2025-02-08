@@ -15,7 +15,7 @@ router.get('/login', (req, res) => {
 router.post('/login', (req, res, next) => {
     passport.authenticate('client-local', { session: false }, (err, user, info) => {
 
-        console.log(err, user);
+        console.log('login post : ', err, user);
         if (err || !user) {
             req.flash('error', 'Invalid username/password');
             return res.redirect('/login');
@@ -59,13 +59,38 @@ router.get('/logout', (req, res) => {
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
 
 // Handle callback from Google
-router.get(
+/* router.get(
     '/auth/google/callback',
     passport.authenticate('google', {
         successRedirect: '/', // Redirect after successful login
         failureRedirect: '/login', // Redirect if login fails
     })
-);
+); */
+
+router.get('/auth/google/callback', (req, res, next) => {
+    passport.authenticate('google', { session: false }, (err, user, info) => {
+        /* if (err || !user) {
+          return res.redirect('/login');
+        }
+        // Manually update the session
+        req.session.user = user;  // or any custom session property
+        return res.redirect('/'); */
+
+        console.log('login post : ', err, user);
+        if (err || !user) {
+            req.flash('error', 'Invalid username/password');
+            return res.redirect('/login');
+        }
+
+        req.session.client = 'client';
+        req.session.clientUser = user;
+
+        return res.redirect('/');
+
+
+    })(req, res, next);
+});
+
 
 
 router.get('/auth/facebook', passport.authenticate('facebook'));
